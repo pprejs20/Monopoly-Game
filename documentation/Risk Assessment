@@ -1,0 +1,14 @@
+Risks and their solutions:
+
+Risk:Editing Unity scene whilst still being in play mode and then exiting the play mode -> This will cause us to lose our progress in the scene as changes made in play mode aren't saved
+Solution: Make sure the Play button is not pressed when making changes! SAVE BEFORE ENTERING INTO PLAY MODE!.
+
+Risk: A team member gets ill and is unable to work.
+Solution: The rest of the team will cover for them and we will evenly spread out the workload
+
+Risk:Unity crashes and we lose unsaved changes.
+Solution: Each member should have a local back up. 
+
+Risk: An intruder gaining access to github and deleting our files
+Solution: At least one member keeping an offline backup copy. 
+
