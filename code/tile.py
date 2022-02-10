@@ -33,7 +33,7 @@ class Tile:
             assert False
 
     @classmethod
-    def loadTilesFromXlsx(cls):
+    def load_tiles_from_xlsx(cls):
         workbook = openpyxl.load_workbook("ExcelData/PropertyTycoonBoardData.xlsx")
         sheet = workbook.active
         tiles = []
