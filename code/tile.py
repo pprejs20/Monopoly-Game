@@ -55,7 +55,7 @@ class Tile:
                     row_data.append(Tile.parse_bool(sheet[cell].value))
                 else:
                     row_data.append(sheet[cell].value)
-            print(row_data)
+            # print(row_data)
             tiles.append(Tile(row_data[0], row_data[1], row_data[2], row_data[3],
                               row_data[4], row_data[5], row_data[6], row_data[7],
                               row_data[8], row_data[9], row_data[10], row_data[11]))
@@ -80,6 +80,6 @@ class Tile:
         return string
 
 
-tiles = Tile.load_tiles_from_xlsx()
-for t in tiles:
-    print(t)
+# tiles = Tile.load_tiles_from_xlsx()
+# for t in tiles:
+#     print(t)
