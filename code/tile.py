@@ -80,6 +80,6 @@ class Tile:
         return string
 
 
-tiles = Tile.loadTilesFromXlsx()
+tiles = Tile.load_tiles_from_xlsx()
 for t in tiles:
     print(t)
