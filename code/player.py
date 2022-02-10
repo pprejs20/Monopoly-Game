@@ -8,6 +8,6 @@ class Player:
         self.laps = laps
 
     def playerRollDice(self):
-        dOne = random.randint(1, 6)
-        dTwo = random.randint(1, 6)
+        dOne = random.randint(1, 7)
+        dTwo = random.randint(1, 7)
         return (dOne, dTwo)
