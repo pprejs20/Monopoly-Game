@@ -16,6 +16,7 @@ class Tile:
         self.three_house_rent = three_house_rent
         self.four_house_rent = four_house_rent
         self.hotel_rent = hotel_rent
+        self.owner = None
 
     @classmethod
     def get_cell_ref(cls, row, col):
