@@ -5,8 +5,7 @@ from tile import Tile
 class TestTile(unittest.TestCase):
 
     def test_load_tiles_from_xlsx(self):
-        tiles = Tile.load_tiles_from_xlsx()
-        tile = tiles[0]
+        tile = Tile.load_tiles_from_xlsx()[0]
 
         self.assertEqual(tile.pos, 1)
         self.assertEqual(tile.space, "Go")
