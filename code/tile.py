@@ -19,11 +19,6 @@ class Tile:
         self.owner = None
 
     @classmethod
-    def get_cell_ref(cls, row, col):
-        # chr(65) is A in ASCII
-        return "" + chr(64 + col) + str(row)
-
-    @classmethod
     def parse_bool(cls, data):
         if data == 'Yes':
             return True
@@ -49,7 +44,7 @@ class Tile:
                 # (Columns C, G, j)
                 if col in [3, 7, 10]:
                     continue
-                cell = Tile.get_cell_ref(row, col)
+                cell = get_cell_ref(row, col)
 
                 # Change 'Yes' and 'No' to True or False for code
                 if col == 6:
@@ -80,7 +75,10 @@ class Tile:
         string += "----------------------------"
         return string
 
+def get_cell_ref(row, col):
+    # chr(65) is A in ASCII
+    return "" + chr(64 + col) + str(row)
 
-# tiles = Tile.load_tiles_from_xlsx()
-# for t in tiles:
-#     print(t)
+#tiles = Tile.load_tiles_from_xlsx()
+#for t in tiles:
+#    print(t)
