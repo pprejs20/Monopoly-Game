@@ -137,7 +137,8 @@ class JailfreeCard(Card):
     def load_jail_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
-        cards = []
+        pot_cards = []
+        opp_cards = []
 
         for row in range(24, 25):
             row_data = []
@@ -145,9 +146,17 @@ class JailfreeCard(Card):
                 cell = get_cell_ref(row, col)
 
                 row_data.append(sheet[cell].value)
-            cards.append(JailfreeCard(row_data[0]))
+            pot_cards.append(JailfreeCard(row_data[0]))
 
-        return cards
+        for row in range(50, 51):
+            row_data = []
+            for col in range(1, 2):
+                cell = get_cell_ref(row, col)
+
+                row_data.append(sheet[cell].value)
+            opp_cards.append(JailfreeCard(row_data[0]))
+
+        return pot_cards, opp_cards
 
     def __str__(self):
         string = "----------- Jail Free Card -----------\n"
@@ -165,21 +174,51 @@ class JailfreeCard(Card):
 # for c1 in cards2:
 #     print(c1)
 
-cards1, cards2 = MovementCard.load_movement_card_from_xlsx()
-for c in cards1:
-    print(c)
-for c1 in cards2:
-    print(c1)
+# cards1, cards2 = MovementCard.load_movement_card_from_xlsx()
+# for c in cards1:
+#     print(c)
+# for c1 in cards2:
+#     print(c1)
 
-
-
-#cards3 = JailfreeCard.load_jail_card_from_xlsx()
-#for c in cards3:
-#   print(c)
+# cards1, cards2 = JailfreeCard.load_jail_card_from_xlsx()
+# for c in cards1:
+#     print(c)
+# for c1 in cards2:
+#     print(c1)
 
 # cards4 = HouseHotelCard.load_hh_card_from_xlsx()
 # for c in cards4:
 #     print(c)
+
+pot_trans, opp_trans = TransactionCard.load_transaction_card_from_xlsx()
+pot_move, opp_move = MovementCard.load_movement_card_from_xlsx()
+pot_jail, opp_jail = JailfreeCard.load_jail_card_from_xlsx()
+opp_hh = HouseHotelCard.load_hh_card_from_xlsx()
+
+for card in pot_trans:
+    potluck.append(card)
+for card in pot_move:
+    potluck.append(card)
+for card in pot_jail:
+    potluck.append(card)
+print("-------------Potluck Cards-------------\n")
+for card in potluck:
+    print(card)
+
+for card in opp_trans:
+    opportunity.append(card)
+for card in opp_move:
+    opportunity.append(card)
+for card in opp_hh:
+    opportunity.append(card)
+for card in opp_jail:
+    opportunity.append(card)
+
+print("-------------Opportunity Knocks Cards-------------\n")
+for card in opportunity:
+    print(card)
+
+
 
 
 
