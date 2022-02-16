@@ -19,7 +19,7 @@ class TransactionCard(Card):
         super().__init__(description)
 
     @classmethod
-    def load_tiles_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+    def load_transaction_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
         cards = []
@@ -45,11 +45,36 @@ class TransactionCard(Card):
         return string
 
 class MovementCard(Card):
-    def __init__(self, relative_pos, tile, pass_go, description): #make sure to change excel to tile to numbers
+    def __init__(self, relative_pos, tile, pass_go, description):
         self.relative_pos = relative_pos
         self.tile = tile
         self.pass_go = pass_go
         super().__init__(description)
+
+    @classmethod
+    def load_movement_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+        workbook = openpyxl.load_workbook(path)
+        sheet = workbook.active
+        cards = []
+
+        for row in range(19, 22):
+            row_data = []
+            for col in range(1, 5):
+                cell = get_cell_ref(row, col)
+
+                row_data.append(sheet[cell].value)
+            cards.append(MovementCard(row_data[0], row_data[1], row_data[2], row_data[3]))
+
+        return cards
+
+    def __str__(self):
+        string = "----------- Movement Card -----------\n"
+        string += "Relative position: {}\n".format(self.relative_pos)
+        string += "Tile: {}\n".format(self.tile)
+        string += "Pass go: {}\n".format(self.pass_go)
+        string += "Description: {}\n".format(self.description)
+        string += "----------------------------"
+        return string
 
 class HouseHotelCard(Card):
     def __init__(self, payer, reciever, house_amount, hotel_amount, description):
@@ -63,11 +88,16 @@ class JailfreeCard(Card):
     pass
 
 
-card = JailfreeCard("jailfree")
-print(isinstance(card, Card))
+#card = JailfreeCard("jailfree")
+#print(isinstance(card, Card))
 
-cards1 = TransactionCard.load_tiles_from_xlsx()
-for c in cards1:
+#cards1 = TransactionCard.load_tiles_from_xlsx()
+#for c in cards1:
+   # print(c)
+
+cards2 = MovementCard.load_movement_card_from_xlsx()
+for c in cards2:
     print(c)
+
 
 
