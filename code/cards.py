@@ -22,7 +22,8 @@ class TransactionCard(Card):
     def load_transaction_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
-        cards = []
+        pot_cards = []
+        opp_cards = []
 
         for row in range(4, 17):
             row_data = []
@@ -31,9 +32,18 @@ class TransactionCard(Card):
                 cell = get_cell_ref(row, col)
 
                 row_data.append(sheet[cell].value)
-            cards.append(TransactionCard(row_data[0], row_data[1], row_data[2], row_data[3]))
+            pot_cards.append(TransactionCard(row_data[0], row_data[1], row_data[2], row_data[3]))
 
-        return cards
+        for row in range(29, 35):
+            row_data = []
+            for col in range(1, 5):
+
+                cell = get_cell_ref(row, col)
+
+                row_data.append(sheet[cell].value)
+            opp_cards.append(TransactionCard(row_data[0], row_data[1], row_data[2], row_data[3]))
+
+        return pot_cards, opp_cards
 
     def __str__(self):
         string  = "----------- Transaction Card -----------\n"
@@ -55,7 +65,8 @@ class MovementCard(Card):
     def load_movement_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
-        cards = []
+        pot_cards = []
+        opp_cards = []
 
         for row in range(19, 22):
             row_data = []
@@ -63,9 +74,17 @@ class MovementCard(Card):
                 cell = get_cell_ref(row, col)
 
                 row_data.append(sheet[cell].value)
-            cards.append(MovementCard(row_data[0], row_data[1], row_data[2], row_data[3]))
+            pot_cards.append(MovementCard(row_data[0], row_data[1], row_data[2], row_data[3]))
 
-        return cards
+        for row in range(41, 48):
+            row_data = []
+            for col in range(1, 5):
+                cell = get_cell_ref(row, col)
+
+                row_data.append(sheet[cell].value)
+            opp_cards.append(MovementCard(row_data[0], row_data[1], row_data[2], row_data[3]))
+
+        return pot_cards, opp_cards
 
     def __str__(self):
         string = "----------- Movement Card -----------\n"
@@ -83,6 +102,32 @@ class HouseHotelCard(Card):
         self.house_amount = house_amount
         self.hotel_amount = hotel_amount
         super().__init__(description)
+
+    @classmethod
+    def load_hh_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+        workbook = openpyxl.load_workbook(path)
+        sheet = workbook.active
+        cards = []
+
+        for row in range(37, 39):
+            row_data = []
+            for col in range(1, 6):
+                cell = get_cell_ref(row, col)
+
+                row_data.append(sheet[cell].value)
+            cards.append(HouseHotelCard(row_data[0], row_data[1], row_data[2], row_data[3], row_data[4]))
+
+        return cards
+
+    def __str__(self):
+        string = "----------- HH Card -----------\n"
+        string += "Payer: {}\n".format(self.payer)
+        string += "Reciever: {}\n".format(self.reciever)
+        string += "House amount: {}\n".format(self.house_amount)
+        string += "Hotel amount: {}\n".format(self.hotel_amount)
+        string += "Description: {}\n".format(self.description)
+        string += "----------------------------"
+        return string
 
 class JailfreeCard(Card):
     def __init__(self, description):
@@ -114,17 +159,29 @@ class JailfreeCard(Card):
 #card = JailfreeCard("jailfree")
 #print(isinstance(card, Card))
 
-#cards1 = TransactionCard.load_tiles_from_xlsx()
-#for c in cards1:
-   # print(c)
+# cards1, cards2 = TransactionCard.load_transaction_card_from_xlsx()
+# for c in cards1:
+#     print(c)
+# for c1 in cards2:
+#     print(c1)
 
-#cards2 = MovementCard.load_movement_card_from_xlsx()
-#for c in cards2:
-    #print(c)
-
-cards3 = JailfreeCard.load_jail_card_from_xlsx()
-for c in cards3:
+cards1, cards2 = MovementCard.load_movement_card_from_xlsx()
+for c in cards1:
     print(c)
+for c1 in cards2:
+    print(c1)
+
+
+
+#cards3 = JailfreeCard.load_jail_card_from_xlsx()
+#for c in cards3:
+#   print(c)
+
+# cards4 = HouseHotelCard.load_hh_card_from_xlsx()
+# for c in cards4:
+#     print(c)
+
+
 
 
 
