@@ -85,7 +85,30 @@ class HouseHotelCard(Card):
         super().__init__(description)
 
 class JailfreeCard(Card):
-    pass
+    def __init__(self, description):
+        super().__init__(description)
+
+    @classmethod
+    def load_jail_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+        workbook = openpyxl.load_workbook(path)
+        sheet = workbook.active
+        cards = []
+
+        for row in range(24, 25):
+            row_data = []
+            for col in range(1, 2):
+                cell = get_cell_ref(row, col)
+
+                row_data.append(sheet[cell].value)
+            cards.append(JailfreeCard(row_data[0]))
+
+        return cards
+
+    def __str__(self):
+        string = "----------- Jail Free Card -----------\n"
+        string += "Description: {}\n".format(self.description)
+        string += "----------------------------"
+        return string
 
 
 #card = JailfreeCard("jailfree")
@@ -95,8 +118,12 @@ class JailfreeCard(Card):
 #for c in cards1:
    # print(c)
 
-cards2 = MovementCard.load_movement_card_from_xlsx()
-for c in cards2:
+#cards2 = MovementCard.load_movement_card_from_xlsx()
+#for c in cards2:
+    #print(c)
+
+cards3 = JailfreeCard.load_jail_card_from_xlsx()
+for c in cards3:
     print(c)
 
 
