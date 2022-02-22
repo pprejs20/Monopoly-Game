@@ -7,12 +7,21 @@ class Player:
         self.propList = propList
         self.laps = laps
 
-    def move_player(self, amount):
+    def move_player_forward(self, amount):
         for i in range(amount):
             if self.pos == 39:
                 self.pos = 0
             else:
                 self.pos += 1
+
+    def move_player_backward(self,amount):
+        for i in range(amount):
+            if self.pos == 0:
+                self.pos = 39
+            else:
+                self.pos -= 1
+
+
 
 
     def playerRollDice(self):
