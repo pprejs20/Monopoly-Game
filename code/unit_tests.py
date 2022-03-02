@@ -44,3 +44,6 @@ class TestTile(unittest.TestCase):
         sheet["F5"].value = "No"
         workbook.save("ExcelData\TestingPropertyTycoonBoardData.xlsx")
 
+class TestCard(unittest.TestCase):
+
+
