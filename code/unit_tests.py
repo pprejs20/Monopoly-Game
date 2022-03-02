@@ -1,6 +1,8 @@
 import unittest
 import openpyxl
 from tile import Tile
+from cards import *
+
 
 class TestTile(unittest.TestCase):
 
@@ -45,5 +47,22 @@ class TestTile(unittest.TestCase):
         workbook.save("ExcelData\TestingPropertyTycoonBoardData.xlsx")
 
 class TestCard(unittest.TestCase):
+
+    def test_load_cards(self):
+        potluck, opportunity = load_all_cards()
+
+        pot_card = potluck[0]
+        opportunity = opportunity[0]
+
+        self.assertEqual(pot_card.payer, "bank")
+        self.assertEqual(pot_card.reciever, "player")
+        self.assertEqual(pot_card.amount, 200)
+        self.assertEqual(pot_card.description, '"You inherit £200"')
+
+        self.assertEqual(opportunity.payer, "bank")
+        self.assertEqual(opportunity.reciever, "player")
+        self.assertEqual(opportunity.amount, 50)
+        self.assertEqual(opportunity.description, '"Bank pays you divided of £50"')
+
 
 
