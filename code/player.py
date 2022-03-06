@@ -24,10 +24,10 @@ class Player:
 
 
 
-    def move_Player(self, amount):
+    def move_player(self, amount):
         self.pos += amount
 
-    def player_RollDice(self):
+    def player_roll_dice(self):
         dOne = random.randint(1, 7)
         dTwo = random.randint(1, 7)
         return (dOne, dTwo)
