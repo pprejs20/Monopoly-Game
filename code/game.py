@@ -1,6 +1,10 @@
 import pygame
 from pygame.locals import *
 
+from cards import load_all_cards
+from player import Player
+from tile import Tile
+
 pygame.init()
 
 screen_width = 1000
@@ -16,3 +20,12 @@ while run:
             run = False
 
 pygame.quit()
+
+def start_game(no_of_players = 2):
+    tiles = Tile.load_tiles_from_xlsx()
+    cards = load_all_cards()
+    players = []
+    for i in range(no_of_players):
+        players.append(Player())
+    
+
