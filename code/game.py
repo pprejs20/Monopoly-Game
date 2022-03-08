@@ -14,7 +14,7 @@ class Game:
         self.players = Game.set_up_players(no_of_players)
 
     @classmethod
-    def set_up_players(self, no_of_players):
+    def set_up_players(cls, no_of_players):
         players = []
         for i in range(no_of_players):
             players.append(Player())
