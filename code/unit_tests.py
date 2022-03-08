@@ -68,8 +68,8 @@ class TestCard(unittest.TestCase):
 class TestPlayer(unittest.TestCase):
 
     def test_player_move(self):
-        player = Player(pos = 39)
-        self.assertEqual(player.pos,39)
+        player = Player(pos=39)
+        self.assertEqual(player.pos, 39)
         player.move_player_forward(1)
         self.assertEqual(player.pos, 0)
         player.move_player_backward(1)
@@ -77,9 +77,8 @@ class TestPlayer(unittest.TestCase):
 
     def test_roll_dice(self):
         player = Player()
-        d1,d2 = player.roll_dice()
-        possible = [1,2,3,4,5,6]
-        print(d1,d2)
+        d1, d2 = player.roll_dice()
+        possible = [1, 2, 3, 4, 5, 6]
         self.assertTrue(d1 in possible)
         self.assertTrue(d2 in possible)
 
