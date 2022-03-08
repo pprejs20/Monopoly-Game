@@ -28,6 +28,7 @@ class Game:
         random.shuffle(opp_cards)
         return pot_cards, opp_cards
 
+game = Game()
 
 
 
