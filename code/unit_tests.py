@@ -75,4 +75,13 @@ class TestPlayer(unittest.TestCase):
         player.move_player_backward(1)
         self.assertEqual(player.pos, 39)
 
+    def test_roll_dice(self):
+        player = Player()
+        d1,d2 = player.roll_dice()
+        possible = [1,2,3,4,5,6]
+        print(d1,d2)
+        self.assertTrue(d1 in possible)
+        self.assertTrue(d2 in possible)
+
+
 
