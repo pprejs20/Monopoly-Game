@@ -5,62 +5,60 @@ import tile
 # set up board lines
 pygame.init()
 
-screen_width = 2200
-screen_height = 1300
+screen_width = 1650
+screen_height = 975
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Property Tycoon')
 
-background = pygame.image.load("Images/Board1.png")
+background = pygame.image.load("Images/Board2.png")
 
-def make_grid():
-    # board vertical lines
-    pygame.draw.line(screen, (255, 255, 255), (1900, 0), (1900, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 0), (1745, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (755, 0), (755, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (600, 0), (600, 1300))
-    # board horizontal lines
-    pygame.draw.line(screen, (255, 255, 255), (600, 0), (1900, 0))
-    pygame.draw.line(screen, (255, 255, 255), (600, 155), (1900, 155))
-    pygame.draw.line(screen, (255, 255, 255), (600, 1145), (1900, 1145))
-    pygame.draw.line(screen, (255, 255, 255), (600, 1299), (1900, 1299))
-    # tile vertical lines
-    pygame.draw.line(screen, (255, 255, 255), (1635, 0), (1635, 155))
-    pygame.draw.line(screen, (255, 255, 255), (1525, 0), (1525, 155))
-    pygame.draw.line(screen, (255, 255, 255), (1415, 0), (1415, 155))
-    pygame.draw.line(screen, (255, 255, 255), (1305, 0), (1305, 155))
-    pygame.draw.line(screen, (255, 255, 255), (1195, 0), (1195, 155))
-    pygame.draw.line(screen, (255, 255, 255), (1085, 0), (1085, 155))
-    pygame.draw.line(screen, (255, 255, 255), (975, 0), (975, 155))
-    pygame.draw.line(screen, (255, 255, 255), (865, 0), (865, 155))
-    pygame.draw.line(screen, (255, 255, 255), (1635, 1145), (1635, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (1525, 1145), (1525, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (1415, 1145), (1415, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (1305, 1145), (1305, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (1195, 1145), (1195, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (1085, 1145), (1085, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (975, 1145), (975, 1300))
-    pygame.draw.line(screen, (255, 255, 255), (865, 1145), (865, 1300))
-    # tile horizontal lines
-    pygame.draw.line(screen, (255, 255, 255), (600, 265), (755, 265))
-    pygame.draw.line(screen, (255, 255, 255), (600, 375), (755, 375))
-    pygame.draw.line(screen, (255, 255, 255), (600, 485), (755, 485))
-    pygame.draw.line(screen, (255, 255, 255), (600, 595), (755, 595))
-    pygame.draw.line(screen, (255, 255, 255), (600, 705), (755, 705))
-    pygame.draw.line(screen, (255, 255, 255), (600, 815), (755, 815))
-    pygame.draw.line(screen, (255, 255, 255), (600, 925), (755, 925))
-    pygame.draw.line(screen, (255, 255, 255), (600, 1035), (755, 1035))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 265), (1900, 265))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 375), (1900, 375))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 485), (1900, 485))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 595), (1900, 595))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 705), (1900, 705))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 815), (1900, 815))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 925), (1900, 925))
-    pygame.draw.line(screen, (255, 255, 255), (1745, 1035), (1900, 1035))
-    # players vertical line
-    #pygame.draw.line(screen, (255, 255, 255), (600, 0), (600, 1300))
-    # players horizontal lines
+
+# def make_grid():
+#     # board vertical lines
+#     pygame.draw.line(screen, (255, 255, 255), (1900, 0), (1900, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 0), (1745, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (755, 0), (755, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 0), (600, 1300))
+#     # board horizontal lines
+#     pygame.draw.line(screen, (255, 255, 255), (600, 0), (1900, 0))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 155), (1900, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 1145), (1900, 1145))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 1299), (1900, 1299))
+#     # tile vertical lines
+#     pygame.draw.line(screen, (255, 255, 255), (1635, 0), (1635, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (1525, 0), (1525, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (1415, 0), (1415, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (1305, 0), (1305, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (1195, 0), (1195, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (1085, 0), (1085, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (975, 0), (975, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (865, 0), (865, 155))
+#     pygame.draw.line(screen, (255, 255, 255), (1635, 1145), (1635, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (1525, 1145), (1525, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (1415, 1145), (1415, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (1305, 1145), (1305, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (1195, 1145), (1195, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (1085, 1145), (1085, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (975, 1145), (975, 1300))
+#     pygame.draw.line(screen, (255, 255, 255), (865, 1145), (865, 1300))
+#     # tile horizontal lines
+#     pygame.draw.line(screen, (255, 255, 255), (600, 265), (755, 265))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 375), (755, 375))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 485), (755, 485))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 595), (755, 595))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 705), (755, 705))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 815), (755, 815))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 925), (755, 925))
+#     pygame.draw.line(screen, (255, 255, 255), (600, 1035), (755, 1035))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 265), (1900, 265))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 375), (1900, 375))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 485), (1900, 485))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 595), (1900, 595))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 705), (1900, 705))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 815), (1900, 815))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 925), (1900, 925))
+#     pygame.draw.line(screen, (255, 255, 255), (1745, 1035), (1900, 1035))
 
 
 
@@ -164,8 +162,8 @@ run = True
 while run:
 
 
-    make_grid()
-    screen.blit(background, (600, 0))
+    #make_grid()
+    screen.blit(background, (450, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
