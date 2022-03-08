@@ -1,7 +1,8 @@
 import random
 
 class Player:
-    def __init__(self, pos, money, propList, laps):
+    # TODO: Double check if the start money is correct
+    def __init__(self, pos=0, money=1500, propList=[], laps=0):
         self.pos = pos
         self.money = money
         self.propList = propList
@@ -27,7 +28,7 @@ class Player:
     def move_player(self, amount):
         self.pos += amount
 
-    def player_roll_dice(self):
+    def roll_dice(self):
         dOne = random.randint(1, 7)
         dTwo = random.randint(1, 7)
         return (dOne, dTwo)
