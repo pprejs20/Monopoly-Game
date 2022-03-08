@@ -2,6 +2,7 @@ import unittest
 import openpyxl
 from tile import Tile
 from cards import *
+from player import *
 
 
 class TestTile(unittest.TestCase):
@@ -64,5 +65,14 @@ class TestCard(unittest.TestCase):
         self.assertEqual(opportunity.amount, 50)
         self.assertEqual(opportunity.description, '"Bank pays you divided of £50"')
 
+class TestPlayer(unittest.TestCase):
+
+    def test_player_move(self):
+        player = Player(pos = 39)
+        self.assertEqual(player.pos,39)
+        player.move_player_forward(1)
+        self.assertEqual(player.pos, 0)
+        player.move_player_backward(1)
+        self.assertEqual(player.pos, 39)
 
 
