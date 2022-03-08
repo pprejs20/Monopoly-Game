@@ -29,8 +29,8 @@ class Player:
         self.pos += amount
 
     def roll_dice(self):
-        dOne = random.randint(1, 7)
-        dTwo = random.randint(1, 7)
+        dOne = random.randint(1, 6)
+        dTwo = random.randint(1, 6)
         return (dOne, dTwo)
 
 
