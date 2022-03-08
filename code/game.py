@@ -7,17 +7,19 @@ from tile import Tile
 import random
 
 class Game:
-    def __init__(self, no_of_players):
+    def __init__(self, no_of_players=3):
         self.no_of_players = no_of_players
         self.tiles = Tile.load_tiles_from_xlsx()
         self.pot_cards, self.opp_cards = Game.get_cards()
-        self.players = []
+        self.players = Game.set_up_players(no_of_players)
 
-    def set_up_game(self, no_of_players=2):
+    @classmethod
+    def set_up_players(self, no_of_players):
         players = []
         for i in range(no_of_players):
             players.append(Player())
         random.shuffle(players)
+        return players
 
     @classmethod
     def get_cards(cls):
