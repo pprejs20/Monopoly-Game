@@ -21,11 +21,27 @@ while run:
 
 pygame.quit()
 
-def start_game(no_of_players = 2):
+def set_up_game(no_of_players = 2):
     tiles = Tile.load_tiles_from_xlsx()
     cards = load_all_cards()
     players = []
     for i in range(no_of_players):
         players.append(Player())
-    
+
+
+def set_up_player_order(players):
+    player_dice_rolls = []
+    for player in players:
+        player_dice_rolls.append((player.roll_dice(), player))
+    for i in range(0, len(player_dice_rolls) - 1):
+        if player_dice_rolls[i][0] > player_dice_rolls[i + 1][0]:
+            temp = player_dice_rolls[i]
+            player_dice_rolls[i] = player_dice_rolls[i + 1]
+            player_dice_rolls[i + 1] = temp
+    # TODO: Finish
+
+
+
+
+
 
