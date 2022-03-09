@@ -13,86 +13,69 @@ pygame.display.set_caption('Property Tycoon')
 
 background = pygame.image.load("Images/Board2.png")
 
-
-# def make_grid():
-#     # board vertical lines
-#     pygame.draw.line(screen, (255, 255, 255), (1900, 0), (1900, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 0), (1745, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (755, 0), (755, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 0), (600, 1300))
-#     # board horizontal lines
-#     pygame.draw.line(screen, (255, 255, 255), (600, 0), (1900, 0))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 155), (1900, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 1145), (1900, 1145))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 1299), (1900, 1299))
-#     # tile vertical lines
-#     pygame.draw.line(screen, (255, 255, 255), (1635, 0), (1635, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (1525, 0), (1525, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (1415, 0), (1415, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (1305, 0), (1305, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (1195, 0), (1195, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (1085, 0), (1085, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (975, 0), (975, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (865, 0), (865, 155))
-#     pygame.draw.line(screen, (255, 255, 255), (1635, 1145), (1635, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (1525, 1145), (1525, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (1415, 1145), (1415, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (1305, 1145), (1305, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (1195, 1145), (1195, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (1085, 1145), (1085, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (975, 1145), (975, 1300))
-#     pygame.draw.line(screen, (255, 255, 255), (865, 1145), (865, 1300))
-#     # tile horizontal lines
-#     pygame.draw.line(screen, (255, 255, 255), (600, 265), (755, 265))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 375), (755, 375))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 485), (755, 485))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 595), (755, 595))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 705), (755, 705))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 815), (755, 815))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 925), (755, 925))
-#     pygame.draw.line(screen, (255, 255, 255), (600, 1035), (755, 1035))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 265), (1900, 265))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 375), (1900, 375))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 485), (1900, 485))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 595), (1900, 595))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 705), (1900, 705))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 815), (1900, 815))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 925), (1900, 925))
-#     pygame.draw.line(screen, (255, 255, 255), (1745, 1035), (1900, 1035))
-
-
-
 # get the tile data from excel
 tiles = tile.Tile.load_tiles_from_xlsx("ExcelData/PropertyTycoonBoardData.xlsx")
 
-# create list to store the coordinates of each tile
-tiles_coord = []
-# iterator to go through the 40 tiles
-i = 1
-# for first row (bottom) y is the same and x decreases by 110 each iteration (width of a tile)
-x = 1145
-for i in range (1, 11):
-    tiles_coord.append((x, 1145))
-    x -= 110
-# for second row (left side) x is the same and y decreases by 110 each iteration
-y = 1145
-for i in range (11, 21):
-    tiles_coord.append((155, y))
-    y -= 110
-# for third row (top) y is the same and x increases by 110 each iteration
-x = 265
-for i in range (21, 31):
-    tiles_coord.append((x, 155))
-    x += 110
-#for fourth row (right side) x is same and y increases by 110 each iteration
-y = 155
-for i in range (31, 41):
-    tiles_coord.append((1145, y))
+# define board height and width
+board_height = board_width = screen_height
+# define tile width
+tile_width = 82.5
+# define tile height
+tile_height = 116.25
+
+
+# function to populate an array with the coordinates of each tile
+def get_coordinates():
+
+    # create list to store the coordinates of each tile
+    tiles_coord = []
+    # iterator to go through the 40 tiles
+    i = 1
+
+    # first get screen width without board because there is space on either side of board (2/3 on left and 1/3 on right)
+    screen_width_excl_board = screen_width - board_width
+
+    # x starts where board ends minus the height of a tile (because first tile, GO, is in bottom right)
+    x = (screen_width - screen_width_excl_board * (1 / 3)) - tile_height
+    # y is the screen height minus height of a tile (because there is no space below board)
+    y = screen_height - tile_height
+    for i in range(1, 11):
+        # for first row (bottom) y stays the same and x decreases by width of a tile each iteration
+        tiles_coord.append((x, y))
+        x -= tile_width
+
+    # x is where the board starts plus the height of a tile
+    x = (screen_width_excl_board * (2 / 3)) + tile_height
+    # y starts at screen height - height of a tile
+    y = screen_height - tile_height
+    for i in range(11, 21):
+        # for second row (left) x stays the same and y decreases by width of a tile each iteration
+        tiles_coord.append((x, y))
+        y -= tile_width
+
+    # x starts at the where the board starts plus height of a tile
+    x = (screen_width_excl_board * (2 / 3)) + tile_height
+    # y is the height of a tile (because there is no space above the board)
+    y = tile_height
+    for i in range(21, 31):
+        # for third row (top) y stays the same and x increases by width of tile each iteration
+        tiles_coord.append((x, y))
+        x += tile_width
+
+    # x is where the board ends minus the height of a tile
+    x = (screen_width - screen_width_excl_board * (1 / 3)) - tile_height
+    # y starts at the height of a tile
+    y = tile_height
+    for i in range(31, 41):
+        tiles_coord.append((x, y))
+        y += tile_width
+
+    return tiles_coord
+
 
 # create font to be used
 font = pygame.font.SysFont('franklingothicmediumcond', 4)
 BLACK = (0, 0, 0)
-
 
 # write the text for each tile
 # for tile in tiles:
@@ -161,8 +144,6 @@ BLACK = (0, 0, 0)
 run = True
 while run:
 
-
-    #make_grid()
     screen.blit(background, (450, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
