@@ -15,7 +15,7 @@ class Player:
             else:
                 self.pos += 1
 
-    def move_player_backward(self,amount):
+    def move_player_backward(self, amount):
         for i in range(amount):
             if self.pos == 0:
                 self.pos = 39
@@ -32,5 +32,15 @@ class Player:
         dOne = random.randint(1, 6)
         dTwo = random.randint(1, 6)
         return (dOne, dTwo)
+
+    def __str__(self):
+        string = "----------- Player -----------\n"
+        string += "Pos: {}\n".format(self.pos)
+        string += "Money: {}\n".format(self.money)
+        string += "Owned Properties: {}\n".format(len(self.propList))
+        string += "Laps: {}\n".format(self.laps)
+        string += "------------------------------\n"
+
+
 
 
