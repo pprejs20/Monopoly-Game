@@ -28,9 +28,33 @@ class Game:
         random.shuffle(opp_cards)
         return pot_cards, opp_cards
 
+
+
+
+
+
+class PlayerQueue:
+    def __init__(self, players):
+        self.players = players
+
+    def shuffle(self):
+        random.shuffle(self.players)
+
+    def next_player(self):
+        player = self.players.pop(0)
+        self.players.append(player)
+        return player
+
+    def get(self, i):
+        return self.players[i]
+
+    def __str__(self):
+        string = "----------- Player Queue -----------\n"
+        i = 1
+        for player in players:
+            string += "-- " + str(i) + " --\n"
+            string += "" + str(player)
+            i += 1
+        return string
+
 game = Game()
-
-
-
-
-
