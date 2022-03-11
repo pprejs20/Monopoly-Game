@@ -182,9 +182,9 @@ def load_all_cards():
         potluck.append(card)
     for card in pot_jail:
         potluck.append(card)
-    print("-------------Potluck Cards-------------\n")
-    for card in potluck:
-        print(card)
+    # print("-------------Potluck Cards-------------\n")
+    # for card in potluck:
+    #     print(card)
 
     for card in opp_trans:
         opportunity.append(card)
@@ -195,9 +195,9 @@ def load_all_cards():
     for card in opp_jail:
         opportunity.append(card)
 
-    print("-------------Opportunity Knocks Cards-------------\n")
-    for card in opportunity:
-        print(card)
+    # print("-------------Opportunity Knocks Cards-------------\n")
+    # for card in opportunity:
+    #     print(card)
 
     return potluck,opportunity
 
