@@ -40,6 +40,7 @@ class Player:
         string += "Owned Properties: {}\n".format(len(self.propList))
         string += "Laps: {}\n".format(self.laps)
         string += "------------------------------\n"
+        return string
 
 
 
