@@ -6,6 +6,7 @@ from player import Player
 from tile import Tile
 import random
 
+
 class Game:
     def __init__(self, no_of_players=3):
         self.no_of_players = no_of_players
@@ -58,5 +59,6 @@ class PlayerQueue:
             i += 1
         string += "-----------------------------------\n"
         return string
+
 
 game = Game()
