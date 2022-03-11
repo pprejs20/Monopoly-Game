@@ -51,7 +51,7 @@ class PlayerQueue:
     def __str__(self):
         string = "----------- Player Queue -----------\n"
         i = 1
-        for player in players:
+        for player in self.players:
             string += "-- " + str(i) + " --\n"
             string += "" + str(player)
             i += 1
