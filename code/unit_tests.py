@@ -84,23 +84,34 @@ class TestPlayer(unittest.TestCase):
         self.assertTrue(d2 in possible)
 
 class TestGame(unittest.TestCase):
+    def setUp(self):
+        self.p1 = Player(money=1)
+        self.p2 = Player(money=2)
+        self.p3 = Player(money=3)
+        self.queue = PlayerQueue([self.p1, self.p2, self.p3])
+
     def test_player_queue_rotate(self):
-        p1 = Player(money=1)
-        p2 = Player(money=2)
-        p3 = Player(money=3)
-        queue = PlayerQueue([p1, p2, p3])
 
-        self.assertEqual(queue.get(0), p1)
-        queue.next_player()
 
-        self.assertEqual(queue.get(0), p2)
-        queue.next_player()
+        self.assertEqual(self.queue.get(0), self.p1)
+        self.queue.next_player()
 
-        self.assertEqual(queue.get(0), p3)
-        queue.next_player()
+        self.assertEqual(self.queue.get(0), self.p2)
+        self.queue.next_player()
+
+        self.assertEqual(self.queue.get(0), self.p3)
+        self.queue.next_player()
         
-        self.assertEqual(queue.players, [p1, p2, p3])
+        self.assertEqual(self.queue.players, [self.p1, self.p2, self.p3])
 
+    def test_player_queue_shuffle(self):
+        player = self.queue.get(0)
+        for i in range(10):
+            self.queue.shuffle()
+            if player != self.queue.get(0):
+                self.assertTrue(True)
+                return
+        self.assertTrue(False)
 
 
 
