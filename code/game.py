@@ -18,7 +18,8 @@ class Game:
         players = []
         for i in range(no_of_players):
             players.append(Player())
-        random.shuffle(players)
+        players = PlayerQueue(players)
+        players.shuffle()
         return players
 
     @classmethod
@@ -55,6 +56,7 @@ class PlayerQueue:
             string += "-- " + str(i) + " --\n"
             string += "" + str(player)
             i += 1
+        string += "-----------------------------------\n"
         return string
 
 game = Game()
