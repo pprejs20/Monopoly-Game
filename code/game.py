@@ -29,6 +29,10 @@ class Game:
         random.shuffle(opp_cards)
         return pot_cards, opp_cards
 
+    def next_step(self):
+        player = self.players.next_player()
+        player.next_step()
+
 
 class PlayerQueue:
     def __init__(self, players):
