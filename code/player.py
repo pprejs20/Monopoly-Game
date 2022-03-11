@@ -7,6 +7,8 @@ class Player:
         self.money = money
         self.propList = propList
         self.laps = laps
+        self.doubles_count = 0
+        self.jailed = False
 
     def move_player_forward(self, amount):
         for i in range(amount):
@@ -22,11 +24,30 @@ class Player:
             else:
                 self.pos -= 1
 
-
-
+    def set_pos(self, pos):
+        self.pos = pos
 
     def move_player(self, amount):
         self.pos += amount
+
+    def is_jailed(self):
+        return self.jailed
+
+    def next_step(self):
+        doubles = False
+        dice_rolls = self.roll_dice()
+
+        if dice_rolls[0] == dice_rolls[1]:
+            doubles = True
+            self.doubles_count += 1
+
+            if self.doubles_count == 3:
+                self.set_pos(10)
+                self.jailed = True
+                return
+
+        dice_sum = dice_rolls[0] + dice_rolls[1]
+        self.move_player(dice_sum)
 
     def roll_dice(self):
         dOne = random.randint(1, 6)
