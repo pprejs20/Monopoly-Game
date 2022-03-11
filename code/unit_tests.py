@@ -3,6 +3,7 @@ import openpyxl
 from tile import Tile
 from cards import *
 from player import *
+from game import *
 
 
 class TestTile(unittest.TestCase):
@@ -81,6 +82,27 @@ class TestPlayer(unittest.TestCase):
         possible = [1, 2, 3, 4, 5, 6]
         self.assertTrue(d1 in possible)
         self.assertTrue(d2 in possible)
+
+class TestGame(unittest.TestCase):
+    def test_player_queue_rotate(self):
+        p1 = Player(money=1)
+        p2 = Player(money=2)
+        p3 = Player(money=3)
+        queue = PlayerQueue([p1, p2, p3])
+
+        self.assertEqual(queue.get(0), p1)
+        queue.next_player()
+
+        self.assertEqual(queue.get(0), p2)
+        queue.next_player()
+
+        self.assertEqual(queue.get(0), p3)
+        queue.next_player()
+        
+        self.assertEqual(queue.players, [p1, p2, p3])
+
+
+
 
 
 
