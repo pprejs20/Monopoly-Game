@@ -46,6 +46,9 @@ class Player:
 
     def add_jail_term(self):
         self.jail_term += 1
+        if self.jail_term == 2:
+            self.unjail()
+            print("You served your time, you are now free!")
 
     def deduct_money(self, amount):
         self.money -= amount
