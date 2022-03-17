@@ -9,6 +9,7 @@ class Player:
         self.laps = laps
         self.doubles_count = 0
         self.jailed = False
+        self.jail_term = 0
 
     def move_player_forward(self, amount):
         for i in range(amount):
@@ -33,8 +34,16 @@ class Player:
     def is_jailed(self):
         return self.jailed
 
-    def set_jailed(self, is_jailed):
-        self.jailed = is_jailed
+    def jail(self):
+        self.jailed = True
+        self.set_pos(10)
+
+    def unjail(self):
+        self.jailed = False
+        self.jail_term = 0
+
+    def add_jail_term(self):
+        self.jail_term += 1
 
     def next_step(self):
         doubles = False
@@ -58,7 +67,8 @@ class Player:
     def roll_dice(self):
         dOne = random.randint(1, 6)
         dTwo = random.randint(1, 6)
-        return (dOne, dTwo)
+        doubles = dOne == dTwo
+        return (dOne, dTwo, doubles)
 
     def __str__(self):
         string = "----------- Player -----------\n"
