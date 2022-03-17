@@ -15,6 +15,8 @@ class Player:
         for i in range(amount):
             if self.pos == 39:
                 self.pos = 0
+                self.add_money(200)
+                print("Collected $200 for passing go")
             else:
                 self.pos += 1
 
@@ -63,6 +65,9 @@ class Player:
 
     def deduct_money(self, amount):
         self.money -= amount
+
+    def add_money(self, amount):
+        self.money += amount
 
     def roll_dice(self):
         dOne = random.randint(1, 6)
