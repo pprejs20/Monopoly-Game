@@ -13,6 +13,8 @@ class Game:
         self.tiles = Tile.load_tiles_from_xlsx()
         self.pot_cards, self.opp_cards = Game.get_cards()
         self.players = Game.set_up_players(no_of_players)
+        self.free_parking_money = 0
+        self.doubles_counter = 0
 
     @classmethod
     def set_up_players(cls, no_of_players):
@@ -30,9 +32,53 @@ class Game:
         random.shuffle(opp_cards)
         return pot_cards, opp_cards
 
-    def next_step(self):
-        player = self.players.next_player()
-        player.next_step()
+    def next_step(self, player=None):
+        if self.doubles_counter == 3:
+            player.jail()
+
+        if player is None:
+            player = self.players.next_player()
+
+        if player.is_jailed():
+            self.jailed_player(player)
+            return
+        d1, d2, doubles = player.roll_dice()
+        dice_sum = d1 + d2
+        player.move_player_forward(dice_sum)
+        print("Player rolled: {}".format(dice_sum))
+
+        if doubles:
+            print("Player rolled a double")
+            self.doubles_counter += 1
+            self.next_step(player)
+
+        self.doubles_counter = 0
+        #TODO: doubles_count has to be reset at the end, after recursive call
+
+    def jailed_player(self, player):
+        assert player.is_jailed()
+        response = input("Do you want to pay $50 to leave jail?")
+        if response == 'y':
+            player.deduct_money(50)
+            self.free_parking_money += 50
+            player.unjail()
+        else:
+            d1, d2, doubles = player.roll_dice()
+            if doubles:
+                player.unjail()
+                print("You have rolled a double, you are now free!")
+                return
+            else:
+                player.add_jail_term()
+                return
+
+    def check_player_position(self, player):
+        # TODO: A lot more checks for things such as free parking, properties, etc
+
+        if player.pos == 30:
+            player.jail()
+
+
 
 
 class PlayerQueue:
@@ -62,3 +108,7 @@ class PlayerQueue:
 
 
 game = Game()
+#game.players.get(0).jail()
+
+for i in range(250):
+    game.next_step()

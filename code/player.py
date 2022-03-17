@@ -47,22 +47,6 @@ class Player:
     def add_jail_term(self):
         self.jail_term += 1
 
-    def next_step(self):
-        doubles = False
-        dice_rolls = self.roll_dice()
-
-        if dice_rolls[0] == dice_rolls[1]:
-            doubles = True
-            self.doubles_count += 1
-
-            if self.doubles_count == 3:
-                self.set_pos(10)
-                self.jailed = True
-                return
-
-        dice_sum = dice_rolls[0] + dice_rolls[1]
-        self.move_player(dice_sum)
-
     def deduct_money(self, amount):
         self.money -= amount
 
