@@ -33,6 +33,9 @@ class Player:
     def is_jailed(self):
         return self.jailed
 
+    def set_jailed(self, is_jailed):
+        self.jailed = is_jailed
+
     def next_step(self):
         doubles = False
         dice_rolls = self.roll_dice()
@@ -48,6 +51,9 @@ class Player:
 
         dice_sum = dice_rolls[0] + dice_rolls[1]
         self.move_player(dice_sum)
+
+    def deduct_money(self, amount):
+        self.money -= amount
 
     def roll_dice(self):
         dOne = random.randint(1, 6)
