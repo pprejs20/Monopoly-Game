@@ -79,6 +79,6 @@ def get_cell_ref(row, col):
     # chr(65) is A in ASCII
     return "" + chr(64 + col) + str(row)
 
-# tiles = Tile.load_tiles_from_xlsx()
-# for t in tiles:
-#    print(t)
+tiles = Tile.load_tiles_from_xlsx()
+for t in tiles:
+   print(t)
