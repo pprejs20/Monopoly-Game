@@ -12,6 +12,8 @@ class Game:
         self.no_of_players = no_of_players
         self.tiles = Tile.load_tiles_from_xlsx()
         self.pot_cards, self.opp_cards = Game.get_cards()
+        self.pot_cards = Queue(self.pot_cards)
+        self.opp_cards = Queue(self.opp_cards)
         self.players = Game.set_up_players(no_of_players)
         self.free_parking_money = 0
         self.doubles_counter = 0
@@ -21,7 +23,7 @@ class Game:
         players = []
         for i in range(no_of_players):
             players.append(Player())
-        players = PlayerQueue(players)
+        players = Queue(players)
         players.shuffle()
         return players
 
@@ -37,7 +39,7 @@ class Game:
             player.jail()
 
         if player is None:
-            player = self.players.next_player()
+            player = self.players.next_object()
 
         if player.is_jailed():
             self.jailed_player(player)
@@ -45,6 +47,7 @@ class Game:
         d1, d2, doubles = player.roll_dice()
         dice_sum = d1 + d2
         player.move_player_forward(dice_sum)
+        self.check_player_position(player)
         print("Player rolled: {}".format(dice_sum))
 
         if doubles:
@@ -74,41 +77,41 @@ class Game:
 
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
-
         if player.pos == 30:
             player.jail()
 
 
 
 
-class PlayerQueue:
-    def __init__(self, players):
-        self.players = players
+class Queue:
+    def __init__(self, objects):
+        self.objects = objects
 
     def shuffle(self):
-        random.shuffle(self.players)
+        random.shuffle(self.objects)
 
-    def next_player(self):
-        player = self.players.pop(0)
-        self.players.append(player)
-        return player
+    def next_object(self):
+        object = self.objects.pop(0)
+        self.objects.append(object)
+        return object
 
     def get(self, i):
-        return self.players[i]
+        return self.objects[i]
 
     def __str__(self):
-        string = "----------- Player Queue -----------\n"
+        string = "--------------- Queue --------------\n"
         i = 1
-        for player in self.players:
+        for object in self.objects:
             string += "-- " + str(i) + " --\n"
-            string += "" + str(player)
+            string += "" + str(object)
             i += 1
         string += "-----------------------------------\n"
         return string
+        
 
 
 game = Game()
 #game.players.get(0).jail()
 
 for i in range(250):
-    game.next_step()
+     game.next_step()
