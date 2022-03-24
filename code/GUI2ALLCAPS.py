@@ -34,6 +34,15 @@ ai_players = pygame.image.load("Images/AIPlayers.png")
 start_game = pygame.image.load("Images/StartGame.png")
 # 200x100
 back = pygame.image.load("Images/Back.png")
+name = pygame.image.load("Images/Name.png")
+choose_icon = pygame.image.load("Images/ChooseIcon.png")
+smartphone = pygame.image.load("Images/smartphone.png")
+cat = pygame.image.load("Images/cat.png")
+boot = pygame.image.load("Images/boot.png")
+iron = pygame.image.load("Images/iron.png")
+ship = pygame.image.load("Images/ship.png")
+hatstand = pygame.image.load("Images/hatstand.png")
+next_button = pygame.image.load("Images/Next.png")
 # get the tile data from excel
 tiles = Tile.load_tiles_from_xlsx("ExcelData/PropertyTycoonBoardData.xlsx")
 # define board height and width
@@ -54,10 +63,17 @@ class ScreenTracker:
         self.start_menu2 = False
         self.start_menu3 = False
         self.start_menu4 = False
+        self.getting_names = False
+        self.choosing_token = False
         self.playing_game = False
         self.normal_mode = True
         self.no_of_players = 0
         self.no_of_ai = 0
+        self.players_setup = 0
+        self.name_chosen = ""
+        self.token_chosen = None
+        self.tokens = [smartphone, cat, iron, hatstand, ship, boot]
+        self.names_and_tokens = []
         self.start_screen1()
 
     def start_screen1(self):
@@ -341,9 +357,9 @@ class ScreenTracker:
                         self.start_screen3()
 
                     if 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800:
-                        self.playing_game = True
+                        self.getting_names = True
                         self.start_menu4 = False
-                        self.game_screen()
+                        self.input_names()
 
     # function to populate an array with the coordinates of each tile
     def get_coordinates(self):
@@ -427,7 +443,155 @@ class ScreenTracker:
             imgs.append(s)
         return imgs
 
+    def input_names(self):
+        input_active = False
+        self.name_chosen = ""
+        font = pygame.font.SysFont('timesnewroman', 40)
+        pygame.display.set_mode(start_screen_size)
+        screen.blit(name, (50, 50))
+        screen.blit(next_button, (600, 700))
+        pygame.display.update()
+        while self.getting_names:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.getting_names = False
+                    break
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = event.pos
+                    input_active = True
+                    if 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800 and len(self.name_chosen) > 0:
+                        self.choosing_token = True
+                        self.getting_names = False
+                        self.choose_token()
+
+                if event.type == pygame.KEYDOWN and input_active:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.name_chosen = self.name_chosen[:-1]
+                    elif event.key == pygame.K_RETURN and len(self.name_chosen) > 0:
+                        input_active = False
+                    elif len(self.name_chosen) < 21:
+                        self.name_chosen += event.unicode
+
+                pygame.draw.rect(screen, (100, 100, 100), pygame.Rect(126, 130, 525, 50))
+                show_name = font.render(self.name_chosen, True, (255, 255, 255))
+                screen.blit(show_name, (150, 132))
+                pygame.display.flip()
+
+    def choose_token(self):
+        self.token_chosen = None
+        pygame.display.set_mode(start_screen_size)
+        screen.fill((0, 200, 210))
+        screen.blit(name, (50, 50))
+        screen.blit(back, (0, 700))
+        screen.blit(next_button, (600, 700))
+        font = pygame.font.SysFont('timesnewroman', 40)
+        show_name = font.render(self.name_chosen, True, (255, 255, 255))
+        screen.blit(show_name, (150, 132))
+        if smartphone in self.tokens:
+            screen.blit(smartphone, (100, 250))
+        if cat in self.tokens:
+            screen.blit(cat, (350, 275))
+        if ship in self.tokens:
+            screen.blit(ship, (600, 250))
+        if iron in self.tokens:
+            screen.blit(iron, (100, 520))
+        if hatstand in self.tokens:
+            screen.blit(hatstand, (395, 500))
+        if boot in self.tokens:
+            screen.blit(boot, (600, 500))
+        pygame.display.update()
+        while self.choosing_token:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.choosing_token = False
+                    break
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = event.pos
+                    if 0 <= mouse_pos[0] <= 200 and 700 <= mouse_pos[1] <= 800:
+                        self.getting_names = True
+                        self.choosing_token = False
+                        self.input_names()
+
+                    if self.token_chosen is not None and 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800:
+                        self.names_and_tokens.append((self.name_chosen, self.token_chosen))
+                        self.tokens.remove(self.token_chosen)
+                        self.players_setup = self.players_setup + 1
+                        if self.players_setup == self.no_of_players:
+                            self.playing_game = True
+                            self.choosing_token = False
+                            print(self.names_and_tokens)
+                            self.game_screen()
+                        else:
+                            self.getting_names = True
+                            self.choosing_token = False
+                            self.input_names()
+
+                    if smartphone in self.tokens and 100 <= mouse_pos[0] <= 200 and 250 <= mouse_pos[1] <= 450:
+                        self.token_chosen = smartphone
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 331), 90, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 338), 103, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 563), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 600), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 544), 70, 3)
+
+                        pygame.draw.circle(screen, (255, 0, 0), (150, 350), 115, 3)
+
+                    if cat in self.tokens and 350 <= mouse_pos[0] <= 500 and 275 <= mouse_pos[1] <= 387:
+                        self.token_chosen = cat
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 338), 103, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 563), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 600), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 544), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 350), 115, 3)
+
+                        pygame.draw.circle(screen, (255, 0, 0), (425, 331), 90, 3)
+
+                    if ship in self.tokens and 600 <= mouse_pos[0] <= 700 and 250 <= mouse_pos[1] <= 426:
+                        self.token_chosen = ship
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 563), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 600), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 544), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 350), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 331), 90, 3)
+
+                        pygame.draw.circle(screen, (255, 0, 0), (650, 338), 103, 3)
+
+                    if iron in self.tokens and 100 <= mouse_pos[0] <= 200 and 520 <= mouse_pos[1] <= 602:
+                        self.token_chosen = iron
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 600), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 544), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 350), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 331), 90, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 338), 103, 3)
+
+                        pygame.draw.circle(screen, (255, 0, 0), (150, 563), 70, 3)
+
+                    if hatstand in self.tokens and 395 <= mouse_pos[0] <= 455 and 500 <= mouse_pos[1] <= 700:
+                        self.token_chosen = hatstand
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 563), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 544), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 350), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 331), 90, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 338), 103, 3)
+
+                        pygame.draw.circle(screen, (255, 0, 0), (425, 600), 115, 3)
+
+                    if boot in self.tokens and 600 <= mouse_pos[0] <= 700 and 500 <= mouse_pos[1] <= 588:
+                        self.token_chosen = boot
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 350), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 331), 90, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (425, 600), 115, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (150, 563), 70, 3)
+                        pygame.draw.circle(screen, (0, 200, 210), (650, 338), 103, 3)
+
+                        pygame.draw.circle(screen, (255, 0, 0), (650, 544), 70, 3)
+
+                    pygame.display.update()
+
     # function to print text on board
+
     def get_text(self):
         # get tile coordinates
         tiles_coord = self.get_coordinates()
@@ -543,17 +707,17 @@ class ScreenTracker:
                     screen.blit(price_img, price_img_rect)
 
     def game_screen(self):
-        while self.playing_game:
-            pygame.display.set_mode(game_size)
-            screen.blit(board, (450, 0))
-            screen.blit(board_right, (1425, 0))
-            self.get_text()
-            pygame.display.update()
-            self.game_loop()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.playing_game = False
-                    break
+        # while self.playing_game:
+        pygame.display.set_mode(game_size)
+        screen.blit(board, (450, 0))
+        screen.blit(board_right, (1425, 0))
+        self.get_text()
+        pygame.display.update()
+        self.game_loop()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         self.playing_game = False
+        #         break
 
     def token_blit(self, number, tile_pos, token):
         coordinates = self.get_coordinates()
@@ -576,16 +740,14 @@ class ScreenTracker:
         elif number == 6:
             x += tile_width - 11
             y += 89
-        token1 = font.render(token, True, BLACK)
-        screen.blit(token1, (x, y))
+        screen.blit(token, (x, y))
         pygame.display.update()
-        print('Player ' + str(number) + ' is at position ' + str(tile_pos) + ' with token' + token)
+        # print('Player ' + str(number) + ' is at position ' + str(tile_pos) + ' with token' + token)
 
     def game_loop(self):
-        player_list = [('Player 1', 'smartphone'), ('Player 2', 'cat'), ('Player 3', 'ship'), ('Player 4', 'iron'),
-                       ('Player 5', 'hatstand'), ('Player 6', 'boot')]
+        player_list = self.names_and_tokens
         game = Game(len(player_list))
-        for i in range(1, 7):
+        for i in range(1, len(player_list) + 1):
             game.players.get(i - 1).name = player_list[i - 1][0]
             game.players.get(i - 1).token = player_list[i - 1][1]
         player_no = 1
@@ -622,21 +784,26 @@ class ScreenTracker:
                                 player_no += 1
                             iterator += 1
                         # carry out the appropriate actions for the turn
+                    if 1555 <= mouse_posi[0] <= 1640 and 910 <= mouse_posi[1] <= 965:
+                        if player == len(player_list)-1:
+                            player = 0
+                        else:
+                            player += 1
 
 
 screen_tracker = ScreenTracker()
 
-run = True
-while run:
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-            break
-
-    screen_tracker.start_screen1()
-    screen_tracker.start_screen2()
-    screen_tracker.game_screen()
-    pygame.display.update()
+# run = True
+# while run:
+#
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             run = False
+#             break
+#
+#     screen_tracker.start_screen1()
+#     screen_tracker.start_screen2()
+#     screen_tracker.game_screen()
+#     pygame.display.update()
 
 pygame.quit()
