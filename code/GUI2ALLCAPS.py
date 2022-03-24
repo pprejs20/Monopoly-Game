@@ -1,6 +1,6 @@
 import pygame
-from pygame.locals import *
-import tile
+from game import Game
+from tile import Tile
 
 pygame.init()
 # ef978b
@@ -11,6 +11,7 @@ screen = pygame.display.set_mode(start_screen_size)
 pygame.display.set_caption('Property Tycoon')
 pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(740, 740, 60, 60))
 board = pygame.image.load("Images/Board2.png")
+board_right = pygame.image.load("Images/BoardRightSide.png")
 play_original = pygame.image.load("Images/PlayOriginal.png")
 play_abridged = pygame.image.load("Images/PlayAbridged.png")
 one_player = pygame.image.load("Images/1Player.png")
@@ -34,7 +35,7 @@ start_game = pygame.image.load("Images/StartGame.png")
 # 200x100
 back = pygame.image.load("Images/Back.png")
 # get the tile data from excel
-tiles = tile.Tile.load_tiles_from_xlsx("ExcelData/PropertyTycoonBoardData.xlsx")
+tiles = Tile.load_tiles_from_xlsx("ExcelData/PropertyTycoonBoardData.xlsx")
 # define board height and width
 board_height = board_width = game_size[1]
 # define tile width
@@ -355,6 +356,7 @@ class ScreenTracker:
         # right)
         screen_width_excl_board = game_size[0] - board_width
 
+        # BOTTOM ROW:
         # x starts where board ends minus the height of a tile (because first tile, GO, is in bottom right)
         x = (game_size[0] - screen_width_excl_board * (1 / 3)) - tile_height
         # y is the screen height minus height of a tile (because there is no space below board)
@@ -364,6 +366,7 @@ class ScreenTracker:
             coord_list.append((x, y))
             x -= tile_width
 
+        # LEFT ROW:
         # x is where the board starts plus the height of a tile
         x = (screen_width_excl_board * (2 / 3)) + tile_height
         # y starts at screen height - height of a tile
@@ -373,6 +376,7 @@ class ScreenTracker:
             coord_list.append((x, y))
             y -= tile_width
 
+        # TOP ROW:
         # x starts at the where the board starts plus height of a tile
         x = (screen_width_excl_board * (2 / 3)) + tile_height
         # y is the height of a tile (because there is no space above the board)
@@ -382,6 +386,7 @@ class ScreenTracker:
             coord_list.append((x, y))
             x += tile_width
 
+        # RIGHT ROW:
         # x is where the board ends minus the height of a tile
         x = (game_size[0] - screen_width_excl_board * (1 / 3)) - tile_height
         # y starts at the height of a tile
@@ -393,7 +398,7 @@ class ScreenTracker:
         return coord_list
 
     # function to wrap text in tiles (if necessary)
-    def wrap_text(self, s):
+    def wrap_text_tile(self, s):
         # create list to store rendered text images
         imgs = []
         # render image of string
@@ -418,6 +423,7 @@ class ScreenTracker:
                 ln = ' '.join(line)
                 imgs.append(ln)
         else:
+            # append the inputted string if it did not need to be
             imgs.append(s)
         return imgs
 
@@ -434,7 +440,7 @@ class ScreenTracker:
                 continue
             else:
                 # get text for name and pass to wrap text function
-                name = self.wrap_text(t.space)
+                name = self.wrap_text_tile(t.space)
                 # get text for price
                 price = str(t.cost)
 
@@ -540,25 +546,97 @@ class ScreenTracker:
         while self.playing_game:
             pygame.display.set_mode(game_size)
             screen.blit(board, (450, 0))
+            screen.blit(board_right, (1425, 0))
             self.get_text()
             pygame.display.update()
+            self.game_loop()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.playing_game = False
                     break
 
+    def token_blit(self, number, tile_pos, token):
+        coordinates = self.get_coordinates()
+        x, y = coordinates[tile_pos - 1]
+        if number == 1:
+            x += 11
+            y += 35
+        elif number == 2:
+            x += tile_width - 11
+            y += 35
+        elif number == 3:
+            x += 11
+            y += 62
+        elif number == 4:
+            x += tile_width - 11
+            y += 62
+        elif number == 5:
+            x += 11
+            y += 89
+        elif number == 6:
+            x += tile_width - 11
+            y += 89
+        token1 = font.render(token, True, BLACK)
+        screen.blit(token1, (x, y))
+        pygame.display.update()
+        print('Player ' + str(number) + ' is at position ' + str(tile_pos) + ' with token' + token)
+
+    def game_loop(self):
+        player_list = [('Player 1', 'smartphone'), ('Player 2', 'cat'), ('Player 3', 'ship'), ('Player 4', 'iron'),
+                       ('Player 5', 'hatstand'), ('Player 6', 'boot')]
+        game = Game(len(player_list))
+        for i in range(1, 7):
+            game.players.get(i - 1).name = player_list[i - 1][0]
+            game.players.get(i - 1).token = player_list[i - 1][1]
+        player_no = 1
+        iterator = 0
+        while iterator < len(player_list):
+            self.token_blit(player_no, game.players.get(player_no - 1).pos, game.players.get(player_no - 1).token)
+            if player_no == 6:
+                player_no = 1
+            else:
+                player_no += 1
+            iterator += 1
+        player = 0
+        while self.playing_game:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.playing_game = False
+                    break
+                current_player = game.players.get(player)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_posi = event.pos
+                    if 1435 <= mouse_posi[0] <= 1540 and 910 <= mouse_posi[1] <= 965:
+                        roll1, roll2, doubles = current_player.roll_dice()
+                        current_player.move_player_forward(roll1 + roll2)
+                        screen.blit(board, (450, 0))
+                        self.get_text()
+                        player_no = 1
+                        iterator = 0
+                        while iterator < len(player_list):
+                            self.token_blit(player_no, game.players.get(player_no - 1).pos,
+                                            game.players.get(player_no - 1).token)
+                            if player_no == 6:
+                                player_no = 1
+                            else:
+                                player_no += 1
+                            iterator += 1
+                        # carry out the appropriate actions for the turn
+
 
 screen_tracker = ScreenTracker()
-# run = True
-# while run:
-#     pygame.display.update()
-#     screen_tracker.start_screen1()
-#     screen_tracker.start_screen2()
-#     screen_tracker.game_screen()
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             run = False
-#             break
 
+run = True
+while run:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+            break
+
+    screen_tracker.start_screen1()
+    screen_tracker.start_screen2()
+    screen_tracker.game_screen()
+    pygame.display.update()
 
 pygame.quit()

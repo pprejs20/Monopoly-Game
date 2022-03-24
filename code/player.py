@@ -1,12 +1,15 @@
 import random
 
+
 class Player:
     # TODO: Double check if the start money is correct
-    def __init__(self, pos=0, money=1500, propList=[], laps=0):
+    def __init__(self, pos=0, money=1500, propList=[], laps=0, name=None, token=None):
         self.pos = pos
         self.money = money
         self.propList = propList
         self.laps = laps
+        self.name = name
+        self.token = token
         self.doubles_count = 0
         self.jailed = False
         self.jail_term = 0
@@ -64,13 +67,11 @@ class Player:
 
     def __str__(self):
         string = "----------- Player -----------\n"
+        string += "Name: {}\n".format(self.name)
+        string += "Token: {}\n".format(self.token)
         string += "Pos: {}\n".format(self.pos)
         string += "Money: {}\n".format(self.money)
         string += "Owned Properties: {}\n".format(len(self.propList))
         string += "Laps: {}\n".format(self.laps)
         string += "------------------------------\n"
         return string
-
-
-
-

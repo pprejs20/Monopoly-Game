@@ -24,7 +24,7 @@ class Game:
         for i in range(no_of_players):
             players.append(Player())
         players = Queue(players)
-        players.shuffle()
+        # players.shuffle()
         return players
 
     @classmethod
@@ -56,7 +56,7 @@ class Game:
             self.next_step(player)
 
         self.doubles_counter = 0
-        #TODO: doubles_count has to be reset at the end, after recursive call
+        # TODO: doubles_count has to be reset at the end, after recursive call
 
     def jailed_player(self, player):
         assert player.is_jailed()
@@ -79,8 +79,6 @@ class Game:
         # TODO: A lot more checks for things such as free parking, properties, etc
         if player.pos == 30:
             player.jail()
-
-
 
 
 class Queue:
@@ -107,11 +105,10 @@ class Queue:
             i += 1
         string += "-----------------------------------\n"
         return string
-        
 
 
 game = Game()
-#game.players.get(0).jail()
+# game.players.get(0).jail()
 
-for i in range(250):
-     game.next_step()
+# for i in range(250):
+#     game.next_step()

@@ -1,9 +1,10 @@
 import openpyxl
 
+
 class Tile:
     def __init__(self, pos, space, group, action, buyable, cost,
-                base_rent, one_house_rent, two_house_rent, three_house_rent, four_house_rent,
-                hotel_rent):
+                 base_rent, one_house_rent, two_house_rent, three_house_rent, four_house_rent,
+                 hotel_rent):
         self.pos = pos
         self.space = space
         self.group = group
@@ -59,7 +60,7 @@ class Tile:
         return tiles
 
     def __str__(self):
-        string  = "----------- Tile -----------\n"
+        string = "----------- Tile -----------\n"
         string += "Pos: {}\n".format(self.pos)
         string += "Space: {}\n".format(self.space)
         string += "Group: {}\n".format(self.group)
@@ -75,10 +76,12 @@ class Tile:
         string += "----------------------------"
         return string
 
+
 def get_cell_ref(row, col):
     # chr(65) is A in ASCII
     return "" + chr(64 + col) + str(row)
 
-tiles = Tile.load_tiles_from_xlsx()
-for t in tiles:
-   print(t)
+
+# tiles = Tile.load_tiles_from_xlsx()
+# for t in tiles:
+#     print(t)
