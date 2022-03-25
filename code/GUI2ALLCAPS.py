@@ -57,7 +57,6 @@ BLACK = (0, 0, 0)
 
 
 class ScreenTracker:
-
     def __init__(self):
         self.start_menu1 = True
         self.start_menu2 = False
@@ -589,6 +588,7 @@ class ScreenTracker:
                         pygame.draw.circle(screen, (255, 0, 0), (650, 544), 70, 3)
 
                     pygame.display.update()
+
     # function to print text on board
 
     def get_text(self):
@@ -706,17 +706,17 @@ class ScreenTracker:
                     screen.blit(price_img, price_img_rect)
 
     def game_screen(self):
-        #while self.playing_game:
-            pygame.display.set_mode(game_size)
-            screen.blit(board, (450, 0))
-            screen.blit(board_right, (1425, 0))
-            self.get_text()
-            pygame.display.update()
-            self.game_loop()
-            # for event in pygame.event.get():
-            #     if event.type == pygame.QUIT:
-            #         self.playing_game = False
-            #         break
+        # while self.playing_game:
+        pygame.display.set_mode(game_size)
+        screen.blit(board, (450, 0))
+        screen.blit(board_right, (1425, 0))
+        self.get_text()
+        pygame.display.update()
+        self.game_loop()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         self.playing_game = False
+        #         break
 
     def token_blit(self, number, tile_pos, token):
         coordinates = self.get_coordinates()
@@ -746,7 +746,7 @@ class ScreenTracker:
     def game_loop(self):
         player_list = self.names_and_tokens
         game = Game(len(player_list))
-        for i in range(1, len(player_list)+1):
+        for i in range(1, len(player_list) + 1):
             game.players.get(i - 1).name = player_list[i - 1][0]
             game.players.get(i - 1).token = player_list[i - 1][1]
         player_no = 1
@@ -782,7 +782,12 @@ class ScreenTracker:
                             else:
                                 player_no += 1
                             iterator += 1
-                        # carry out the appropriate actions for the turn
+                            # carry out the appropriate actions for the turn
+                    if 1555 <= mouse_posi[0] <= 1640 and 910 <= mouse_posi[1] <= 965:
+                        if player == len(player_list) - 1:
+                            player = 0
+                        else:
+                            player += 1
 
 
 screen_tracker = ScreenTracker()
