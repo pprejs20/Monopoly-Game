@@ -22,7 +22,7 @@ class Game:
     def set_up_players(cls, no_of_players):
         players = []
         for i in range(no_of_players):
-            players.append(Player())
+            players.append(Player("temp"))
         players = Queue(players)
         # players.shuffle()
         return players
@@ -115,6 +115,9 @@ class Queue:
 
 
 game = Game()
+tiles = Tile.load_tiles_from_xlsx()
+for t in tiles:
+    print(t)
 # game.players.get(0).jail()
 
 # for i in range(250):
