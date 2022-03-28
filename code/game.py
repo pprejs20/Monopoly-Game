@@ -81,6 +81,7 @@ class Game:
             player.jail()
 
 
+
 class Queue:
     def __init__(self, objects):
         self.objects = objects
@@ -99,9 +100,9 @@ class Queue:
     def __str__(self):
         string = "--------------- Queue --------------\n"
         i = 1
-        for object in self.objects:
+        for obj in self.objects:
             string += "-- " + str(i) + " --\n"
-            string += "" + str(object)
+            string += "" + str(obj)
             i += 1
         string += "-----------------------------------\n"
         return string
