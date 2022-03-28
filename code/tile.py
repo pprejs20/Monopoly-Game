@@ -61,6 +61,7 @@ class Tile:
 
     def __str__(self):
         string = "----------- Tile -----------\n"
+        string += "Owner: {}\n".format(self.owner)
         string += "Pos: {}\n".format(self.pos)
         string += "Space: {}\n".format(self.space)
         string += "Group: {}\n".format(self.group)
