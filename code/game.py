@@ -75,10 +75,16 @@ class Game:
                 player.add_jail_term()
                 return
 
+    def find_jail_position(self):
+        for t in self.tiles:
+            if t.group == "Go to jail":
+                return t.pos-1
+
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
-        if player.pos == 30:
+        if player.pos == self.find_jail_position():
             player.jail()
+
 
 
 
