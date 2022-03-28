@@ -8,24 +8,15 @@ import random
 
 
 class Game:
-    def __init__(self, no_of_players=3):
-        self.no_of_players = no_of_players
+    def __init__(self, players):
+        self.players = Queue(players)
+        self.players.shuffle()
         self.tiles = Tile.load_tiles_from_xlsx()
         self.pot_cards, self.opp_cards = Game.get_cards()
         self.pot_cards = Queue(self.pot_cards)
         self.opp_cards = Queue(self.opp_cards)
-        self.players = Game.set_up_players(no_of_players)
         self.free_parking_money = 0
         self.doubles_counter = 0
-
-    @classmethod
-    def set_up_players(cls, no_of_players):
-        players = []
-        for i in range(no_of_players):
-            players.append(Player("temp"))
-        players = Queue(players)
-        # players.shuffle()
-        return players
 
     @classmethod
     def get_cards(cls):
@@ -86,7 +77,6 @@ class Game:
             player.jail()
 
 
-
 class Queue:
     def __init__(self, objects):
         self.objects = objects
@@ -113,11 +103,9 @@ class Queue:
         return string
 
 
-game = Game()
-tiles = Tile.load_tiles_from_xlsx()
-for t in tiles:
-    print(t)
-# game.players.get(0).jail()
 
-# for i in range(250):
-#     game.next_step()
+players = [Player("Player1"), Player("Player2"), Player("Player3")]
+game = Game(players)
+
+for i in range(250):
+    game.next_step()

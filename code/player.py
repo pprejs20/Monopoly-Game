@@ -3,7 +3,7 @@ import random
 
 class Player:
     # TODO: Double check if the start money is correct
-    def __init__(self, pos=0, money=1500, propList=[], laps=0, name=None, token=None):
+    def __init__(self, name, pos=0, money=1500, propList=[], laps=0, token=None):
         self.pos = pos
         self.money = money
         self.propList = propList
