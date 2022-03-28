@@ -14,6 +14,9 @@ class Player:
         self.jailed = False
         self.jail_term = 0
 
+    def add_prop(self, tile):
+        self.propList.append(tile)
+
     def move_player_forward(self, amount):
         for i in range(amount):
             if self.pos == 39:
