@@ -17,6 +17,22 @@ class TransactionCard(Card):
         self.amount = amount
         super().__init__(description)
 
+    def execute(self, player, players, game):
+        if self.reciever == "bank":
+            player.deduct_money(self.amount)
+        if self.payer == "bank":
+            player.add_money(self.amount)
+        if self.payer == "all":
+            for i in range(len(players)-1):
+                assert players.get(i).name != player.name
+                p = players.get(i)
+                p.deduct_money(self.amount)
+                player.add_money(self.amount)
+        if self.reciever == "freeparking":
+            player.deduct_money(self.amount)
+            game.free_parking_money += self.amount
+
+
     @classmethod
     def load_transaction_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
         workbook = openpyxl.load_workbook(path)
@@ -203,14 +219,16 @@ def load_all_cards():
 
 load_all_cards()
 
-#card = JailfreeCard("jailfree")
-#print(isinstance(card, Card))
 
-# cards1, cards2 = TransactionCard.load_transaction_card_from_xlsx()
-# for c in cards1:
-#     print(c)
-# for c1 in cards2:
-#     print(c1)
+
+# card = JailfreeCard("jailfree")
+# print(isinstance(card, Card))
+
+cards1, cards2 = load_all_cards()
+for c in cards1:
+    print(c)
+for c1 in cards2:
+    print(c1)
 
 # cards1, cards2 = MovementCard.load_movement_card_from_xlsx()
 # for c in cards1:
