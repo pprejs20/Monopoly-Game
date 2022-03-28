@@ -43,6 +43,13 @@ iron = pygame.image.load("Images/iron.png")
 ship = pygame.image.load("Images/ship.png")
 hatstand = pygame.image.load("Images/hatstand.png")
 next_button = pygame.image.load("Images/Next.png")
+# resized icons to go on board (width limit = 31, height limit = 22)
+smartphone_token = pygame.transform.scale(smartphone, (11, 22))
+cat_token = pygame.transform.scale(cat, (31, 23))
+boot_token = pygame.transform.scale(boot, (29, 26))
+iron_token = pygame.transform.scale(iron, (31, 25))
+ship_token = pygame.transform.scale(ship, (13, 22))
+hatstand_token = pygame.transform.scale(hatstand, (6, 22))
 # get the tile data from excel
 tiles = Tile.load_tiles_from_xlsx("ExcelData/PropertyTycoonBoardData.xlsx")
 # define board height and width
@@ -591,7 +598,6 @@ class ScreenTracker:
                     pygame.display.update()
 
     # function to print text on board
-
     def get_text(self):
         # get tile coordinates
         tiles_coord = self.get_coordinates()
@@ -719,46 +725,146 @@ class ScreenTracker:
         #         self.playing_game = False
         #         break
 
+    # function to blit a players token  on the board
     def token_blit(self, number, tile_pos, token):
+        # get the coordinates of all the tiles
         coordinates = self.get_coordinates()
+        # get the top left corner of the current tile token is being blitted on to
         x, y = coordinates[tile_pos - 1]
-        if number == 1:
-            x += 11
-            y += 35
-        elif number == 2:
-            x += tile_width - 11
-            y += 35
-        elif number == 3:
-            x += 11
-            y += 62
-        elif number == 4:
-            x += tile_width - 11
-            y += 62
-        elif number == 5:
-            x += 11
-            y += 89
-        elif number == 6:
-            x += tile_width - 11
-            y += 89
+        # BOTTOM ROW
+        if tile_pos < 11:
+            # player 1 token goes in top left
+            if number == 1:
+                x += 6.5
+                y += 36.5
+            # player 2 token goes top right
+            elif number == 2:
+                x += 42.5
+                y += 36.5
+            # player 3 token goes middle left
+            elif number == 3:
+                x += 6.5
+                y += 63.5
+            # player 4 token goes middle right
+            elif number == 4:
+                x += 42.5
+                y += 63.5
+            # player 5 token goes bottom left
+            elif number == 5:
+                x += 6.5
+                y += 90.5
+            # player 6 token goes bottom right
+            elif number == 6:
+                x += 42.5
+                y += 90.5
+        # LEFT ROW
+        elif tile_pos < 21:
+            token = pygame.transform.rotate(token, -90)
+            if number == 1:
+                x -= 36.5 + token.get_rect().width
+                y += 6.5
+            elif number == 2:
+                x -= 36.5 + token.get_rect().width
+                y += 42.5
+            elif number == 3:
+                x -= 63.5 + token.get_rect().width
+                y += 6.5
+            elif number == 4:
+                x -= 63.5 + token.get_rect().width
+                y += 42.5
+            elif number == 5:
+                x -= 90.5 + token.get_rect().width
+                y += 6.5
+            elif number == 6:
+                x -= 90.5 + token.get_rect().width
+                y += 42.5
+        # TOP ROW
+        elif tile_pos < 31:
+            token = pygame.transform.rotate(token, 180)
+            if number == 1:
+                x -= 6.5 + token.get_rect().width
+                y -= 36.5 + token.get_rect().height
+            elif number == 2:
+                x -= 42.5 + token.get_rect().width
+                y -= 36.5 + token.get_rect().height
+            elif number == 3:
+                x -= 6.5 + token.get_rect().width
+                y -= 63.5 + token.get_rect().height
+            elif number == 4:
+                x -= 42.5 + token.get_rect().width
+                y -= 63.5 + token.get_rect().height
+            elif number == 5:
+                x -= 6.5 + token.get_rect().width
+                y -= 90.5 + token.get_rect().height
+            elif number == 6:
+                x -= 42.5 + token.get_rect().width
+                y -= 90.5 + token.get_rect().height
+        # RIGHT ROW
+        elif tile_pos < 41:
+            token = pygame.transform.rotate(token, 90)
+            if number == 1:
+                x += 36.5
+                y -= 6.5 + token.get_rect().height
+            elif number == 2:
+                x += 36.5
+                y -= 42.5 + token.get_rect().height
+            elif number == 3:
+                x += 63.5
+                y -= 6.5 + token.get_rect().height
+            elif number == 4:
+                x += 63.5
+                y -= 42.5 + token.get_rect().height
+            elif number == 5:
+                x += 90.5
+                y -= 6.5 + token.get_rect().height
+            elif number == 6:
+                x += 90.5
+                y -= 42.5 + token.get_rect().height
+        # blit the token onto the screen at the correct coordinates
         screen.blit(token, (x, y))
+        print((number, tile_pos))
+        # update display
         pygame.display.update()
         # print('Player ' + str(number) + ' is at position ' + str(tile_pos) + ' with token' + token)
 
+    def tile_landed_on(self, curr_player):
+        resolved_tile = False
+        current_tile = tiles[curr_player.pos-1]
+        while not resolved_tile:
+            # TODO: add code to blit contents of tile onto screen, take necessary actions for tile, then re-blit
+            #  center of board on top
+            resolved_tile = True
+
     def game_loop(self):
+        # get the inputted names and chosen tokens for each player
         player_list = self.names_and_tokens
+        # create game object for number of players
         game = Game(len(player_list))
+        # assign the player objects in the game object the correct names and tokens
         for i in range(1, len(player_list) + 1):
+            # give player i in the game object the name corresponding to player i in the player_list
             game.players.get(i - 1).name = player_list[i - 1][0]
-            game.players.get(i - 1).token = player_list[i - 1][1]
-        player_no = 1
-        iterator = 0
-        while iterator < len(player_list):
-            self.token_blit(player_no, game.players.get(player_no - 1).pos, game.players.get(player_no - 1).token)
-            if player_no == 6:
-                player_no = 1
+            # get the token chosen to convert it to a size that fits the board
+            pl_token = player_list[i - 1][1]
+            if pl_token == smartphone:
+                pl_token = smartphone_token
+            elif pl_token == cat:
+                pl_token = cat_token
+            elif pl_token == boot:
+                pl_token = boot_token
+            elif pl_token == iron:
+                pl_token = iron_token
+            elif pl_token == ship:
+                pl_token = ship_token
             else:
-                player_no += 1
-            iterator += 1
+                pl_token = hatstand_token
+            # assign the resized token to the player
+            game.players.get(i - 1).token = pl_token
+        # variable to know if it is player 1,2,3, etc. (necessary for blitting)
+        player_no = 1
+        for item in player_list:
+            self.token_blit(player_no, game.players.get(player_no - 1).pos, game.players.get(player_no - 1).token)
+            player_no += 1
         player = 0
         while self.playing_game:
             for event in pygame.event.get():
@@ -766,25 +872,27 @@ class ScreenTracker:
                     self.playing_game = False
                     break
                 current_player = game.players.get(player)
+                # TODO: draw an indicator for which player's turn it is
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                #if event.type == pygame.KEYDOWN:
                     mouse_posi = event.pos
+                    #pressed = event.key
                     if 1435 <= mouse_posi[0] <= 1540 and 910 <= mouse_posi[1] <= 965:
+                    #if pressed == pygame.K_SPACE:
                         roll1, roll2, doubles = current_player.roll_dice()
+                    # TODO: draw some dice on screen to display roll1 and roll2
                         current_player.move_player_forward(roll1 + roll2)
                         screen.blit(board, (450, 0))
                         self.get_text()
                         player_no = 1
-                        iterator = 0
-                        while iterator < len(player_list):
+                        for item in player_list:
                             self.token_blit(player_no, game.players.get(player_no - 1).pos,
                                             game.players.get(player_no - 1).token)
-                            if player_no == 6:
-                                player_no = 1
-                            else:
-                                player_no += 1
-                            iterator += 1
+                            player_no += 1
                         # carry out the appropriate actions for the turn
+                        self.tile_landed_on(current_player)
                     if 1555 <= mouse_posi[0] <= 1640 and 910 <= mouse_posi[1] <= 965:
+                    #if pressed == pygame.K_LALT:
                         if player == len(player_list)-1:
                             player = 0
                         else:
