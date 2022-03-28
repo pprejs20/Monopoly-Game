@@ -71,10 +71,28 @@ class Game:
             if t.group == "Go to jail":
                 return t.pos-1
 
+    def check_property(self, player):
+        tile = self.tiles[player.pos]
+        if tile.owner is None:
+            if player.laps > 0:
+                if input("buy property y/n: ") == "y":
+                    player.deduct_money(tile.cost)
+                    tile.owner = player.name
+                    player.add_prop(tile)
+                return
+
+
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
-        if player.pos == self.find_jail_position():
+        tile = self.tiles[player.pos]
+        if tile.group == "Go to jail":
             player.jail()
+        if tile.buyable:
+            self.check_property(player)
+        if tile.space == "Pot Luck":
+            pot = self.pot_cards.next_object()
+
+
 
 
 class Queue:
@@ -91,6 +109,10 @@ class Queue:
 
     def get(self, i):
         return self.objects[i]
+
+    def remove(self):
+        return self.objects.pop(-1)
+
 
     def __str__(self):
         string = "--------------- Queue --------------\n"
