@@ -69,7 +69,7 @@ class TestCard(unittest.TestCase):
 class TestPlayer(unittest.TestCase):
 
     def test_player_move(self):
-        player = Player(pos=39)
+        player = Player("test1", pos=39)
         self.assertEqual(player.pos, 39)
         player.move_player_forward(1)
         self.assertEqual(player.pos, 0)
@@ -77,32 +77,32 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(player.pos, 39)
 
     def test_roll_dice(self):
-        player = Player()
-        d1, d2 = player.roll_dice()
+        player = Player("test")
+        d1, d2, double = player.roll_dice()
         possible = [1, 2, 3, 4, 5, 6]
         self.assertTrue(d1 in possible)
         self.assertTrue(d2 in possible)
 
 class TestGame(unittest.TestCase):
     def setUp(self):
-        self.p1 = Player(money=1)
-        self.p2 = Player(money=2)
-        self.p3 = Player(money=3)
-        self.queue = PlayerQueue([self.p1, self.p2, self.p3])
+        self.p1 = Player("p1", money=1)
+        self.p2 = Player("p2", money=2)
+        self.p3 = Player("p3", money=3)
+        self.queue = Queue([self.p1, self.p2, self.p3])
 
     def test_player_queue_rotate(self):
 
 
         self.assertEqual(self.queue.get(0), self.p1)
-        self.queue.next_player()
+        self.queue.next_object()
 
         self.assertEqual(self.queue.get(0), self.p2)
-        self.queue.next_player()
+        self.queue.next_object()
 
         self.assertEqual(self.queue.get(0), self.p3)
-        self.queue.next_player()
+        self.queue.next_object()
         
-        self.assertEqual(self.queue.players, [self.p1, self.p2, self.p3])
+        self.assertEqual(self.queue.objects, [self.p1, self.p2, self.p3])
 
     def test_player_queue_shuffle(self):
         player = self.queue.get(0)
