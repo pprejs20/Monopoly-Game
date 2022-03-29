@@ -129,5 +129,5 @@ class Queue:
 players = [Player("Player1"), Player("Player2"), Player("Player3")]
 game = Game(players)
 
-for i in range(250):
-    game.next_step()
+# for i in range(250):
+#     game.next_step()

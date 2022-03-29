@@ -68,13 +68,13 @@ class Player:
         doubles = dOne == dTwo
         return (dOne, dTwo, doubles)
 
-    def __str__(self):
-        string = "----------- Player -----------\n"
-        string += "Name: {}\n".format(self.name)
-        string += "Token: {}\n".format(self.token)
-        string += "Pos: {}\n".format(self.pos)
-        string += "Money: {}\n".format(self.money)
-        string += "Owned Properties: {}\n".format(len(self.propList))
-        string += "Laps: {}\n".format(self.laps)
-        string += "------------------------------\n"
-        return string
+    # def __str__(self):
+    #     string = "----------- Player -----------\n"
+    #     string += "Name: {}\n".format(self.name)
+    #     string += "Token: {}\n".format(self.token)
+    #     string += "Pos: {}\n".format(self.pos)
+    #     string += "Money: {}\n".format(self.money)
+    #     string += "Owned Properties: {}\n".format(len(self.propList))
+    #     string += "Laps: {}\n".format(self.laps)
+    #     string += "------------------------------\n"
+    #     return string

@@ -1,5 +1,6 @@
 import pygame
 from game import Game
+from player import Player
 from tile import Tile
 
 pygame.init()
@@ -735,91 +736,91 @@ class ScreenTracker:
         if tile_pos < 11:
             # player 1 token goes in top left
             if number == 1:
-                x += 6.5
-                y += 36.5
+                x += 22 - token.get_rect().width/2
+                y += 47.5 - token.get_rect().height/2
             # player 2 token goes top right
             elif number == 2:
-                x += 42.5
-                y += 36.5
+                x += 63 - token.get_rect().width/2
+                y += 47.5 - token.get_rect().height/2
             # player 3 token goes middle left
             elif number == 3:
-                x += 6.5
-                y += 63.5
+                x += 22 - token.get_rect().width/2
+                y += 74.5 - token.get_rect().height/2
             # player 4 token goes middle right
             elif number == 4:
-                x += 42.5
-                y += 63.5
+                x += 63 - token.get_rect().width/2
+                y += 74.5 - token.get_rect().height/2
             # player 5 token goes bottom left
             elif number == 5:
-                x += 6.5
-                y += 90.5
+                x += 22 - token.get_rect().width/2
+                y += 101.5 - token.get_rect().height/2
             # player 6 token goes bottom right
             elif number == 6:
-                x += 42.5
-                y += 90.5
+                x += 63 - token.get_rect().width/2
+                y += 101.5 - token.get_rect().height/2
         # LEFT ROW
         elif tile_pos < 21:
             token = pygame.transform.rotate(token, -90)
             if number == 1:
-                x -= 36.5 + token.get_rect().width
-                y += 6.5
+                x -= 47.5 + token.get_rect().width/2
+                y += 22 - token.get_rect().height/2
             elif number == 2:
-                x -= 36.5 + token.get_rect().width
-                y += 42.5
+                x -= 47.5 + token.get_rect().width/2
+                y += 63 - token.get_rect().height/2
             elif number == 3:
-                x -= 63.5 + token.get_rect().width
-                y += 6.5
+                x -= 74.5 + token.get_rect().width/2
+                y += 22 - token.get_rect().height/2
             elif number == 4:
-                x -= 63.5 + token.get_rect().width
-                y += 42.5
+                x -= 74.5 + token.get_rect().width/2
+                y += 63 - token.get_rect().height/2
             elif number == 5:
-                x -= 90.5 + token.get_rect().width
-                y += 6.5
+                x -= 101.5 + token.get_rect().width/2
+                y += 22 - token.get_rect().height/2
             elif number == 6:
-                x -= 90.5 + token.get_rect().width
-                y += 42.5
+                x -= 101.5 + token.get_rect().width/2
+                y += 63 - token.get_rect().height/2
         # TOP ROW
         elif tile_pos < 31:
             token = pygame.transform.rotate(token, 180)
             if number == 1:
-                x -= 6.5 + token.get_rect().width
-                y -= 36.5 + token.get_rect().height
+                x -= 22 + token.get_rect().width/2
+                y -= 47.5 + token.get_rect().height/2
             elif number == 2:
-                x -= 42.5 + token.get_rect().width
-                y -= 36.5 + token.get_rect().height
+                x -= 63 + token.get_rect().width/2
+                y -= 47.5 + token.get_rect().height/2
             elif number == 3:
-                x -= 6.5 + token.get_rect().width
-                y -= 63.5 + token.get_rect().height
+                x -= 22 + token.get_rect().width/2
+                y -= 74.5 + token.get_rect().height/2
             elif number == 4:
-                x -= 42.5 + token.get_rect().width
-                y -= 63.5 + token.get_rect().height
+                x -= 63 + token.get_rect().width/2
+                y -= 74.5 + token.get_rect().height/2
             elif number == 5:
-                x -= 6.5 + token.get_rect().width
-                y -= 90.5 + token.get_rect().height
+                x -= 22 + token.get_rect().width/2
+                y -= 101.5 + token.get_rect().height/2
             elif number == 6:
-                x -= 42.5 + token.get_rect().width
-                y -= 90.5 + token.get_rect().height
+                x -= 63 + token.get_rect().width/2
+                y -= 101.5 + token.get_rect().height/2
         # RIGHT ROW
         elif tile_pos < 41:
             token = pygame.transform.rotate(token, 90)
             if number == 1:
-                x += 36.5
-                y -= 6.5 + token.get_rect().height
+                x += 47.5 - token.get_rect().width/2
+                y -= 22 + token.get_rect().height/2
             elif number == 2:
-                x += 36.5
-                y -= 42.5 + token.get_rect().height
+                x += 47.5 - token.get_rect().width/2
+                y -= 63 + token.get_rect().height/2
             elif number == 3:
-                x += 63.5
-                y -= 6.5 + token.get_rect().height
+                x += 74.5 - token.get_rect().width/2
+                y -= 22 + token.get_rect().height/2
             elif number == 4:
-                x += 63.5
-                y -= 42.5 + token.get_rect().height
+                x += 74.5 - token.get_rect().width/2
+                y -= 63 + token.get_rect().height/2
             elif number == 5:
-                x += 90.5
-                y -= 6.5 + token.get_rect().height
+                x += 101.5 - token.get_rect().width/2
+                y -= 22 - token.get_rect().height/2
             elif number == 6:
-                x += 90.5
-                y -= 42.5 + token.get_rect().height
+                x += 101.5 - token.get_rect().width/2
+                y -= 63 + token.get_rect().height/2
         # blit the token onto the screen at the correct coordinates
         screen.blit(token, (x, y))
         print((number, tile_pos))
@@ -838,14 +839,14 @@ class ScreenTracker:
     def game_loop(self):
         # get the inputted names and chosen tokens for each player
         player_list = self.names_and_tokens
-        # create game object for number of players
-        game = Game(len(player_list))
+        # create a list for the players
+        players = []
         # assign the player objects in the game object the correct names and tokens
-        for i in range(1, len(player_list) + 1):
-            # give player i in the game object the name corresponding to player i in the player_list
-            game.players.get(i - 1).name = player_list[i - 1][0]
+        for i in range(len(player_list) - 1, -1, -1):
+            # create a player with name from the player_list
+            player = Player(player_list[i][0])
             # get the token chosen to convert it to a size that fits the board
-            pl_token = player_list[i - 1][1]
+            pl_token = player_list[i][1]
             if pl_token == smartphone:
                 pl_token = smartphone_token
             elif pl_token == cat:
@@ -859,7 +860,11 @@ class ScreenTracker:
             else:
                 pl_token = hatstand_token
             # assign the resized token to the player
-            game.players.get(i - 1).token = pl_token
+            player.token = pl_token
+            # append player to the player list
+            players.append(player)
+        # create game object using the player list
+        game = Game(players)
         # variable to know if it is player 1,2,3, etc. (necessary for blitting)
         player_no = 1
         for item in player_list:
