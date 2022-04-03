@@ -9,7 +9,7 @@ import random
 
 class Game:
     def __init__(self, players):
-        self.players = Queue(players)
+        self.players = PlayerQueue(players)
         self.players.shuffle()
         self.tiles = Tile.load_tiles_from_xlsx()
         self.pot_cards, self.opp_cards = Game.get_cards()
@@ -79,7 +79,9 @@ class Game:
                     player.deduct_money(tile.cost)
                     tile.owner = player.name
                     player.add_prop(tile)
-                return
+        elif tile.owner is not None:
+            pass
+                # return
 
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
@@ -107,6 +109,8 @@ class Queue:
     def get(self, i):
         return self.objects[i]
 
+
+
     def remove(self):
         return self.objects.pop(-1)
 
@@ -119,6 +123,17 @@ class Queue:
             i += 1
         string += "-----------------------------------\n"
         return string
+
+class PlayerQueue(Queue):
+    def __init__(self, players):
+        super().__init__(players)
+
+    def get_by_name(self, name):
+        for obj in self.objects:
+            if obj.name == name:
+                return obj
+
+        raise Exception("No player with that name!")
 
 
 players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
