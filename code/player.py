@@ -23,6 +23,7 @@ class Player:
                 self.pos = 0
                 self.add_money(200)
                 print("[{}] Collected $200 for passing go".format(self.name))
+                self.laps += 1
             else:
                 self.pos += 1
 
