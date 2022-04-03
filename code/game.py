@@ -39,10 +39,10 @@ class Game:
         dice_sum = d1 + d2
         player.move_player_forward(dice_sum)
         self.check_player_position(player)
-        print("Player rolled: {}".format(dice_sum))
+        print("[{}] rolled: {}".format(player.name, dice_sum))
 
         if doubles:
-            print("Player rolled a double")
+            print("[{}] Player rolled a double".format(player.name))
             self.doubles_counter += 1
             self.next_step(player)
 
@@ -51,7 +51,7 @@ class Game:
 
     def jailed_player(self, player):
         assert player.is_jailed()
-        response = input("Do you want to pay $50 to leave jail?")
+        response = input("[{}] Do you want to pay $50 to leave jail?".format(player.name))
         if response == 'y':
             player.deduct_money(50)
             self.free_parking_money += 50
@@ -60,7 +60,7 @@ class Game:
             d1, d2, doubles = player.roll_dice()
             if doubles:
                 player.unjail()
-                print("You have rolled a double, you are now free!")
+                print("[{}] You have rolled a double, you are now free!".format(player.name))
                 return
             else:
                 player.add_jail_term()
@@ -75,12 +75,11 @@ class Game:
         tile = self.tiles[player.pos]
         if tile.owner is None:
             if player.laps > 0:
-                if input("buy property y/n: ") == "y":
+                if input("[{}] buy property y/n: ".format(player.name)) == "y":
                     player.deduct_money(tile.cost)
                     tile.owner = player.name
                     player.add_prop(tile)
                 return
-
 
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
@@ -91,8 +90,6 @@ class Game:
             self.check_property(player)
         if tile.space == "Pot Luck":
             pot = self.pot_cards.next_object()
-
-
 
 
 class Queue:
@@ -113,7 +110,6 @@ class Queue:
     def remove(self):
         return self.objects.pop(-1)
 
-
     def __str__(self):
         string = "--------------- Queue --------------\n"
         i = 1
@@ -125,9 +121,8 @@ class Queue:
         return string
 
 
-
-players = [Player("Player1"), Player("Player2"), Player("Player3")]
+players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
 game = Game(players)
 
-# for i in range(250):
-#     game.next_step()
+for i in range(250):
+    game.next_step()
