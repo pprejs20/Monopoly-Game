@@ -22,7 +22,7 @@ class Player:
             if self.pos == 39:
                 self.pos = 0
                 self.add_money(200)
-                print("Collected $200 for passing go")
+                print("[{}] Collected $200 for passing go".format(self.name))
             else:
                 self.pos += 1
 
@@ -54,7 +54,7 @@ class Player:
         self.jail_term += 1
         if self.jail_term == 2:
             self.unjail()
-            print("You served your time, you are now free!")
+            print("[{}] You served your time, you are now free!".format(self.name))
 
     def deduct_money(self, amount):
         self.money -= amount
@@ -68,13 +68,13 @@ class Player:
         doubles = dOne == dTwo
         return (dOne, dTwo, doubles)
 
-    # def __str__(self):
-    #     string = "----------- Player -----------\n"
-    #     string += "Name: {}\n".format(self.name)
-    #     string += "Token: {}\n".format(self.token)
-    #     string += "Pos: {}\n".format(self.pos)
-    #     string += "Money: {}\n".format(self.money)
-    #     string += "Owned Properties: {}\n".format(len(self.propList))
-    #     string += "Laps: {}\n".format(self.laps)
-    #     string += "------------------------------\n"
-    #     return string
+    def __str__(self):
+        string = "----------- Player -----------\n"
+        string += "Name: {}\n".format(self.name)
+        string += "Token: {}\n".format(self.token)
+        string += "Pos: {}\n".format(self.pos)
+        string += "Money: {}\n".format(self.money)
+        string += "Owned Properties: {}\n".format(len(self.propList))
+        string += "Laps: {}\n".format(self.laps)
+        string += "------------------------------\n"
+        return string
