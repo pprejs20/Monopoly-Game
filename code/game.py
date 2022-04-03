@@ -17,6 +17,8 @@ class Game:
         self.opp_cards = Queue(self.opp_cards)
         self.free_parking_money = 0
         self.doubles_counter = 0
+        self.current_d1 = None
+        self.current_d2 = None
 
     @classmethod
     def get_cards(cls):
@@ -36,6 +38,8 @@ class Game:
             self.jailed_player(player)
             return
         d1, d2, doubles = player.roll_dice()
+        self.current_d1 = d1
+        self.current_d2 = d2
         dice_sum = d1 + d2
         player.move_player_forward(dice_sum)
         self.check_player_position(player)
@@ -80,8 +84,28 @@ class Game:
                     tile.owner = player.name
                     player.add_prop(tile)
         elif tile.owner is not None:
-            pass
-                # return
+            if tile.group == "Utilities":
+                self.check_utilities(player, tile.owner)
+
+    def check_utilities(self, player, owner_name):
+        owner = self.players.get_by_name(owner_name)
+        count = self.count_utilities(owner)
+        if count == 1:
+            money_owed = (self.current_d1 + self.current_d2) * 4
+        elif count == 2:
+            money_owed = (self.current_d1 + self.current_d2) * 4
+        else:
+            raise Exception("Invalid number of utilities")
+
+        player.deduct_money(money_owed)
+        owner.add_money(money_owed)
+
+    def count_utilities(self, player):
+        count = 0
+        for prop in player.propList:
+            if prop.group == "Utilities":
+                count += 1
+        return count
 
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
@@ -109,8 +133,6 @@ class Queue:
     def get(self, i):
         return self.objects[i]
 
-
-
     def remove(self):
         return self.objects.pop(-1)
 
@@ -123,6 +145,7 @@ class Queue:
             i += 1
         string += "-----------------------------------\n"
         return string
+
 
 class PlayerQueue(Queue):
     def __init__(self, players):
