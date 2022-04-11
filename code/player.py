@@ -69,6 +69,14 @@ class Player:
         doubles = dOne == dTwo
         return (dOne, dTwo, doubles)
 
+    def buy_property(self, tile, cost=None):
+        if cost is None:
+            cost = tile.cost
+
+        self.deduct_money(tile.cost)
+        tile.owner = self.name
+        self.add_prop(tile)
+
     def __str__(self):
         string = "----------- Player -----------\n"
         string += "Name: {}\n".format(self.name)
