@@ -79,16 +79,26 @@ class Game:
         assert tile.buyable
         temp_queue = PlayerQueue(self.players.objects.copy())
         temp_queue.remove_by_name(player.name)
-        curr_price = tile.cost
-        curr_player = temp_queue.next_object()
-        while temp_queue.get_length() > 1:
+        curr_price = tile.cost - 50 # - 50 because the first raise will be the original price of the property (min raise 50)
+        money_placed = False
+        while not (temp_queue.get_length() == 0):
+            curr_player = temp_queue.next_object()
+            # Only one player left and has already raised, they win
+            if temp_queue.get_length() == 1 and money_placed:
+                break
+
             curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
             if passed:
                 temp_queue.remove_by_name(curr_player.name)
-            curr_player = temp_queue.next_object()
+            else:
+                money_placed = True
 
+        if temp_queue.get_length() == 0:
+            print("No one bought the property")
+            return
         curr_player = temp_queue.get(0)
         curr_player.buy_property(tile, cost=curr_price)
+        print("({}) Bought property: {}, for ${}".format(curr_player.name, tile.space, curr_price))
 
     def display_auction_menu(self, player, tile, curr_price):
         # TODO: Check if player has enough money!
