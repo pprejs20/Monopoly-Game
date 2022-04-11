@@ -75,14 +75,51 @@ class Game:
             if t.group == "Go to jail":
                 return t.pos-1
 
+    def auction_property(self, tile, player):
+        assert tile.buyable
+        temp_queue = PlayerQueue(self.players.objects.copy())
+        temp_queue.remove_by_name(player.name)
+        curr_price = tile.cost
+        curr_player = temp_queue.next_object()
+        while temp_queue.get_length() > 1:
+            curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
+            if passed:
+                temp_queue.remove_by_name(curr_player.name)
+            curr_player = temp_queue.next_object()
+
+        curr_player = temp_queue.get(0)
+        curr_player.buy_property(tile, cost=curr_price)
+
+    def display_auction_menu(self, player, tile, curr_price):
+        # TODO: Check if player has enough money!
+        string =  "-------- ({}) Tile Auction --------\n".format(player.name)
+        string += "Property: {}\n".format(tile.space)
+        string += "Current Price: {}\n\n".format(curr_price)
+        string += "1. Pass\n"
+        string += "2. Raise $50\n"
+        string += "3. Raise $100\n"
+        string += "4. Raise $500\n"
+        string += "Choose an option: "
+        inpt = input(string)
+
+        if inpt == "1":
+            return curr_price, True
+        elif inpt == "2":
+            return curr_price + 50, False
+        elif inpt == "3":
+            return curr_price + 100, False
+        elif inpt == "4":
+            return curr_price + 500, False
+
     def check_property(self, player):
         tile = self.tiles[player.pos]
         if tile.owner is None:
             if player.laps > 0:
-                if input("[{}] buy property y/n: ".format(player.name)) == "y":
-                    player.deduct_money(tile.cost)
-                    tile.owner = player.name
-                    player.add_prop(tile)
+                inpt = input("[{}] buy property y/n: ".format(player.name))
+                if inpt == "y":
+                    player.buy_property(tile)
+                elif inpt == "n":
+                    self.auction_property(tile, player)
         elif tile.owner is not None:
             if tile.group == "Utilities":
                 self.check_utilities(player, tile.owner)
@@ -136,6 +173,9 @@ class Queue:
     def remove(self):
         return self.objects.pop(-1)
 
+    def get_length(self):
+        return len(self.objects)
+
     def __str__(self):
         string = "--------------- Queue --------------\n"
         i = 1
@@ -155,8 +195,14 @@ class PlayerQueue(Queue):
         for obj in self.objects:
             if obj.name == name:
                 return obj
+        raise Exception("No player with that name! (getting)")
 
-        raise Exception("No player with that name!")
+    def remove_by_name(self, name):
+        for obj in self.objects:
+            if obj.name == name:
+                self.objects.remove(obj)
+                return
+        raise Exception("No player with that name! (removing)")
 
 
 players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
@@ -164,3 +210,8 @@ game = Game(players)
 
 for i in range(250):
     game.next_step()
+
+# TODO: Check if player has enough money during auctioning
+# TODO: Make player sell properties if they run out of money
+# TODO: Allow players to buy houses on properties if they have all the colors
+# TODO: Collect money from free parking
