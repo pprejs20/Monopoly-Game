@@ -89,7 +89,7 @@ dices = [dice1, dice2, dice3, dice4, dice5, dice6]
 # create font to be used
 font = pygame.font.SysFont('franklingothicmediumcond', 15)
 BLACK = (0, 0, 0)
-WHITE = (100, 100, 100)
+WHITE = (255, 255, 255)
 
 # TODO: touch up the commented code below to get blit the property indicators on left and right side of board
 # create dictionary for the bank property indicators
@@ -144,8 +144,11 @@ def blit_player_indicators(player_no, player):
     y_inc = (player_no - 1) * 155
     print((player_no, player.name, y_inc))
     screen.blit(playerTemplate, (0, (22.5 + y_inc)))
-    name = font.render(player.name, True, WHITE)
-    screen.blit(name, (0, (22.5 + y_inc)))
+    font1 = pygame.font.SysFont('franklingothicmediumcond', 30)
+    name = font1.render(player.name, True, WHITE)
+    money = font1.render(str(player.money), True, WHITE)
+    screen.blit(name, (10, (22.5 + y_inc)))
+    screen.blit(money, ((450-10-money.get_rect().width), (22.5 + y_inc)))
     for prop in player.propList:
         indicator = player_prop_ind[prop.space][0]
         indicator = pygame.transform.scale(indicator, (30, 43))
@@ -922,15 +925,51 @@ class ScreenTracker:
     def tile_landed_on(self, curr_player, curr_player_no):
         resolved_tile = False
         current_tile = tiles[curr_player.pos - 1]
+        base = pygame.Rect((450+tile_height+150), (tile_height+100), 675 - 2 * tile_height, 675 - 2 * tile_height)
+        pygame.draw.rect(screen, WHITE, base)
+        font2 = pygame.font.SysFont('franklingothicmediumcond', 20)
+        line1 = font2.render(curr_player.name + ", you've landed on:", True, BLACK)
+        line2 = font2.render(str(current_tile.space), True, BLACK)
+        line1_rect = line1.get_rect()
+        line1_rect.centerx = 937.5
+        line1_rect.y = (tile_height+100)+20
+        line2_rect = line2.get_rect()
+        line2_rect.y = line1_rect.y + line1_rect.height + 20
+        line2_rect.centerx = 937.5
+        screen.blit(line1, line1_rect)
+        screen.blit(line2, line2_rect)
+        pygame.display.update()
         while not resolved_tile:
-            # TODO: add code to blit contents of tile onto screen, take necessary actions for tile, then re-blit
-            #  center of board on top
-            # if current_tile.buyable == True:
-            # if player clicks buy (check mouse_pos)
-            # set transparency of image at bank_prop_list[current_tile] to be 0 (disappear from rhs)
-            # add the property to the player's property list
-            # call blit_player_prop(curr_player_no, curr_player) to blit player's properties (include one they just bought)
-            # else, tile needs to go up for auction
+            if current_tile.buyable == True:
+                if current_tile.owner == None:
+                    # add check to see if tile is property or station/utility
+                    if curr_player.laps > 0:
+                        # for property --> line3 = "Base rent: £x     1 House: £x"
+                        #                  line4 = "2 House: £x       3 House: £x"
+                        #                  line5 = "4 House: £x       Hotel: £x"
+                        #                  line6 = "Cost: £x, Do you wish to buy?"
+                        line3 = font2.render("Do you wish to purchase?", True, BLACK)
+                        line3_rect = line3.get_rect()
+                        line3_rect.centerx = 937.5
+                        line3_rect.y = base.centery
+                        screen.blit(line3, line3_rect)
+                        # make yes button
+                        yes_button = pygame.Rect(base.x + 20, base.bottom - 20 - 50, 70, 50)
+                        pygame.draw.rect(screen, (40, 220, 50), yes_button)
+                        yes = font2.render("Yes", True, BLACK)
+                        yes_rect = yes.get_rect()
+                        yes_rect.center = yes_button.center
+                        screen.blit(yes, yes_rect)
+                        # make no button
+                        pygame.display.update()
+                        # if they click yes
+                            # set transparency of image at bank_prop_list[current_tile] to be 0 (disappear from rhs)
+                            # add the property to the player's property list
+                            # call blit_player_prop(curr_player_no, curr_player) to blit player's properties (include one they just bought)
+                        # else, if click no, tile needs to go up for auction
+            # if current_tile.space == "Pot Luck" or "Opporunity Knocks":
+                # get the top card of the corresponding deck
+                # blit what is says (back-end will handle actually doing it)
             resolved_tile = True
 
     def game_loop(self):
@@ -969,36 +1008,42 @@ class ScreenTracker:
             self.token_blit(player_no, player.pos, player.token)
             blit_player_indicators(player_no, player)
             player_no += 1
-        player = 0
+        player_c = 0
         while self.playing_game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.playing_game = False
                     break
-                current_player = game.players.get(player)
+                current_player = game.players.get(player_c)
                 # TODO: draw an indicator for which player's turn it is
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_posi = event.pos
-                    if 1555 <= mouse_posi[0] <= 1540 and 910 <= mouse_posi[1] <= 965:
+                    if 1460 <= mouse_posi[0] <= 1545 and 910 <= mouse_posi[1] <= 965:
                         roll1, roll2, doubles = current_player.roll_dice()
-                        # TODO: change size of dice images (bigger)
                         current_player.move_player_forward(roll1 + roll2)
                         screen.blit(board, (450, 0))
                         self.get_text()
-                        screen.blit(dice_images[roll1], (903.75, 472.5))
-                        screen.blit(dice_images[roll2], (951.25, 472.5))
+                        screen.blit(dice_images[roll1], (858.75, (975-tile_height-70)))
+                        screen.blit(dice_images[roll2], (966.25, (975-tile_height-70)))
                         player_no = 1
-                        for item in player_list:
-                            self.token_blit(player_no, game.players.get(player_no - 1).pos,
-                                            game.players.get(player_no - 1).token)
+                        for player in players:
+                            self.token_blit(player_no, player.pos, player.token)
+                            blit_player_indicators(player_no, player)
                             player_no += 1
                         # carry out the appropriate actions for the turn
-                        self.tile_landed_on(current_player, player)
+                        self.tile_landed_on(current_player, player_c)
                     if 1555 <= mouse_posi[0] <= 1640 and 910 <= mouse_posi[1] <= 965:
-                        if player == len(player_list) - 1:
-                            player = 0
+                        if player_c == len(player_list) - 1:
+                            player_c = 0
                         else:
-                            player += 1
+                            player_c += 1
+                        screen.blit(board, (450, 0))
+                        self.get_text()
+                        player_no = 1
+                        for player in players:
+                            self.token_blit(player_no, player.pos, player.token)
+                            blit_player_indicators(player_no, player)
+                            player_no += 1
 
 
 screen_tracker = ScreenTracker()
