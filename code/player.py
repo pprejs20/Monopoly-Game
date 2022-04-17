@@ -19,7 +19,7 @@ class Player:
 
     def move_player_forward(self, amount):
         for i in range(amount):
-            if self.pos == 40:
+            if self.pos == 39:
                 self.pos = 1
                 self.add_money(200)
                 print("[{}] Collected $200 for passing go".format(self.name))
