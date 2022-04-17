@@ -209,7 +209,7 @@ class Game:
             print("[{}] Paid $200 for income tax".format(player.name))
         elif tile.space == "Super Tax":
             player.deduct_money(100)
-            print("[{}] Paid $200 for super tax".format(player.name))
+            print("[{}] Paid $100 for super tax".format(player.name))
 
 
 
@@ -272,5 +272,9 @@ for i in range(250):
 
 # TODO: Check if player has enough money during auctioning
 # TODO: Make player sell properties if they run out of money
+        # Leaving jail
+        # Tax tiles
+        # Auctioning
+        # Landing on someones tile
 # TODO: Allow players to buy houses on properties if they have all the colors
 # TODO: Collect money from free parking
