@@ -193,12 +193,12 @@ class Game:
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
         tile = self.tiles[player.pos]
-        
+
         if tile.group == "Go to jail":
             player.jail()
-        if tile.buyable:
+        elif tile.buyable:
             self.check_property(player)
-        if tile.space == "Pot Luck":
+        elif tile.space == "Pot Luck":
             pot = self.pot_cards.next_object()
 
 
