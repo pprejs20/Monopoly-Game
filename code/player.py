@@ -3,7 +3,7 @@ import random
 
 class Player:
     # TODO: Double check if the start money is correct
-    def __init__(self, name, pos=0, money=1500, propList=[], laps=0, token=None):
+    def __init__(self, name, pos=1, money=1500, propList=[], laps=0, token=None):
         self.pos = pos
         self.money = money
         self.propList = propList
@@ -19,8 +19,8 @@ class Player:
 
     def move_player_forward(self, amount):
         for i in range(amount):
-            if self.pos == 39:
-                self.pos = 0
+            if self.pos == 40:
+                self.pos = 1
                 self.add_money(200)
                 print("[{}] Collected $200 for passing go".format(self.name))
                 self.laps += 1

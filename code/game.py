@@ -218,8 +218,8 @@ class PlayerQueue(Queue):
 players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
 game = Game(players)
 
-for i in range(250):
-    game.next_step()
+# for i in range(250):
+#     game.next_step()
 
 # TODO: Check if player has enough money during auctioning
 # TODO: Make player sell properties if they run out of money
