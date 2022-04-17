@@ -200,6 +200,17 @@ class Game:
             self.check_property(player)
         elif tile.space == "Pot Luck":
             pot = self.pot_cards.next_object()
+        elif tile.space == "Free Parking":
+            player.add_money(self.free_parking_money)
+            print("[{}] Collected ${} from free parking money".format(player.name, self.free_parking_money))
+            self.free_parking_money = 0
+        elif tile.space == "Income Tax":
+            player.deduct_money(200)
+            print("[{}] Paid $200 for income tax".format(player.name))
+        elif tile.space == "Super Tax":
+            player.deduct_money(100)
+            print("[{}] Paid $200 for super tax".format(player.name))
+
 
 
 class Queue:
