@@ -93,6 +93,6 @@ class AIPlayer(Player):
     player_count = 1
 
     def __init__(self, pos=0, money=1500, propList=[], laps=0, token=None):
-        name = "AI Player" + str(AIPlayer.player_count)
-        AIPlayer.player_count += 1 
+        name = "AI Player " + str(AIPlayer.player_count)
+        AIPlayer.player_count += 1
         super().__init__(name, pos, money, propList, laps, token)
