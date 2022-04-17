@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from cards import load_all_cards
-from player import Player
+from player import Player, AIPlayer
 from tile import Tile
 import random
 
@@ -55,7 +55,15 @@ class Game:
 
     def jailed_player(self, player):
         assert player.is_jailed()
-        response = input("[{}] Do you want to pay $50 to leave jail?".format(player.name))
+        if player.money >= 50:
+            if isinstance(player, AIPlayer):
+                response = random.choice(["y", "n"])
+            else:
+                response = input("[{}] Do you want to pay $50 to leave jail?".format(player.name))
+        else:
+            response = "n"
+            print("[{}] Has not enough money to leave jail (${})".format(player.name, player.money))
+
         if response == 'y':
             player.deduct_money(50)
             self.free_parking_money += 50
@@ -86,8 +94,10 @@ class Game:
             # Only one player left and has already raised, they win
             if temp_queue.get_length() == 1 and money_placed:
                 break
-
-            curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
+            if isinstance(player, AIPlayer):
+                curr_price, passed = self.auction_menu_ai(curr_player, tile, curr_price)
+            else:
+                curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
             if passed:
                 temp_queue.remove_by_name(curr_player.name)
             else:
@@ -121,15 +131,41 @@ class Game:
         elif inpt == "4":
             return curr_price + 500, False
 
+    def auction_menu_ai(self, player, tile, curr_price):
+        if player.money >= curr_price + 500:
+            inpt = random.choice(["1", "2", "3", "4"])
+        elif player.money >= curr_price + 100:
+            inpt = random.choice(["1", "2", "3"])
+        elif player.money >= curr_price + 50:
+            inpt = random.choice(["1", "2"])
+        else:
+            inpt = "1"
+
+        if inpt == "1":
+            return curr_price, True
+        elif inpt == "2":
+            return curr_price + 50, False
+        elif inpt == "3":
+            return curr_price + 100, False
+        elif inpt == "4":
+            return curr_price + 500, False
+
     def check_property(self, player):
         tile = self.tiles[player.pos]
         if tile.owner is None:
             if player.laps > 0:
-                inpt = input("[{}] buy property y/n: ".format(player.name))
-                if inpt == "y":
-                    player.buy_property(tile)
-                elif inpt == "n":
-                    self.auction_property(tile, player)
+                if player.money >= tile.cost:
+                    if isinstance(player, AIPlayer):
+                        inpt = random.choice(["y", "n"])
+                    else:
+                        inpt = input("[{}] buy property y/n: ".format(player.name))
+                    if inpt == "y":
+                        player.buy_property(tile)
+                        print("[{}] Bought {} for {}".format(player.name, tile.space, tile.cost))
+                    elif inpt == "n":
+                        self.auction_property(tile, player)
+                else:
+                    print("[{}] Not enough money to buy!".format(player.name))
         elif tile.owner is not None:
             if tile.group == "Utilities":
                 self.check_utilities(player, tile.owner)
@@ -157,6 +193,7 @@ class Game:
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
         tile = self.tiles[player.pos]
+        
         if tile.group == "Go to jail":
             player.jail()
         if tile.buyable:
@@ -215,11 +252,12 @@ class PlayerQueue(Queue):
         raise Exception("No player with that name! (removing)")
 
 
-players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
+# players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
+players = [AIPlayer(), AIPlayer(), AIPlayer(), AIPlayer()]
 game = Game(players)
 
-# for i in range(250):
-#     game.next_step()
+for i in range(250):
+    game.next_step()
 
 # TODO: Check if player has enough money during auctioning
 # TODO: Make player sell properties if they run out of money
