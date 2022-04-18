@@ -20,7 +20,7 @@ class Player:
 
     def move_player_forward(self, amount):
         for i in range(amount):
-            if self.pos == 40:
+            if self.pos == 39:
                 self.pos = 1
                 self.add_money(200)
                 print("[{}] Collected $200 for passing go".format(self.name))
@@ -88,3 +88,12 @@ class Player:
         string += "Laps: {}\n".format(self.laps)
         string += "------------------------------\n"
         return string
+
+
+class AIPlayer(Player):
+    player_count = 1
+
+    def __init__(self, pos=0, money=1500, propList=[], laps=0, token=None):
+        name = "AI Player " + str(AIPlayer.player_count)
+        AIPlayer.player_count += 1
+        super().__init__(name, pos, money, propList, laps, token)
