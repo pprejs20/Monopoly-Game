@@ -1,6 +1,6 @@
 import pygame
 from game import Game
-from player import Player
+from player import Player, AIPlayer
 from tile import Tile
 
 pygame.init()
@@ -66,7 +66,7 @@ brown1 = pygame.image.load("Images/Brown.png")
 brown2 = pygame.image.load("Images/Brown.png")
 lblue1 = pygame.image.load("Images/LightBlue.png")
 lblue2 = pygame.image.load("Images/LightBlue.png")
-lblue3= pygame.image.load("Images/LightBlue.png")
+lblue3 = pygame.image.load("Images/LightBlue.png")
 pink1 = pygame.image.load("Images/Pink.png")
 pink2 = pygame.image.load("Images/Pink.png")
 pink3 = pygame.image.load("Images/Pink.png")
@@ -99,6 +99,8 @@ playerTemplate = pygame.image.load("Images/PlayerTemplate.png")
 # load pot luck and opportunity knocks templates
 pot_luck = pygame.image.load("Images/PotLuck.png")
 opp_knocks = pygame.image.load("Images/OppKnocks.png")
+# load hat for indicating current player
+hat = pygame.image.load("Images/Hat.png")
 # load dice images
 dice1 = pygame.image.load("Images/dice1.png")
 dice2 = pygame.image.load("Images/dice2.png")
@@ -112,7 +114,6 @@ font = pygame.font.SysFont('franklingothicmediumcond', 15)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-# TODO: touch up the commented code below to get blit the property indicators on left and right side of board
 # create dictionary for the bank property indicators
 bank_prop_list = {}
 for i in [2, 4, 7, 9, 10, 12, 14, 15, 17, 19, 20, 22, 24, 25, 27, 28, 30, 32, 33, 35, 38, 40, 6, 16, 26, 36, 13, 29]:
@@ -169,7 +170,7 @@ def blit_player_indicators(player_no, player):
     name = font1.render(player.name, True, WHITE)
     money = font1.render(str(player.money), True, WHITE)
     screen.blit(name, (10, (22.5 + y_inc)))
-    screen.blit(money, ((450 - 10 - money.get_rect().width), (22.5 + y_inc)))
+    screen.blit(money, (250, (22.5 + y_inc)))
     for prop in player.propList:
         indicator = player_prop_ind[prop.space][0]
         indicator = pygame.transform.scale(indicator, (29, 42))
@@ -489,88 +490,6 @@ class ScreenTracker:
                         self.start_menu4 = False
                         self.input_names()
 
-    # function to populate an array with the coordinates of each tile
-    def get_coordinates(self):
-        # create list to store the coordinates of each tile
-        coord_list = []
-        # iterator to go through the 40 tiles
-        i = 1
-
-        # first get screen width without board because there is space on either side of board (2/3 on left and 1/3 on
-        # right)
-        screen_width_excl_board = game_size[0] - board_width
-
-        # BOTTOM ROW:
-        # x starts where board ends minus the height of a tile (because first tile, GO, is in bottom right)
-        x = (game_size[0] - screen_width_excl_board * (1 / 3)) - tile_height
-        # y is the screen height minus height of a tile (because there is no space below board)
-        y = game_size[1] - tile_height
-        for i in range(1, 11):
-            # for first row (bottom) y stays the same and x decreases by width of a tile each iteration
-            coord_list.append((x, y))
-            x -= tile_width
-
-        # LEFT ROW:
-        # x is where the board starts plus the height of a tile
-        x = (screen_width_excl_board * (2 / 3)) + tile_height
-        # y starts at screen height - height of a tile
-        y = game_size[1] - tile_height
-        for i in range(11, 21):
-            # for second row (left) x stays the same and y decreases by width of a tile each iteration
-            coord_list.append((x, y))
-            y -= tile_width
-
-        # TOP ROW:
-        # x starts at the where the board starts plus height of a tile
-        x = (screen_width_excl_board * (2 / 3)) + tile_height
-        # y is the height of a tile (because there is no space above the board)
-        y = tile_height
-        for i in range(21, 31):
-            # for third row (top) y stays the same and x increases by width of tile each iteration
-            coord_list.append((x, y))
-            x += tile_width
-
-        # RIGHT ROW:
-        # x is where the board ends minus the height of a tile
-        x = (game_size[0] - screen_width_excl_board * (1 / 3)) - tile_height
-        # y starts at the height of a tile
-        y = tile_height
-        for i in range(31, 41):
-            coord_list.append((x, y))
-            y += tile_width
-
-        return coord_list
-
-    # function to wrap text in tiles (if necessary)
-    def wrap_text(self, text, width):
-        # create list to store rendered text images
-        imgs = []
-        # render image of string
-        string_img = font.render(text, True, BLACK)
-        # check width to see if it fits in tile (with gap of 7.5 px on either side)
-        if string_img.get_rect().width > width:
-            # split given string into words
-            words = text.split()
-
-            # get ready to loop through all the words
-            while len(words) > 0:
-                # create list to store words in a line
-                line = []
-                # add word until they no longer fit the width
-                while len(words) > 0:
-                    line.append(words.pop(0))
-                    width1, height1 = font.size(' '.join(line + words[:1]))
-                    if width1 > width:
-                        break
-
-                # append the words that did fit in the line
-                ln = ' '.join(line)
-                imgs.append(ln)
-        else:
-            # append the inputted string if it did not need to be
-            imgs.append(text)
-        return imgs
-
     def input_names(self):
         input_active = False
         self.name_chosen = ""
@@ -717,6 +636,88 @@ class ScreenTracker:
                         pygame.draw.circle(screen, (255, 0, 0), (650, 544), 70, 3)
 
                     pygame.display.update()
+
+    # function to populate an array with the coordinates of each tile
+    def get_coordinates(self):
+        # create list to store the coordinates of each tile
+        coord_list = []
+        # iterator to go through the 40 tiles
+        i = 1
+
+        # first get screen width without board because there is space on either side of board (2/3 on left and 1/3 on
+        # right)
+        screen_width_excl_board = game_size[0] - board_width
+
+        # BOTTOM ROW:
+        # x starts where board ends minus the height of a tile (because first tile, GO, is in bottom right)
+        x = (game_size[0] - screen_width_excl_board * (1 / 3)) - tile_height
+        # y is the screen height minus height of a tile (because there is no space below board)
+        y = game_size[1] - tile_height
+        for i in range(1, 11):
+            # for first row (bottom) y stays the same and x decreases by width of a tile each iteration
+            coord_list.append((x, y))
+            x -= tile_width
+
+        # LEFT ROW:
+        # x is where the board starts plus the height of a tile
+        x = (screen_width_excl_board * (2 / 3)) + tile_height
+        # y starts at screen height - height of a tile
+        y = game_size[1] - tile_height
+        for i in range(11, 21):
+            # for second row (left) x stays the same and y decreases by width of a tile each iteration
+            coord_list.append((x, y))
+            y -= tile_width
+
+        # TOP ROW:
+        # x starts at the where the board starts plus height of a tile
+        x = (screen_width_excl_board * (2 / 3)) + tile_height
+        # y is the height of a tile (because there is no space above the board)
+        y = tile_height
+        for i in range(21, 31):
+            # for third row (top) y stays the same and x increases by width of tile each iteration
+            coord_list.append((x, y))
+            x += tile_width
+
+        # RIGHT ROW:
+        # x is where the board ends minus the height of a tile
+        x = (game_size[0] - screen_width_excl_board * (1 / 3)) - tile_height
+        # y starts at the height of a tile
+        y = tile_height
+        for i in range(31, 41):
+            coord_list.append((x, y))
+            y += tile_width
+
+        return coord_list
+
+    # function to wrap text in tiles (if necessary)
+    def wrap_text(self, text, width):
+        # create list to store rendered text images
+        imgs = []
+        # render image of string
+        string_img = font.render(text, True, BLACK)
+        # check width to see if it fits in tile (with gap of 7.5 px on either side)
+        if string_img.get_rect().width > width:
+            # split given string into words
+            words = text.split()
+
+            # get ready to loop through all the words
+            while len(words) > 0:
+                # create list to store words in a line
+                line = []
+                # add word until they no longer fit the width
+                while len(words) > 0:
+                    line.append(words.pop(0))
+                    width1, height1 = font.size(' '.join(line + words[:1]))
+                    if width1 > width:
+                        break
+
+                # append the words that did fit in the line
+                ln = ' '.join(line)
+                imgs.append(ln)
+        else:
+            # append the inputted string if it did not need to be
+            imgs.append(text)
+        return imgs
 
     # function to print text on board
     def get_text(self):
@@ -950,7 +951,7 @@ class ScreenTracker:
         # assign the player objects in the game object the correct names and tokens
         for i in range(0, len(player_list)):
             # create a player with name from the player_list
-            player =  Player(player_list[i][0])
+            player = Player(name=player_list[i][0], propList=[])
             # get the token chosen to convert it to a size that fits the board
             pl_token = player_list[i][1]
             if pl_token == smartphone:
@@ -971,6 +972,24 @@ class ScreenTracker:
             player.number = i + 1
             # append player to the player list
             players.append(player)
+        # create AI players
+        for i in range(0, self.no_of_ai):
+            token = self.tokens.pop(0)
+            if token == smartphone:
+                token = smartphone_token
+            elif token == cat:
+                token = cat_token
+            elif token == boot:
+                token = boot_token
+            elif token == iron:
+                token = iron_token
+            elif token == ship:
+                token = ship_token
+            else:
+                token = hatstand_token
+            ai = AIPlayer(token=token, propList=[])
+            ai.number = i + 1 + self.no_of_players
+            players.append(ai)
         # create game object using the player list
         game = Game(players)
         # get the cards
@@ -981,7 +1000,9 @@ class ScreenTracker:
             self.token_blit(player.number, player.pos, player.token)
             blit_player_indicators(player.number, player)
             print(player.name + ", " + str(player.number))
-
+        current_player = game.players.get(0)
+        screen.blit(hat, (450 - 10 - 40, 30 + ((current_player.number - 1) * 155)))
+        pygame.display.update()
         self.game_loop(game)
 
     def tile_landed_on(self, curr_player):
@@ -996,7 +1017,7 @@ class ScreenTracker:
         line1_rect.centerx = 937.5
         line1_rect.y = (tile_height + 100) + 20
         line2_rect = line2.get_rect()
-        line2_rect.y = line1_rect.y + line1_rect.height + 20
+        line2_rect.y = line1_rect.bottom + 20
         line2_rect.centerx = 937.5
         screen.blit(line1, line1_rect)
         screen.blit(line2, line2_rect)
@@ -1020,7 +1041,6 @@ class ScreenTracker:
             resolved_tile = True
 
     def action_card(self, tile, cur_player):
-        base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         font2 = pygame.font.SysFont('franklingothicmediumcond', 20)
         if tile.space == "Pot Luck":
             c = pot_luck.get_rect()
@@ -1061,24 +1081,24 @@ class ScreenTracker:
                 tile.three_house_rent), True, BLACK)
         line4_rect = line4.get_rect()
         line4_rect.centerx = 937.5
-        line4_rect.y = line3_rect.y + line3_rect.height + 15
+        line4_rect.y = line3_rect.bottom + 15
         screen.blit(line4, line4_rect)
         line5 = font2.render(
             "4 House: £{}".format(tile.four_house_rent) + "          Hotel: £{}".format(
                 tile.hotel_rent), True, BLACK)
         line5_rect = line5.get_rect()
         line5_rect.centerx = 937.5
-        line5_rect.y = line4_rect.y + line4_rect.height + 15
+        line5_rect.y = line4_rect.bottom + 15
         screen.blit(line5, line5_rect)
         line6 = font2.render("Cost: £{}".format(tile.cost), True, BLACK)
         line6_rect = line6.get_rect()
         line6_rect.centerx = 937.5
-        line6_rect.y = line5_rect.y + line5_rect.height + 20
+        line6_rect.y = line5_rect.bottom + 20
         screen.blit(line6, line6_rect)
         line7 = font2.render("{}, do you wish to buy?".format(curr_player.name), True, BLACK)
         line7_rect = line7.get_rect()
         line7_rect.centerx = 937.5
-        line7_rect.y = line6_rect.y + line6_rect.height + 30
+        line7_rect.y = line6_rect.bottom + 30
         screen.blit(line7, line7_rect)
         # make yes button
         yes_button = pygame.Rect(base.x + 20, base.bottom - 20 - 50, 70, 50)
@@ -1119,11 +1139,55 @@ class ScreenTracker:
                     # else, if click no, tile needs to go up for auction
                     elif no_button.left <= mouse_pos[0] <= no_button.right and no_button.top <= mouse_pos[
                         1] <= no_button.bottom:
-                        self.auction_prop(tile, curr_player)
+                        self.auction_prop(tile, tile.cost, curr_player)
                         buying_prop = False
 
-    def auction_prop(self, tile, player):
-        print("not finished yet")
+    def auction_prop(self, tile, curr_price, player):
+        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
+        font2 = pygame.font.SysFont('franklingothicmediumcond', 20)
+        # create third line of text: "Current bid: £x"
+        line3 = font2.render("Current bid: £{}".format(str(curr_price)), True, BLACK)
+        line3_rect = line3.get_rect()
+        line3_rect.centerx = 937.5
+        line3_rect.y = 330
+        screen.blit(line3, line3_rect)
+        # create fourth line of text: "*Player_name*, will you:"
+        line4 = font2.render("{}, will you:".format(player.name), True, BLACK)
+        line4_rect = line4.get_rect()
+        line4_rect.centerx = 937.5
+        line4_rect.y = line3_rect.bottom + 20
+        screen.blit(line4, line4_rect)
+        # create button 1: Pass
+        pass_button = pygame.Rect(base.x + 50, base.bottom - 210, 100, 50)
+        pygame.draw.rect(screen, (230, 200, 130), pass_button)
+        pass_txt = font2.render("Pass", True, BLACK)
+        pass_rect = pass_txt.get_rect()
+        pass_rect.center = pass_button.center
+        screen.blit(pass_txt, pass_rect)
+        # create button 2: Raise £50
+        fifty_button = pygame.Rect(base.right - 150, base.bottom - 210, 100, 50)
+        pygame.draw.rect(screen, (230, 200, 130), fifty_button)
+        fifty = font2.render("Raise £50", True, BLACK)
+        fifty_rect = fifty.get_rect()
+        fifty_rect.center = fifty_button.center
+        screen.blit(fifty, fifty_rect)
+        # create button 3: Raise £100
+        hund_button = pygame.Rect(base.x + 50, base.bottom - 90, 100, 50)
+        pygame.draw.rect(screen, (230, 200, 130), hund_button)
+        hund = font2.render("Raise £100", True, BLACK)
+        hund_rect = hund.get_rect()
+        hund_rect.center = hund_button.center
+        screen.blit(hund, hund_rect)
+        # create button 4: Raise £500
+        button = pygame.Rect(base.right - 150, base.bottom - 90, 100, 50)
+        pygame.draw.rect(screen, (230, 200, 130), button)
+        txt = font2.render("Raise £500", True, BLACK)
+        txt_rect = txt.get_rect()
+        txt_rect.center = button.center
+        screen.blit(txt, txt_rect)
+        pygame.display.update()
+        # TODO: add functionality to each button
 
     def game_loop(self, game):
         current = 1
@@ -1133,8 +1197,7 @@ class ScreenTracker:
                 if event.type == pygame.QUIT:
                     self.playing_game = False
                     break
-                current_player = game.players.get(current-1)
-                # TODO: draw an indicator for which player's turn it is
+                current_player = game.players.get(current - 1)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
                     if 1460 <= mouse_pos[0] <= 1545 and 910 <= mouse_pos[1] <= 965:
@@ -1148,6 +1211,8 @@ class ScreenTracker:
                         for i in range(game.players.get_length()):
                             player = game.players.get(i)
                             self.token_blit(player.number, player.pos, player.token)
+                            blit_player_indicators(player.number, player)
+                        screen.blit(hat, (450 - 10 - 40, 30 + ((game.players.get(current - 1).number - 1) * 155)))
                         # carry out the appropriate actions for the turn
                         self.tile_landed_on(current_player)
                     if 1555 <= mouse_pos[0] <= 1640 and 910 <= mouse_pos[1] <= 965 and dice_rolled:
@@ -1161,24 +1226,11 @@ class ScreenTracker:
                         for i in range(game.players.get_length()):
                             player = game.players.get(i)
                             self.token_blit(player.number, player.pos, player.token)
-                            print(player.name + ":")
-                            for item in player.propList:
-                                print(item.space)
+                            blit_player_indicators(player.number, player)
+                        screen.blit(hat, (450 - 10 - 40, 30 + ((game.players.get(current - 1).number - 1) * 155)))
+                        pygame.display.update()
 
 
 screen_tracker = ScreenTracker()
-
-# run = True
-# while run:
-#
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             run = False
-#             break
-#
-#     screen_tracker.start_screen1()
-#     screen_tracker.start_screen2()
-#     screen_tracker.game_screen()
-#     pygame.display.update()
 
 pygame.quit()
