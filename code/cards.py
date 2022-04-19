@@ -133,6 +133,7 @@ class HouseHotelCard(Card):
         super().__init__(description)
 
     def execute(self):
+        pass
 
 
     @classmethod
@@ -239,12 +240,12 @@ load_all_cards()
 
 # card = JailfreeCard("jailfree")
 # print(isinstance(card, Card))
-
-cards1, cards2 = load_all_cards()
-for c in cards1:
-    print(c)
-for c1 in cards2:
-    print(c1)
+#
+# cards1, cards2 = load_all_cards()
+# for c in cards1:
+#     print(c)
+# for c1 in cards2:
+#     print(c1)
 
 # cards1, cards2 = MovementCard.load_movement_card_from_xlsx()
 # for c in cards1:
