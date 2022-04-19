@@ -77,6 +77,18 @@ class MovementCard(Card):
         self.pass_go = pass_go
         super().__init__(description)
 
+    def execute(self, player):
+        if self.relative_pos:
+            player.move_player(self.tile-1)
+        else:
+            if self.tile > 0:
+             player.move_player_forward(self.tile) ##add new method to move forward or backward with minus
+            else:
+                player.move_player_backward(self.tile)
+        if player.pos > self.tile-1:
+            if self.pass_go:
+                player.add_money(200)
+
     @classmethod
     def load_movement_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
         workbook = openpyxl.load_workbook(path)
@@ -119,6 +131,10 @@ class HouseHotelCard(Card):
         self.house_amount = house_amount
         self.hotel_amount = hotel_amount
         super().__init__(description)
+
+    def execute(self):
+        pass
+
 
     @classmethod
     def load_hh_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
@@ -217,13 +233,14 @@ def load_all_cards():
 
     return potluck,opportunity
 
+
 load_all_cards()
 
 
 
 # card = JailfreeCard("jailfree")
 # print(isinstance(card, Card))
-
+#
 # cards1, cards2 = load_all_cards()
 # for c in cards1:
 #     print(c)

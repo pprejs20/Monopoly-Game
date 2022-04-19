@@ -3,7 +3,7 @@ import random
 
 class Player:
     # TODO: Double check if the start money is correct
-    def __init__(self, name, pos=1, money=1500, propList=[], laps=0, token=None):
+    def __init__(self, name, pos=1, money=1500, propList=[], laps=0, token=None, number=None):
         self.pos = pos
         self.money = money
         self.propList = propList
@@ -13,6 +13,7 @@ class Player:
         self.doubles_count = 0
         self.jailed = False
         self.jail_term = 0
+        self.number = number
 
     def add_prop(self, tile):
         self.propList.append(tile)
