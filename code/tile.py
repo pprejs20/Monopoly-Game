@@ -4,7 +4,8 @@ import openpyxl
 class Tile:
     def __init__(self, pos, space, group, action, buyable, cost,
                  base_rent, one_house_rent, two_house_rent, three_house_rent, four_house_rent,
-                 hotel_rent):
+                 hotel_rent, no_of_houses=0):
+        self.no_of_houses = no_of_houses
         self.pos = pos
         self.space = space
         self.group = group
@@ -58,6 +59,7 @@ class Tile:
                               row_data[8], row_data[9], row_data[10], row_data[11]))
 
         return tiles
+
 
     def __str__(self):
         string = "----------- Tile -----------\n"
