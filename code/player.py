@@ -3,10 +3,15 @@ import random
 
 class Player:
     # TODO: Double check if the start money is correct
-    def __init__(self, name, pos=1, money=1500, propList=[], laps=0, token=None, number=None):
+    def __init__(self, name, pos=1, money=1500, propList=None, laps=0, token=None, number=None):
         self.pos = pos
         self.money = money
-        self.propList = propList
+
+        if propList is None:
+            self.propList = []
+        else:
+            self.propList = propList
+
         self.laps = laps
         self.name = name
         self.token = token
@@ -14,6 +19,7 @@ class Player:
         self.jailed = False
         self.jail_term = 0
         self.number = number
+        self.monopolies = []
 
     def add_prop(self, tile):
         self.propList.append(tile)
@@ -78,6 +84,36 @@ class Player:
         tile.owner = self.name
         self.add_prop(tile)
 
+        if tile.group in tiles_of_color.keys():
+            num = self.count_color(tile.group)
+
+            if num == tiles_of_color[tile.group]:
+                self.monopolies.append(tile.group)
+
+
+
+
+    def has_monopoly(self):
+        return True if len(self.monopolies) > 0 else False
+
+    def get_monopolies(self):
+        return self.monopolies
+
+    def count_color(self, color):
+        count = 0
+        for prop in self.propList:
+            if prop.group == color:
+                count += 1
+        return color
+
+    def get_props_of_color(self, color):
+        props = []
+        for prop in self.propList:
+            if prop.group == color:
+                props.append(prop)
+        return props
+
+
     def __str__(self):
         string = "----------- Player -----------\n"
         string += "Name: {}\n".format(self.name)
@@ -93,7 +129,24 @@ class Player:
 class AIPlayer(Player):
     player_count = 1
 
-    def __init__(self, pos=0, money=1500, propList=[], laps=0, token=None):
+    def __init__(self, pos=0, money=1500, propList=None, laps=0, token=None):
+        if propList is None:
+            propList = []
+        else:
+            pass
+        self.propList = [] if propList is None else propList
         name = "AI Player " + str(AIPlayer.player_count)
         AIPlayer.player_count += 1
         super().__init__(name, pos, money, propList, laps, token)
+
+
+tiles_of_color = {
+    "Brown": 2,
+    "Blue": 3,
+    "Purple": 3,
+    "Orange": 3,
+    "Red": 3,
+    "Yellow": 3,
+    "Green": 3,
+    "Deep blue": 2
+}
