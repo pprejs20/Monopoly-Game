@@ -4,6 +4,7 @@ from pygame.locals import *
 from cards import load_all_cards
 from player import Player, AIPlayer, tiles_of_color
 from tile import Tile
+from inter import Intermediary
 import random
 
 
@@ -19,6 +20,7 @@ class Game:
         self.doubles_counter = 0
         self.current_d1 = None
         self.current_d2 = None
+        self.gui = Intermediary()
 
     @classmethod
     def get_cards(cls):
@@ -42,6 +44,7 @@ class Game:
         self.current_d2 = d2
         dice_sum = d1 + d2
         player.move_player_forward(dice_sum)
+        self.gui.gui_roll_dice(self, player, d1, d2)
         self.check_player_position(player)
         print("[{}] rolled: {}".format(player.name, dice_sum))
 
@@ -119,6 +122,7 @@ class Game:
         temp_queue.remove_by_name(player.name)
         curr_price = tile.cost - 50 # - 50 because the first raise will be the original price of the property (min raise 50)
         money_placed = False
+        self.gui.gui_auction_prop(tile)
         while not (temp_queue.get_length() == 0):
             curr_player = temp_queue.next_object()
             # Only one player left and has already raised, they win
@@ -138,6 +142,7 @@ class Game:
             return
         curr_player = temp_queue.get(0)
         curr_player.buy_property(tile, cost=curr_price)
+        self.gui.gui_buy_prop(curr_player, tile)
         print("({}) Bought property: {}, for ${}".format(curr_player.name, tile.space, curr_price))
 
     def display_auction_menu(self, player, tile, curr_price):
@@ -150,7 +155,9 @@ class Game:
         string += "3. Raise $100\n"
         string += "4. Raise $500\n"
         string += "Choose an option: "
-        inpt = input(string)
+
+        response = self.gui.gui_auction_menu(player, curr_price)
+        inpt = response
 
         if inpt == "1":
             return curr_price, True
@@ -162,6 +169,7 @@ class Game:
             return curr_price + 500, False
 
     def auction_menu_ai(self, player, tile, curr_price):
+        self.gui.gui_auction_menu(player, curr_price)
         if player.money >= curr_price + 500:
             inpt = random.choice(["1", "2", "3", "4"])
         elif player.money >= curr_price + 100:
@@ -181,16 +189,18 @@ class Game:
             return curr_price + 500, False
 
     def check_property(self, player):
-        tile = self.tiles[player.pos]
+        tile = self.tiles[player.pos-1]
         if tile.owner is None:
             if player.laps > 0:
                 if player.money >= tile.cost:
+                    response = self.gui.gui_offer_prop(player)
                     if isinstance(player, AIPlayer):
                         inpt = random.choice(["y", "n"])
                     else:
-                        inpt = input("[{}] buy property y/n: ".format(player.name))
+                        inpt = response
                     if inpt == "y":
                         player.buy_property(tile)
+                        self.gui.gui_buy_prop(player)
                         print("[{}] Bought {} for {}".format(player.name, tile.space, tile.cost))
                     elif inpt == "n":
                         self.auction_property(tile, player)
@@ -222,16 +232,24 @@ class Game:
 
     def check_player_position(self, player):
         # TODO: A lot more checks for things such as free parking, properties, etc
-        tile = self.tiles[player.pos]
-
+        tile = self.tiles[player.pos-1]
+        self.gui.gui_check_player_location(player)
         if tile.group == "Go to jail":
             player.jail()
+            self.gui.gui_go_jail(player)
         elif tile.buyable:
             self.check_property(player)
         elif tile.space == "Pot Luck":
             pot = self.pot_cards.next_object()
+            self.gui.gui_pot_luck(pot)
+            # pot.execute(player, self.players, self)
+        elif tile.space == "Opportunity Knocks":
+            opp = self.opp_cards.next_object()
+            self.gui.gui_opp_knocks(opp)
+            # opp.execute(player, self.players, self)
         elif tile.space == "Free Parking":
             player.add_money(self.free_parking_money)
+            self.gui.gui_free_parking()
             print("[{}] Collected ${} from free parking money".format(player.name, self.free_parking_money))
             self.free_parking_money = 0
         elif tile.space == "Income Tax":
@@ -309,4 +327,5 @@ class PlayerQueue(Queue):
         # Landing on someones tile
 # TODO: Allow players to buy houses on properties if they have all the colors
 # TODO: Collect money from free parking
+
 # TODO: Finish Check monopoly
