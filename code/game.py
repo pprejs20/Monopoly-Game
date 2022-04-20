@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from cards import load_all_cards
-from player import Player, AIPlayer
+from player import Player, AIPlayer, tiles_of_color
 from tile import Tile
 import random
 
@@ -51,7 +51,37 @@ class Game:
             self.next_step(player)
 
         self.doubles_counter = 0
-        # TODO: doubles_count has to be reset at the end, after recursive call
+        if player.has_monopoly() and not doubles:
+            self.check_monopoly(player)
+
+    def check_monopoly(self, player):
+        # TODO: Finish this
+        available_props = self.get_house_available_props(player)
+        
+        pass
+
+
+    def get_house_available_props(self, player):
+        monopolies = player.get_monopolies()
+        available_props = []
+        for mon in monopolies:
+            props = player.get_props_of_color(mon)
+            house_nos = self.get_prop_houses(props)
+            min_houses = min(house_nos)
+            max_houses = max(house_nos)
+            assert not max_houses - min_houses > 1
+            for prop in props:
+                if prop.no_of_houses == min_houses:
+                    available_props.append(prop)
+        return available_props
+
+    def get_prop_houses(self, props):
+        house_nos = []
+        for prop in props:
+            house_nos.append(prop.no_of_houses)
+        return house_nos
+
+
 
     def jailed_player(self, player):
         assert player.is_jailed()
@@ -263,6 +293,7 @@ class PlayerQueue(Queue):
         raise Exception("No player with that name! (removing)")
 
 
+
 # players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
 players = [AIPlayer(), AIPlayer(), AIPlayer(), AIPlayer()]
 game = Game(players)
@@ -274,3 +305,4 @@ for i in range(250):
 # TODO: Make player sell properties if they run out of money
 # TODO: Allow players to buy houses on properties if they have all the colors
 # TODO: Collect money from free parking
+# TODO: Finish Check monopoly
