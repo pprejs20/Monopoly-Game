@@ -104,7 +104,7 @@ class Player:
         for prop in self.propList:
             if prop.group == color:
                 count += 1
-        return color
+        return count
 
     def get_props_of_color(self, color):
         props = []
