@@ -132,8 +132,14 @@ class HouseHotelCard(Card):
         self.hotel_amount = hotel_amount
         super().__init__(description)
 
-    def execute(self):
-        pass
+    def execute(self, player):
+        houseCount = 0
+        hotelCount = 0
+        for prop in player.propList:
+            houseCount += prop.no_of_houses
+            hotelCount += prop.no_of_hotel
+        player.deduct_money(houseCount*self.house_amount)
+        player.deduct_money(hotelCount*self.hotel_amount)
 
 
     @classmethod
@@ -166,6 +172,9 @@ class HouseHotelCard(Card):
 class JailfreeCard(Card):
     def __init__(self, description):
         super().__init__(description)
+
+    def execute(self,player):
+        pass
 
     @classmethod
     def load_jail_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
