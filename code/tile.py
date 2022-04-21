@@ -60,6 +60,13 @@ class Tile:
 
         return tiles
 
+    def add_house(self):
+        assert self.no_of_houses != 5
+        self.no_of_houses += 1
+
+    def remove_house(self):
+        assert self.no_of_houses > 0
+        self.no_of_houses -= 1
 
     def __str__(self):
         string = "----------- Tile -----------\n"

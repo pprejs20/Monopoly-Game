@@ -56,10 +56,31 @@ class Game:
 
     def check_monopoly(self, player):
         # TODO: Finish this
-        available_props = self.get_house_available_props(player)
-        
-        pass
+        inpt = None
+        while input != 1:
+            available_props = self.get_house_available_props(player)
+            string = "1. Leave\n"
+            string += self.consturct_prop_strings(available_props)
+            string += "\nSelect an option: "
+            inpt = int(input(string))
 
+            if inpt == 1:
+                return
+            elif inpt > 1:
+                self.buy_house(available_props[inpt - 2], player)
+
+    def buy_house(self, prop, player):
+        player.deduct_money(house_costs[prop.group])
+        prop.add_house()
+
+
+    def consturct_prop_strings(self, props):
+        string = ""
+        counter = 2
+        for prop in props:
+            string += "{}. {}, {}, ${} per house\n".format(counter, prop.space, prop.group, house_costs[prop.group])
+            counter += 1
+        return string
 
     def get_house_available_props(self, player):
         monopolies = player.get_monopolies()
@@ -80,8 +101,6 @@ class Game:
         for prop in props:
             house_nos.append(prop.no_of_houses)
         return house_nos
-
-
 
     def jailed_player(self, player):
         assert player.is_jailed()
@@ -292,12 +311,25 @@ class PlayerQueue(Queue):
                 return
         raise Exception("No player with that name! (removing)")
 
+house_costs = {
+    "Brown": 50,
+    "Blue": 50,
+    "Purple": 100,
+    "Orange": 100,
+    "Red": 150,
+    "Yellow": 150,
+    "Green": 200,
+    "Deep Blue": 200
+}
 
 
-# players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
+players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
 # players = [AIPlayer(), AIPlayer(), AIPlayer(), AIPlayer()]
-# game = Game(players)
+game = Game(players)
 
+game.players.objects[0].buy_property(game.tiles[1])
+game.players.objects[0].buy_property(game.tiles[3])
+game.next_step()
 # for i in range(250):
 #     game.next_step()
 
