@@ -52,7 +52,7 @@ class Player:
 
     def jail(self):
         self.jailed = True
-        self.set_pos(10)
+        self.set_pos(11)
 
     def unjail(self):
         self.jailed = False

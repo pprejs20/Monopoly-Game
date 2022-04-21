@@ -167,12 +167,11 @@ def blit_player_indicators(player_no, player):
     screen.blit(playerTemplate, (0, (22.5 + y_inc)))
     font1 = pygame.font.SysFont('franklingothicmediumcond', 30)
     name = font1.render(player.name, True, WHITE)
-    money = font1.render(str(player.money), True, WHITE)
-    screen.blit(name, (10, (22.5 + y_inc)))
-    screen.blit(money, (250, (22.5 + y_inc)))
+    money = font1.render("£" + str(player.money), True, WHITE)
+    screen.blit(name, (10, (27 + y_inc)))
+    screen.blit(money, (287, (27 + y_inc)))
     for prop in player.propList:
         indicator = player_prop_ind[prop.space][0]
-        indicator = pygame.transform.scale(indicator, (29, 42))
         x = player_prop_ind[prop.space][1][0]
         y = player_prop_ind[prop.space][1][1] + y_inc
         screen.blit(indicator, (x, y))
@@ -819,7 +818,7 @@ class ScreenTracker:
                         self.name_chosen = self.name_chosen[:-1]
                     elif event.key == pygame.K_RETURN and len(self.name_chosen) > 0:
                         input_active = False
-                    elif len(self.name_chosen) < 21:
+                    elif len(self.name_chosen) < 13:
                         self.name_chosen += event.unicode
 
                 pygame.draw.rect(screen, (100, 100, 100), pygame.Rect(126, 130, 525, 50))
@@ -945,6 +944,12 @@ class ScreenTracker:
         screen.blit(board, (450, 0))
         screen.blit(board_right, (1425, 0))
         get_text()
+        font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
+        fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
+        fp_rect = fp_txt.get_rect()
+        fp_rect.centerx = 937.5
+        fp_rect.centery = 487.5
+        screen.blit(fp_txt, fp_rect)
         blit_bank_prop()
         pygame.display.update()
         # get the inputted names and chosen tokens for each player
@@ -1011,6 +1016,7 @@ class ScreenTracker:
 
     def game_loop(self, game):
         dice_rolled = False
+        turn_ended = True
         while self.playing_game:
             pygame.display.update()
             for event in pygame.event.get():
@@ -1019,13 +1025,21 @@ class ScreenTracker:
                     break
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
-                    if 1460 <= mouse_pos[0] <= 1545 and 910 <= mouse_pos[1] <= 965:
+                    if 1460 <= mouse_pos[0] <= 1545 and 910 <= mouse_pos[1] <= 965 and turn_ended:
                         dice_rolled = True
+                        turn_ended = False
                         self.game.next_step()
                     if 1555 <= mouse_pos[0] <= 1640 and 910 <= mouse_pos[1] <= 965 and dice_rolled:
                         dice_rolled = False
+                        turn_ended = True
                         screen.blit(board, (450, 0))
                         get_text()
+                        font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
+                        fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
+                        fp_rect = fp_txt.get_rect()
+                        fp_rect.centerx = 937.5
+                        fp_rect.centery = 487.5
+                        screen.blit(fp_txt, fp_rect)
                         for i in range(game.players.get_length()):
                             player = game.players.get(i)
                             token_blit(player.number, player.pos, player.token)
