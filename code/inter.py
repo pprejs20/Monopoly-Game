@@ -118,7 +118,7 @@ for key in bank_prop_list:
         x = 2
         y += 50
     ind = bank_prop_list[key]
-    ind = pygame.transform.scale(ind, (30, 43))
+    ind = pygame.transform.scale(ind, (29, 42))
     player_prop_ind[key] = (ind, (x, y))
     x += 32
     i += 1
@@ -157,8 +157,8 @@ def blit_player_indicators(player_no, player):
     font1 = pygame.font.SysFont('franklingothicmediumcond', 30)
     name = font1.render(player.name, True, WHITE)
     money = font1.render("£" + str(player.money), True, WHITE)
-    screen.blit(name, (10, (27 + y_inc)))
-    screen.blit(money, (287, (27 + y_inc)))
+    screen.blit(name, (10, (30 + y_inc)))
+    screen.blit(money, (287, (30 + y_inc)))
     for prop in player.propList:
         indicator = player_prop_ind[prop.space][0]
         x = player_prop_ind[prop.space][1][0]
@@ -531,7 +531,7 @@ class Intermediary:
         screen.blit(no, no_rect)
         pygame.display.update()
         if isinstance(player, AIPlayer):
-            pygame.time.wait(3000)
+            pygame.time.wait(1000)
             response = random.choice(["y", "n"])
         else:
             response = None
@@ -554,7 +554,6 @@ class Intermediary:
                             1] <= no_button.bottom:
                             pay = False
                             response = "n"
-        self.gui_reblit_board()
         return response
 
     def gui_pay_to_leave(self, player):
@@ -566,7 +565,7 @@ class Intermediary:
         line2.y = 350
         screen.blit(line2, line2_rect)
         pygame.display.update()
-        pygame.time.wait(3000)
+        pygame.time.wait(1000)
 
     def gui_roll_to_leave(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
@@ -575,6 +574,16 @@ class Intermediary:
         line2_rect = line2.get_rect()
         line2_rect.centerx = 937.5
         line2.y = 350
+        screen.blit(line2, line2_rect)
+        pygame.display.update()
+
+    def gui_leave(self, player):
+        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
+        line2 = font2.render("{}, you've rolled a double and are now free!".format(player.name), True, BLACK)
+        line2_rect = line2.get_rect()
+        line2_rect.centerx = 937.5
+        line2_rect.y = 350
         screen.blit(line2, line2_rect)
         pygame.display.update()
 
@@ -590,11 +599,13 @@ class Intermediary:
 
     def gui_roll_dice(self, player, roll1, roll2):
         # self.gui_reblit_left()
-        for i in range (5):
+        for i in range(4):
             screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (858.75, (975 - tile_height - 70)))
             screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (966.25, (975 - tile_height - 70)))
             pygame.display.update()
-            pygame.time.wait(800)
+            pygame.time.wait(300)
+        screen.blit(board, (450, 0))
+        get_text()
         screen.blit(dice_images[roll1], (858.75, (975 - tile_height - 70)))
         screen.blit(dice_images[roll2], (966.25, (975 - tile_height - 70)))
         for i in range(self.game.players.get_length()):
@@ -693,7 +704,7 @@ class Intermediary:
         screen.blit(no, no_rect)
         pygame.display.update()
         if isinstance(curr_player, AIPlayer):
-            pygame.time.wait(3000)
+            pygame.time.wait(1000)
             response = random.choice(["y", "n"])
         else:
             buying_prop = True
@@ -716,12 +727,18 @@ class Intermediary:
                             1] <= no_button.bottom:
                             buying_prop = False
                             response = "n"
-        self.gui_reblit_board()
         return response
 
     def gui_buy_prop(self, curr_player, tile=None,):
+        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
         if tile is None:
             tile = tiles[curr_player.pos - 1]
+        line3 = font2.render("{} has bought ".format(curr_player.name) + "{}!".format(tile.space), True, BLACK)
+        line3_rect = line3.get_rect()
+        line3_rect.centerx = 937.5
+        line3_rect.y = 350
+        screen.blit(line3, line3_rect)
         # set transparency of image at bank_prop_list[current_tile] to be 0 (disappear from rhs)
         bank_prop_list[tile.space].set_alpha(0)
         # reblit rhs
@@ -786,7 +803,7 @@ class Intermediary:
         screen.blit(fhund_txt, fhund_txt_rect)
         pygame.display.update()
         if isinstance(player, AIPlayer):
-            pygame.time.wait(3000)
+            pygame.time.wait(1000)
             if player.money >= curr_price + 500:
                 response = random.choice(["1", "2", "3", "4"])
             elif player.money >= curr_price + 100:

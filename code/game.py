@@ -126,6 +126,7 @@ class Game:
             self.gui.gui_roll_dice(player, d1, d2)
             if doubles:
                 player.unjail()
+                self.gui.gui_leave(player)
                 print("[{}] You have rolled a double, you are now free!".format(player.name))
                 return
             else:
@@ -164,7 +165,6 @@ class Game:
         curr_player = temp_queue.get(0)
         curr_player.buy_property(tile, cost=curr_price)
         self.gui.gui_buy_prop(curr_player, tile)
-        self.gui.gui_reblit_board()
         print("({}) Bought property: {}, for ${}".format(curr_player.name, tile.space, curr_price))
 
     def display_auction_menu(self, player, tile, curr_price):

@@ -129,7 +129,7 @@ for key in bank_prop_list:
         x = 2
         y += 50
     ind = bank_prop_list[key]
-    ind = pygame.transform.scale(ind, (30, 43))
+    ind = pygame.transform.scale(ind, (29, 42))
     player_prop_ind[key] = (ind, (x, y))
     x += 32
     i += 1
@@ -168,8 +168,8 @@ def blit_player_indicators(player_no, player):
     font1 = pygame.font.SysFont('franklingothicmediumcond', 30)
     name = font1.render(player.name, True, WHITE)
     money = font1.render("£" + str(player.money), True, WHITE)
-    screen.blit(name, (10, (27 + y_inc)))
-    screen.blit(money, (287, (27 + y_inc)))
+    screen.blit(name, (10, (30 + y_inc)))
+    screen.blit(money, (287, (30 + y_inc)))
     for prop in player.propList:
         indicator = player_prop_ind[prop.space][0]
         x = player_prop_ind[prop.space][1][0]
@@ -824,7 +824,7 @@ class ScreenTracker:
                 pygame.draw.rect(screen, (100, 100, 100), pygame.Rect(126, 130, 525, 50))
                 show_name = font.render(self.name_chosen, True, (255, 255, 255))
                 screen.blit(show_name, (150, 132))
-                pygame.display.flip()
+                pygame.display.update()
 
     def choose_token(self):
         self.token_chosen = None
@@ -940,6 +940,10 @@ class ScreenTracker:
 
     def game_screen(self):
         # while self.playing_game:
+        pygame.display.set_mode(game_size)
+        screen.blit(board, (450, 0))
+        screen.blit(board_right, (1425, 0))
+        get_text()
         # get the inputted names and chosen tokens for each player
         player_list = self.names_and_tokens
         # create a list for the players
@@ -993,10 +997,6 @@ class ScreenTracker:
         self.pot_luck = game.pot_cards
         self.opp_knocks = game.opp_cards
         # blit the board, text, and free parking
-        pygame.display.set_mode(game_size)
-        screen.blit(board, (450, 0))
-        screen.blit(board_right, (1425, 0))
-        get_text()
         font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
         fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
         fp_rect = fp_txt.get_rect()
@@ -1044,7 +1044,7 @@ class ScreenTracker:
                         for i in range(game.players.get_length()):
                             player = game.players.get(i)
                             token_blit(player.number, player.pos, player.token)
-                            blit_player_indicators(player.number, player)
+                            # blit_player_indicators(player.number, player)
                         screen.blit(hat, (450 - 10 - 40, 30 + ((game.players.get(0).number - 1) * 155)))
                         pygame.display.update()
 
