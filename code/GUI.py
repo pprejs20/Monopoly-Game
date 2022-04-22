@@ -940,18 +940,6 @@ class ScreenTracker:
 
     def game_screen(self):
         # while self.playing_game:
-        pygame.display.set_mode(game_size)
-        screen.blit(board, (450, 0))
-        screen.blit(board_right, (1425, 0))
-        get_text()
-        font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
-        fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
-        fp_rect = fp_txt.get_rect()
-        fp_rect.centerx = 937.5
-        fp_rect.centery = 487.5
-        screen.blit(fp_txt, fp_rect)
-        blit_bank_prop()
-        pygame.display.update()
         # get the inputted names and chosen tokens for each player
         player_list = self.names_and_tokens
         # create a list for the players
@@ -1004,6 +992,19 @@ class ScreenTracker:
         # get the cards
         self.pot_luck = game.pot_cards
         self.opp_knocks = game.opp_cards
+        # blit the board, text, and free parking
+        pygame.display.set_mode(game_size)
+        screen.blit(board, (450, 0))
+        screen.blit(board_right, (1425, 0))
+        get_text()
+        font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
+        fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
+        fp_rect = fp_txt.get_rect()
+        fp_rect.centerx = 937.5
+        fp_rect.centery = 487.5
+        screen.blit(fp_txt, fp_rect)
+        blit_bank_prop()
+        pygame.display.update()
         # blit the players tokens
         for player in players:
             token_blit(player.number, player.pos, player.token)

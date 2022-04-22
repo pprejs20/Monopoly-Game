@@ -115,12 +115,15 @@ class Game:
             print("[{}] Doesn't have enough money to leave jail (£{})".format(player.name, player.money))
 
         if response == 'y':
+            self.gui.gui_pay_to_leave(player)
             player.deduct_money(50)
             self.free_parking_money += 50
             player.unjail()
             self.gui.gui_reblit_all()
         else:
             d1, d2, doubles = player.roll_dice()
+            self.gui.gui_roll_to_leave(player)
+            self.gui.gui_roll_dice(player, d1, d2)
             if doubles:
                 player.unjail()
                 print("[{}] You have rolled a double, you are now free!".format(player.name))

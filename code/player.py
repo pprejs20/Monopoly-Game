@@ -129,7 +129,7 @@ class Player:
 class AIPlayer(Player):
     player_count = 1
 
-    def __init__(self, pos=0, money=1500, propList=None, laps=0, token=None):
+    def __init__(self, pos=1, money=1500, propList=None, laps=0, token=None):
         if propList is None:
             propList = []
         else:

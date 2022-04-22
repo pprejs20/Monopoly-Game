@@ -513,7 +513,7 @@ class Intermediary:
         line2 = font2.render("Do you want to pay £50 to leave jail?", True, BLACK)
         line2_rect = line2.get_rect()
         line2_rect.centerx = 937.5
-        line2_rect.y = line1_rect.bottom + 20
+        line2_rect.y = line1_rect.bottom + 30
         screen.blit(line2, line2_rect)
         # make yes button
         yes_button = pygame.Rect(base.x + 40, base.bottom - 90, 70, 50)
@@ -557,6 +557,27 @@ class Intermediary:
         self.gui_reblit_board()
         return response
 
+    def gui_pay_to_leave(self, player):
+        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
+        line2 = font2.render("You pay £50 to leave jail!", True, BLACK)
+        line2_rect = line2.get_rect()
+        line2_rect.centerx = 937.5
+        line2.y = 350
+        screen.blit(line2, line2_rect)
+        pygame.display.update()
+        pygame.time.wait(3000)
+
+    def gui_roll_to_leave(self, player):
+        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
+        line2 = font2.render("Rolling for a double to leave jail!", True, BLACK)
+        line2_rect = line2.get_rect()
+        line2_rect.centerx = 937.5
+        line2.y = 350
+        screen.blit(line2, line2_rect)
+        pygame.display.update()
+
     def gui_go(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
@@ -565,13 +586,21 @@ class Intermediary:
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        pygame.display.update()
 
     def gui_roll_dice(self, player, roll1, roll2):
-        self.gui_reblit_board()
-        self.gui_reblit_left()
+        # self.gui_reblit_left()
+        for i in range (5):
+            screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (858.75, (975 - tile_height - 70)))
+            screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (966.25, (975 - tile_height - 70)))
+            pygame.display.update()
+            pygame.time.wait(800)
         screen.blit(dice_images[roll1], (858.75, (975 - tile_height - 70)))
         screen.blit(dice_images[roll2], (966.25, (975 - tile_height - 70)))
-        screen.blit(hat, (450 - 10 - 40, 30 + (player.number - 1) * 155))
+        for i in range(self.game.players.get_length()):
+            player = self.game.players.get(i)
+            token_blit(player.number, player.pos, player.token)
+        # screen.blit(hat, (450 - 10 - 40, 30 + (player.number - 1) * 155))
         pygame.display.update()
 
     def gui_check_player_location(self, player):
