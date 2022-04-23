@@ -58,8 +58,10 @@ class Game:
     def check_monopoly(self, player):
         # TODO: Finish this
         inpt = None
+        first_time = True
         while input != 1:
-            available_props = self.get_house_available_props(player)
+            available_props = self.get_house_available_props(player, first_time)
+            first_time = False
             string = "1. Leave\n"
             string += self.consturct_prop_strings(available_props)
             string += "\nSelect an option: "
@@ -79,11 +81,11 @@ class Game:
         string = ""
         counter = 2
         for prop in props:
-            string += "{}. {}, {}, £{} per house\n".format(counter, prop.space, prop.group, house_costs[prop.group])
+            string += "{}. {}, {}, Current Houses: {}, ${} per house\n".format(counter, prop.space, prop.group, prop.no_of_houses, house_costs[prop.group])
             counter += 1
         return string
 
-    def get_house_available_props(self, player):
+    def get_house_available_props(self, player, first_time):
         monopolies = player.get_monopolies()
         available_props = []
         for mon in monopolies:
@@ -93,7 +95,13 @@ class Game:
             max_houses = max(house_nos)
             assert not max_houses - min_houses > 1
             for prop in props:
+                if prop.no_of_houses == 5:
+                    continue
                 if prop.no_of_houses == min_houses:
+                    if prop.no_of_houses == 4 and not first_time:
+                        continue
+                    else:
+                        hotel_allowed.append(False)
                     available_props.append(prop)
         return available_props
 
@@ -357,7 +365,7 @@ house_costs = {
 
 
 # players = [Player("Player1"), Player("Player2"), Player("Player3"), Player("Player4")]
-# # players = [AIPlayer(), AIPlayer(), AIPlayer(), AIPlayer()]
+# players = [AIPlayer(), AIPlayer(), AIPlayer(), AIPlayer()]
 # game = Game(players)
 #
 # game.players.objects[0].buy_property(game.tiles[1])
