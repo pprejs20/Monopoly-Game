@@ -79,12 +79,9 @@ class MovementCard(Card):
 
     def execute(self, player):
         if self.relative_pos:
-            player.move_player(self.tile-1)
+            player.set_pos(self.tile-1)
         else:
-            if self.tile > 0:
-             player.move_player_forward(self.tile) ##add new method to move forward or backward with minus
-            else:
-                player.move_player_backward(self.tile * -1)
+            player.move_player(self.tile)
         if player.pos > self.tile-1:
             if self.pass_go:
                 player.add_money(200)
@@ -172,6 +169,9 @@ class HouseHotelCard(Card):
 class JailfreeCard(Card):
     def __init__(self, description):
         super().__init__(description)
+
+    def execute(self, player):
+        player.jailCard += 1
 
     @classmethod
     def load_jail_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):

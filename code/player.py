@@ -3,7 +3,8 @@ import random
 
 class Player:
     # TODO: Double check if the start money is correct
-    def __init__(self, name, pos=1, money=1500, propList=None, laps=0, token=None, number=None):
+    def __init__(self, name, pos=1, money=1500, propList=None, laps=0, token=None, number=None, jailCard=0):
+        self.jailCard = jailCard
         self.pos = pos
         self.money = money
 

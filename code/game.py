@@ -105,6 +105,15 @@ class Game:
 
     def jailed_player(self, player):
         assert player.is_jailed()
+
+        if player.jailCard > 0:
+            input = str(input("use get out of jail card"))
+            if input == "y":
+                player.jailCard -= 1
+                player.unjail()
+            else:
+                pass
+
         if player.money >= 50:
             # if isinstance(player, AIPlayer):
             #     response = random.choice(["y", "n"])
