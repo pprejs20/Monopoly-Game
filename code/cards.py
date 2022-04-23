@@ -84,7 +84,7 @@ class MovementCard(Card):
             if self.tile > 0:
              player.move_player_forward(self.tile) ##add new method to move forward or backward with minus
             else:
-                player.move_player_backward(self.tile)
+                player.move_player_backward(self.tile * -1)
         if player.pos > self.tile-1:
             if self.pass_go:
                 player.add_money(200)
@@ -173,9 +173,6 @@ class JailfreeCard(Card):
     def __init__(self, description):
         super().__init__(description)
 
-    def execute(self,player):
-        pass
-
     @classmethod
     def load_jail_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
         workbook = openpyxl.load_workbook(path)
@@ -240,7 +237,7 @@ def load_all_cards():
     # for card in opportunity:
     #     print(card)
 
-    return potluck,opportunity
+    return potluck, opportunity
 
 
 load_all_cards()
@@ -249,7 +246,9 @@ load_all_cards()
 
 # card = JailfreeCard("jailfree")
 # print(isinstance(card, Card))
-#
+
+
+
 # cards1, cards2 = load_all_cards()
 # for c in cards1:
 #     print(c)
@@ -259,8 +258,10 @@ load_all_cards()
 # cards1, cards2 = MovementCard.load_movement_card_from_xlsx()
 # for c in cards1:
 #     print(c)
+#     print(type(c.tile))
 # for c1 in cards2:
 #     print(c1)
+#     print(type(c.tile))
 
 # cards1, cards2 = JailfreeCard.load_jail_card_from_xlsx()
 # for c in cards1:
