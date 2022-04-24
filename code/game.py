@@ -7,13 +7,12 @@ import random
 
 
 class Game:
+    """Main game engine class"""
     def __init__(self, players):
         self.players = PlayerQueue(players)
         self.players.shuffle()
         self.tiles = Tile.load_tiles_from_xlsx()
         self.pot_cards, self.opp_cards = Game.get_cards()
-        self.pot_cards = Queue(self.pot_cards)
-        self.opp_cards = Queue(self.opp_cards)
         self.free_parking_money = 0
         self.doubles_counter = 0
         self.current_d1 = None
@@ -22,12 +21,22 @@ class Game:
 
     @classmethod
     def get_cards(cls):
+        """
+        Gets the cards from the excel data, shuffles, and returns them in the correct format
+        :return: A tuple of two card queues, for pot luck and opportunity knocks cards respectively
+        """
+
         pot_cards, opp_cards = load_all_cards()
         random.shuffle(pot_cards)
         random.shuffle(opp_cards)
-        return pot_cards, opp_cards
+        return Queue(pot_cards), Queue(opp_cards)
 
     def next_step(self, player=None):
+        """
+        The main game loop function, it drives the game forward
+        :param player: optional parameter if a deviation from standard player queue order is required
+        """
+
         if self.doubles_counter == 3:
             player.jail()
 
@@ -56,7 +65,11 @@ class Game:
             self.check_monopoly(player)
 
     def check_monopoly(self, player):
-        # TODO: Finish this
+        """
+        This function is used to allow players to buy houses and hotels if they have a monopoly
+        :param player: the player that this procedure will be executed for
+        """
+
         inpt = None
         first_time = True
         while input != 1:
@@ -73,11 +86,23 @@ class Game:
                 self.buy_house(available_props[inpt - 2], player)
 
     def buy_house(self, prop, player):
+        """
+        This function buys a house at a property
+        :param prop: the property for which the house will be purchased
+        :param player: the player which will purchase the property
+        """
+        
         player.deduct_money(house_costs[prop.group])
         prop.add_house()
 
 
     def consturct_prop_strings(self, props):
+        """
+        Constructs the strings for the buying houses command line menu
+        :param props: a list of properties for which the s
+        :return: String of numbered property options
+        """
+
         string = ""
         counter = 2
         for prop in props:
@@ -86,6 +111,13 @@ class Game:
         return string
 
     def get_house_available_props(self, player, first_time):
+        """
+        Gets the properties that a player is able to purchase houses on
+        :param player: the player for which the properties will be checked
+        :param first_time: this parameter prevents players from being able to buy hotels before buying 4 houses
+        :return: A list of properties for which houses can be purchased
+        """
+
         monopolies = player.get_monopolies()
         available_props = []
         for mon in monopolies:
@@ -106,12 +138,23 @@ class Game:
         return available_props
 
     def get_prop_houses(self, props):
+        """
+        Makes a list of the number of houses in the corresponding properties provided by the parameter
+        :param props: A list of properties
+        :return: A list of integers corresponding to the number of houses in each property
+        """
+
         house_nos = []
         for prop in props:
             house_nos.append(prop.no_of_houses)
         return house_nos
 
     def jailed_player(self, player):
+        """
+        Procedure that takes place when a player is in jail on their turn
+        :param player: the jailed player
+        """
+
         assert player.is_jailed()
 
         if player.jailCard > 0:
@@ -119,6 +162,7 @@ class Game:
             if input == "y":
                 player.jailCard -= 1
                 player.unjail()
+                return
             else:
                 pass
 
@@ -151,11 +195,22 @@ class Game:
                 return
 
     def find_jail_position(self):
+        """
+        Finds where the jail is in the list of tiles
+        :return: position of the jail tile
+        """
+
         for t in self.tiles:
             if t.group == "Go to jail":
                 return t.pos-1
 
     def auction_property(self, tile, player):
+        """
+        Initiates auction procedure for when a player doesn't want to purchase a property they landed on
+        :param tile: the property to be auctioned
+        :param player: the player who didn't purchase the property
+        """
+
         assert tile.buyable
         temp_queue = PlayerQueue(self.players.objects.copy())
         temp_queue.remove_by_name(player.name)
@@ -185,6 +240,14 @@ class Game:
         print("({}) Bought property: {}, for ${}".format(curr_player.name, tile.space, curr_price))
 
     def display_auction_menu(self, player, tile, curr_price):
+        """
+        Shows the menu for auctioning properties
+        :param player: the player who is currently bidding
+        :param tile: the tile to be purchased
+        :param curr_price: the current price for the auction
+        :return: the new price and a boolean indicating whether player has passed
+        """
+
         # TODO: Check if player has enough money!
         string =  "-------- ({}) Tile Auction --------\n".format(player.name)
         string += "Property: {}\n".format(tile.space)
@@ -227,6 +290,10 @@ class Game:
         #     return curr_price + 500, False
 
     def check_property(self, player):
+        """
+        Procedure which takes place when a player lands on a property
+        :param player: the player whose turn it is
+        """
         tile = self.tiles[player.pos-1]
         if tile.owner is None:
             if player.laps > 0:
@@ -245,10 +312,16 @@ class Game:
                 else:
                     print("[{}] Not enough money to buy!".format(player.name))
         elif tile.owner is not None:
-            if tile.group == "Utilities":
+            if tile.group == "Utilities" and player.name != tile.owner:
                 self.check_utilities(player, tile.owner)
 
     def check_utilities(self, player, owner_name):
+        """
+        Procedure which takes place if a player lands on a owned utility
+        :param player: the player whose turn it currently is
+        :param owner_name: the name of the owner of the property
+        """
+
         owner = self.players.get_by_name(owner_name)
         count = self.count_utilities(owner)
         if count == 1:
@@ -262,6 +335,12 @@ class Game:
         owner.add_money(money_owed)
 
     def count_utilities(self, player):
+        """
+        Counts how many utilities a player owns
+        :param player: the player in question
+        :return: the number of utilities owned by the player
+        """
+
         count = 0
         for prop in player.propList:
             if prop.group == "Utilities":
@@ -269,6 +348,10 @@ class Game:
         return count
 
     def check_player_position(self, player):
+        """
+        Procedure which takes place when a player rolls dice and lands on a new tile
+        :param player: the player in question
+        """
         # TODO: A lot more checks for things such as free parking, properties, etc
         tile = self.tiles[player.pos-1]
         self.gui.gui_check_player_location(player)
@@ -304,6 +387,10 @@ class Game:
 
 
 class Queue:
+    """
+    A Queue data structure implementation
+    """
+
     def __init__(self, objects):
         self.objects = objects
 
