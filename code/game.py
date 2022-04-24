@@ -7,7 +7,10 @@ import random
 
 
 class Game:
-    """Main game engine class"""
+    """
+    Main game engine class
+    """
+
     def __init__(self, players):
         self.players = PlayerQueue(players)
         self.players.shuffle()
@@ -294,6 +297,7 @@ class Game:
         Procedure which takes place when a player lands on a property
         :param player: the player whose turn it is
         """
+
         tile = self.tiles[player.pos-1]
         if tile.owner is None:
             if player.laps > 0:
@@ -352,6 +356,7 @@ class Game:
         Procedure which takes place when a player rolls dice and lands on a new tile
         :param player: the player in question
         """
+
         # TODO: A lot more checks for things such as free parking, properties, etc
         tile = self.tiles[player.pos-1]
         self.gui.gui_check_player_location(player)
@@ -395,20 +400,45 @@ class Queue:
         self.objects = objects
 
     def shuffle(self):
+        """
+        shuffles the order of the objects
+        """
+
         random.shuffle(self.objects)
 
     def next_object(self):
+        """
+        Gives the next element in the queue and rotates the queue accordingly
+        :return: the next object in the queue
+        """
+
         object = self.objects.pop(0)
         self.objects.append(object)
         return object
 
     def get(self, i):
+        """
+        Gets a spceific element in the queue
+        :param i: The index of the element
+        :return: the element at the given index
+        """
+
         return self.objects[i]
 
     def remove(self):
+        """
+        Removes an object out of the queue without rotating the queue
+        :return: the next object in the queue
+        """
+
         return self.objects.pop(-1)
 
     def get_length(self):
+        """
+        Gives the length of the queue
+        :return: the length of the queue
+        """
+
         return len(self.objects)
 
     def __str__(self):
@@ -423,16 +453,31 @@ class Queue:
 
 
 class PlayerQueue(Queue):
+    """
+    Extension of the Queue class with additional functionality for player objects
+    """
+
     def __init__(self, players):
         super().__init__(players)
 
     def get_by_name(self, name):
+        """
+        Gets a player with the name provided from the queue
+        :param name: the name of the player
+        :return: the player with that name
+        """
+
         for obj in self.objects:
             if obj.name == name:
                 return obj
         raise Exception("No player with that name! (getting)")
 
     def remove_by_name(self, name):
+        """
+        Removes a player from the queue with a specific name
+        :param name: the name of the player
+        """
+
         for obj in self.objects:
             if obj.name == name:
                 self.objects.remove(obj)
