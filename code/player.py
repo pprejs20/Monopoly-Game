@@ -25,6 +25,7 @@ class Player:
         self.jail_term = 0
         self.number = number
         self.monopolies = []
+        self.net_worth = self.money
 
     def add_prop(self, tile):
         """
@@ -112,21 +113,25 @@ class Player:
             self.unjail()
             print("[{}] You served your time, you are now free!".format(self.name))
 
-    def deduct_money(self, amount):
+    def deduct_money(self, amount, net_worth_deduction=False):
         """
         Takes money away from the player
         :param amount: the amount of money that will be deducted
         """
 
         self.money -= amount
+        if net_worth_deduction:
+            self.net_worth -= amount
 
-    def add_money(self, amount):
+    def add_money(self, amount, net_worth_increase=True):
         """
         Gives the player money
         :param amount: the amount of money to be added
         """
 
         self.money += amount
+        if net_worth_increase:
+            self.net_worth += amount
 
     def roll_dice(self):
         """
@@ -182,7 +187,7 @@ class Player:
         :param color: the color of the properties
         :return: the number of properties owned of the specified color
         """
-        
+
         count = 0
         for prop in self.propList:
             if prop.group == color:
