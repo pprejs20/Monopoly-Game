@@ -108,6 +108,11 @@ class MovementCard(Card):
         super().__init__(description)
 
     def execute(self, player, players, game):
+        """
+        Procedure which gets executed when a player pulls this card
+        :param player: the player that pulled the card
+        """
+        
         if self.relative_pos:
             player.set_pos(self.tile-1)
         else:
@@ -169,7 +174,12 @@ class HouseHotelCard(Card):
         self.hotel_amount = hotel_amount
         super().__init__(description)
 
-    def execute(self, player, players, game):8
+    def execute(self, player, players, game):
+        """
+        Procedure which gets executed when a player pulls this card
+        :param player: the player that pulled the card
+        """
+
         houseCount = 0
         hotelCount = 0
         for prop in player.propList:
@@ -221,6 +231,11 @@ class JailfreeCard(Card):
         super().__init__(description)
 
     def execute(self, player, players, game):
+        """
+        Procedure which gets executed when a player pulls this card
+        :param player: the player that pulled the card
+        """
+
         player.jailCard += 1
 
     @classmethod
