@@ -2,6 +2,10 @@ import openpyxl
 
 
 class Tile:
+    """
+    A class for all necessary functionality involving tiles and properties on the board 
+    """
+
     def __init__(self, pos, space, group, action, buyable, cost,
                  base_rent, one_house_rent, two_house_rent, three_house_rent, four_house_rent,
                  hotel_rent, no_of_houses=0):
@@ -22,6 +26,12 @@ class Tile:
 
     @classmethod
     def parse_bool(cls, data):
+        """
+        Turns string "yes" and "no" values to True or false boolean datatypes 
+        :param data: the string that the boolean will be derived from
+        :return: True if input is "yes", False if input is "no" 
+        """
+
         if data == 'Yes':
             return True
         elif data == 'No':
@@ -32,6 +42,12 @@ class Tile:
 
     @classmethod
     def load_tiles_from_xlsx(cls, path="ExcelData/PropertyTycoonBoardData.xlsx"):
+        """
+        Loads all the cards from the xlsx data 
+        :param path: the path to the xlsx data
+        :return: a list of Tile objects derived from the xlsx data
+        """
+
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
         tiles = []
@@ -61,10 +77,18 @@ class Tile:
         return tiles
 
     def add_house(self):
+        """
+        Adds a house to the property
+        """
+
         assert self.no_of_houses != 5
         self.no_of_houses += 1
 
     def remove_house(self):
+        """
+        Removed a house from the property 
+        """
+
         assert self.no_of_houses > 0
         self.no_of_houses -= 1
 
@@ -88,6 +112,13 @@ class Tile:
 
 
 def get_cell_ref(row, col):
+    """
+    Gets xlsx cell reference given the row and column 
+    :param row: row number 
+    :param col: column number 
+    :return: A string designating a cell in excel 
+    """
+
     # chr(65) is A in ASCII
     return "" + chr(64 + col) + str(row)
 
