@@ -112,13 +112,13 @@ for i in [2, 4, 7, 9, 10, 12, 14, 15, 17, 19, 20, 22, 24, 25, 27, 28, 30, 32, 33
 player_prop_ind = {}
 i = 1
 x = 2
-y = 77.5
+y = 76
 for key in bank_prop_list:
     if i == 15:
         x = 2
         y += 50
     ind = bank_prop_list[key]
-    ind = pygame.transform.scale(ind, (29, 42))
+    ind = pygame.transform.scale(ind, (29, 43))
     player_prop_ind[key] = (ind, (x, y))
     x += 32
     i += 1
@@ -164,6 +164,9 @@ def blit_player_indicators(player_no, player):
         x = player_prop_ind[prop.space][1][0]
         y = player_prop_ind[prop.space][1][1] + y_inc
         screen.blit(indicator, (x, y))
+    if player.jailCard > 0:
+        card = pygame.transform.scale(gjf, (29, 43))
+        screen.blit(card, (227, 28.5))
     pygame.display.update()
 
 
@@ -291,6 +294,15 @@ def get_text():
                 price_img_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
                 price_img_rect.y = (tiles_coord[curr_pos - 1][1] + tile_height) - (2 + price_img_rect.height)
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
+                    screen.blit(houses_img, houses_rect)
+
 
             # for the left row
             elif curr_pos < 21:
@@ -316,6 +328,15 @@ def get_text():
                 price_img_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
                 price_img_rect.x = (tiles_coord[curr_pos - 1][0] - tile_height) + 2
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    pygame.transform.rotate(houses_img, -90)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
+                    houses_rect.x = tiles_coord[curr_pos - 1][0] - 2
+                    screen.blit(houses_img, houses_rect)
 
             # for the top row
             elif curr_pos < 31:
@@ -341,6 +362,16 @@ def get_text():
                 price_img_rect.centerx = (tiles_coord[curr_pos - 1][0] - (tile_width / 2))
                 price_img_rect.y = 2
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    houses_img = pygame.transform.rotate(houses_img, 180)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                    houses_rect.y = tiles_coord[curr_pos - 1][1] - 2
+                    screen.blit(houses_img, houses_rect)
+
 
             # for the right row
             else:
@@ -366,6 +397,15 @@ def get_text():
                 price_img_rect.centery = (tiles_coord[curr_pos - 1][1] - (tile_width / 2))
                 price_img_rect.x = (tiles_coord[curr_pos - 1][0] + tile_height) - (2 + price_img_rect.width)
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    pygame.transform.rotate(houses_img, 90)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
+                    houses_rect.x = tiles_coord[curr_pos - 1][0] + 2
+                    screen.blit(houses_img, houses_rect)
 
 
 # function to blit a players token  on the board
@@ -475,12 +515,13 @@ class Intermediary:
         self.game = game
 
     # integration functions
-    def gui_reblit_left(self):
+    def reblit_left(self):
         for i in range(self.game.players.get_length()):
             player = self.game.players.get(i)
             blit_player_indicators(player.number, player)
 
-    def gui_reblit_board(self):
+
+    def reblit_board(self):
         screen.blit(board, (450, 0))
         get_text()
         for i in range(self.game.players.get_length()):
@@ -494,15 +535,68 @@ class Intermediary:
         screen.blit(fp_txt, fp_rect)
         pygame.display.update()
 
-    def gui_reblit_right(self):
+    def reblit_right(self):
         blit_bank_prop()
 
-    def gui_reblit_all(self):
-        self.gui_reblit_left()
-        self.gui_reblit_board()
-        self.gui_reblit_right()
+    def reblit_all(self):
+        self.reblit_left()
+        self.reblit_board()
+        self.reblit_right()
 
-    def gui_jailed_player(self, player):
+    def gjf_card(self, player):
+        base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
+        pygame.draw.rect(screen, WHITE, base)
+        line1 = font2.render("{}, you're in jail!,".format(player.name), True, BLACK)
+        line1_rect = line1.get_rect()
+        line1_rect.centerx = 937.5
+        line1_rect.y = tile_height + 120
+        screen.blit(line1, line1_rect)
+        line2 = font2.render("Do you want to use your Get Out of Jail Free card?", True, BLACK)
+        line2_rect = line2.get_rect()
+        line2_rect.centerx = 937.5
+        line2_rect.y = line1_rect.bottom + 30
+        screen.blit(line2, line2_rect)
+        # make yes button
+        yes_button = pygame.Rect(base.x + 40, base.bottom - 90, 70, 50)
+        pygame.draw.rect(screen, (40, 220, 50), yes_button)
+        yes = font2.render("Yes", True, BLACK)
+        yes_rect = yes.get_rect()
+        yes_rect.center = yes_button.center
+        screen.blit(yes, yes_rect)
+        # make no button
+        no_button = pygame.Rect(base.right - 110, base.bottom - 90, 70, 50)
+        pygame.draw.rect(screen, (220, 50, 40), no_button)
+        no = font2.render("No", True, BLACK)
+        no_rect = no.get_rect()
+        no_rect.center = no_button.center
+        screen.blit(no, no_rect)
+        pygame.display.update()
+        if isinstance(player, AIPlayer):
+            pygame.time.wait(1000)
+            response = random.choice(["y", "n"])
+        else:
+            response = None
+            use = True
+            while use:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        use = False
+                        break
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = event.pos
+                        # if they click yes
+                        if yes_button.left <= mouse_pos[0] <= yes_button.right and yes_button.top <= mouse_pos[
+                            1] <= yes_button.bottom:
+                            use = False
+                            response = "y"
+                        # else, if click no, tile needs to go up for auction
+                        elif no_button.left <= mouse_pos[0] <= no_button.right and no_button.top <= mouse_pos[
+                            1] <= no_button.bottom:
+                            use = False
+                            response = "n"
+        return response
+
+    def jailed_player(self, player):
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         line1 = font2.render("{}, you're in jail!,".format(player.name), True, BLACK)
@@ -556,7 +650,7 @@ class Intermediary:
                             response = "n"
         return response
 
-    def gui_pay_to_leave(self, player):
+    def pay_to_leave(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("You pay £50 to leave jail!", True, BLACK)
@@ -567,17 +661,17 @@ class Intermediary:
         pygame.display.update()
         pygame.time.wait(1000)
 
-    def gui_roll_to_leave(self, player):
+    def roll_to_leave(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("Rolling for a double to leave jail!", True, BLACK)
         line2_rect = line2.get_rect()
         line2_rect.centerx = 937.5
-        line2.y = 350
+        line2_rect.y = 350
         screen.blit(line2, line2_rect)
         pygame.display.update()
 
-    def gui_leave(self, player):
+    def leave(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("{}, you've rolled a double and are now free!".format(player.name), True, BLACK)
@@ -587,7 +681,7 @@ class Intermediary:
         screen.blit(line2, line2_rect)
         pygame.display.update()
 
-    def gui_go(self, player):
+    def go(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("Collect £200 as you pass GO!", True, BLACK)
@@ -595,10 +689,11 @@ class Intermediary:
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        self.reblit_left()
         pygame.display.update()
 
-    def gui_roll_dice(self, player, roll1, roll2):
-        # self.gui_reblit_left()
+    def roll_dice(self, player, roll1, roll2):
+        # self.reblit_left()
         for i in range(4):
             screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (858.75, (975 - tile_height - 70)))
             screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (966.25, (975 - tile_height - 70)))
@@ -614,7 +709,7 @@ class Intermediary:
         # screen.blit(hat, (450 - 10 - 40, 30 + (player.number - 1) * 155))
         pygame.display.update()
 
-    def gui_check_player_location(self, player):
+    def check_player_location(self, player):
         current_tile = tiles[player.pos - 1]
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
@@ -630,7 +725,7 @@ class Intermediary:
         screen.blit(line2, line2_rect)
         pygame.display.update()
 
-    def gui_go_jail(self, player):
+    def go_jail(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("Uh oh! {}".format(random.choice(msgs)), True, BLACK)
@@ -645,7 +740,7 @@ class Intermediary:
         screen.blit(line4, line4_rect)
         pygame.display.update()
 
-    def gui_offer_prop(self, curr_player):
+    def offer_prop(self, curr_player):
         tile = tiles[curr_player.pos - 1]
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         if tile.pos in [6, 16, 26, 36]:
@@ -713,7 +808,6 @@ class Intermediary:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         buying_prop = False
-                        # self.playing_game = False
                         break
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
@@ -729,7 +823,7 @@ class Intermediary:
                             response = "n"
         return response
 
-    def gui_buy_prop(self, curr_player, tile=None,):
+    def buy_prop(self, curr_player, tile=None,):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         if tile is None:
@@ -742,12 +836,12 @@ class Intermediary:
         # set transparency of image at bank_prop_list[current_tile] to be 0 (disappear from rhs)
         bank_prop_list[tile.space].set_alpha(0)
         # reblit rhs
-        self.gui_reblit_right()
+        self.reblit_right()
         # reblit lhs
-        self.gui_reblit_left()
+        self.reblit_left()
         pygame.display.update()
 
-    def gui_auction_prop(self, tile):
+    def auction_prop(self, tile):
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # line 1: "Auction for: *Property name*"
@@ -758,7 +852,7 @@ class Intermediary:
         screen.blit(line1, line1_rect)
         pygame.display.update()
 
-    def gui_auction_menu(self, player, curr_price):
+    def auction_menu(self, player, curr_price):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         # create third line of text: "Current bid: £x"
@@ -842,7 +936,30 @@ class Intermediary:
                             bidding = False
         return response
 
-    def gui_pot_luck(self, card):
+    def owned_tile(self, player, tile):
+        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
+        line3 = font2.render("{} ".format(tile.space) + "is owned by {}".format(tile.owner), True, BLACK)
+        line3_rect = line3.get_rect()
+        line3_rect.centerx = 937.5
+        line3_rect.y = 350
+        screen.blit(line3, line3_rect)
+        line4 = font2.render("{}, time to pay rent!".format(player.name), True, BLACK)
+        line4_rect = line4.get_rect()
+        line4_rect.centerx = 937.5
+        line4_rect.y = line3_rect.bottom + 30
+        screen.blit(line4, line4_rect)
+        pygame.display.update()
+
+    def pay_rent(self, rent, payee, receiver):
+        line5 = font2.render("{} ".format(payee.name) + "pays {}".format(receiver.name) + "{} in rent!".format(str(rent)), True, BLACK)
+        line5_rect = line5.get_rect()
+        line5_rect.centerx= 937.5
+        line5_rect.y = 400
+        screen.blit(line5, line5_rect)
+        pygame.display.update()
+
+    def pot_luck(self, card):
         c = pot_luck.get_rect()
         c.centerx = 937.5
         c.y = 375
@@ -859,7 +976,7 @@ class Intermediary:
             screen.blit(line3, line3_rect)
             pygame.display.update()
 
-    def gui_opp_knocks(self, card):
+    def opp_knocks(self, card):
         c = opp_knocks.get_rect()
         c.centerx = 937.5
         c.y = 375
@@ -877,7 +994,7 @@ class Intermediary:
             pygame.display.update()
 
 
-    def gui_free_parking(self, player):
+    def free_parking(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("Wooo! {} has hit the jackpot and gets richer!".format(player.name), True, BLACK)
@@ -887,7 +1004,7 @@ class Intermediary:
         screen.blit(line3, line3_rect)
         pygame.display.update()
 
-    def gui_income_tax(self, player):
+    def income_tax(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("{} must pay £200 to the bank".format(player.name), True, BLACK)
@@ -897,7 +1014,7 @@ class Intermediary:
         screen.blit(line3, line3_rect)
         pygame.display.update()
 
-    def gui_super_tax(self, player):
+    def super_tax(self, player):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("{} must pay £100 to the bank".format(player.name), True, BLACK)
@@ -906,3 +1023,24 @@ class Intermediary:
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
         pygame.display.update()
+
+    def end_game(self, game, player):
+        base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
+        pygame.draw.rect(screen, WHITE, base)
+        line1 = font2.render("The game is over!", True, BLACK)
+        line1_rect = line1.get_rect()
+        line1_rect.centerx = 937.5
+        line1_rect.y = tile_height + 120
+        screen.blit(line1, line1_rect)
+        line3 = font2.render("{} wins with a net worth of:".format(player.name), True, BLACK)
+        line3_rect = line3.get_rect()
+        line3_rect.centerx = 937.5
+        line3_rect.y = 350
+        screen.blit(line3, line3_rect)
+        line4 = font2.render("{}".format(player.money), True, BLACK)
+        line4_rect = line4.get_rect()
+        line4_rect.centerx = 937.5
+        line4_rect.y = line3_rect.bottom + 20
+        screen.blit(line4, line4_rect)
+        pygame.display.update()
+        pygame.time.wait(5000)

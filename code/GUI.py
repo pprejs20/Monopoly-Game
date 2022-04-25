@@ -1,3 +1,5 @@
+import time
+
 import pygame
 from game import Game
 from player import Player, AIPlayer
@@ -93,6 +95,8 @@ water = pygame.image.load("Images/Water.png")
 prop_indicators = [brown1, brown2, lblue1, lblue2, lblue3, pink1, pink2, pink3, orange1, orange2, orange3, red1, red2,
                    red3, yellow1, yellow2, yellow3, green1, green2, green3, dblue1, dblue2, station1, station2,
                    station3, station4, elec, water]
+# get out of jail free indicator
+gjf = pygame.image.load("Images/GJF.png")
 # load player template image for left hand side of board
 playerTemplate = pygame.image.load("Images/PlayerTemplate.png")
 # load pot luck and opportunity knocks templates
@@ -123,13 +127,13 @@ for i in [2, 4, 7, 9, 10, 12, 14, 15, 17, 19, 20, 22, 24, 25, 27, 28, 30, 32, 33
 player_prop_ind = {}
 i = 1
 x = 2
-y = 77.5
+y = 76
 for key in bank_prop_list:
     if i == 15:
         x = 2
         y += 50
     ind = bank_prop_list[key]
-    ind = pygame.transform.scale(ind, (29, 42))
+    ind = pygame.transform.scale(ind, (29, 43))
     player_prop_ind[key] = (ind, (x, y))
     x += 32
     i += 1
@@ -175,6 +179,9 @@ def blit_player_indicators(player_no, player):
         x = player_prop_ind[prop.space][1][0]
         y = player_prop_ind[prop.space][1][1] + y_inc
         screen.blit(indicator, (x, y))
+    if player.jailCard > 0:
+        card = pygame.transform.scale(gjf, (29, 43))
+        screen.blit(card, (227, 28.5))
     pygame.display.update()
 
 
@@ -302,6 +309,14 @@ def get_text():
                 price_img_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
                 price_img_rect.y = (tiles_coord[curr_pos - 1][1] + tile_height) - (2 + price_img_rect.height)
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
+                    screen.blit(houses_img, houses_rect)
 
             # for the left row
             elif curr_pos < 21:
@@ -327,6 +342,15 @@ def get_text():
                 price_img_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
                 price_img_rect.x = (tiles_coord[curr_pos - 1][0] - tile_height) + 2
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    pygame.transform.rotate(houses_img, -90)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
+                    houses_rect.x = tiles_coord[curr_pos - 1][0] - 2
+                    screen.blit(houses_img, houses_rect)
 
             # for the top row
             elif curr_pos < 31:
@@ -352,6 +376,15 @@ def get_text():
                 price_img_rect.centerx = (tiles_coord[curr_pos - 1][0] - (tile_width / 2))
                 price_img_rect.y = 2
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    houses_img = pygame.transform.rotate(houses_img, 180)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                    houses_rect.y = tiles_coord[curr_pos - 1][1] - 2
+                    screen.blit(houses_img, houses_rect)
 
             # for the right row
             else:
@@ -377,6 +410,15 @@ def get_text():
                 price_img_rect.centery = (tiles_coord[curr_pos - 1][1] - (tile_width / 2))
                 price_img_rect.x = (tiles_coord[curr_pos - 1][0] + tile_height) - (2 + price_img_rect.width)
                 screen.blit(price_img, price_img_rect)
+                # print number of houses
+                if t.no_of_houses > 0:
+                    houses = str(t.no_of_houses)
+                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    pygame.transform.rotate(houses_img, 90)
+                    houses_rect = houses_img.get_rect()
+                    houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
+                    houses_rect.x = tiles_coord[curr_pos - 1][0] + 2
+                    screen.blit(houses_img, houses_rect)
 
 
 # function to blit a players token  on the board
@@ -1013,12 +1055,25 @@ class ScreenTracker:
         current_player = game.players.get(0)
         screen.blit(hat, (450 - 10 - 40, 30 + ((current_player.number - 1) * 155)))
         pygame.display.update()
-        self.game_loop(game)
+        start_time = time.time()
+        self.game_loop(game, start_time)
 
-    def game_loop(self, game):
+    def game_loop(self, game, start_time):
         dice_rolled = False
         turn_ended = True
+        last_turns = False
+        checked = False
+        ctr = None
         while self.playing_game:
+            if not self.normal_mode:
+                if ctr == game.players.get_length():
+                    game.end_game()
+                    self.playing_game = False
+                elapsed_time = time.time() - start_time
+                if elapsed_time > 1800 and not checked:
+                    ctr = 1
+                    last_turns = True
+                    checked = True
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -1031,6 +1086,8 @@ class ScreenTracker:
                         turn_ended = False
                         self.game.next_step()
                     if 1555 <= mouse_pos[0] <= 1640 and 910 <= mouse_pos[1] <= 965 and dice_rolled:
+                        if last_turns:
+                            ctr += 1
                         dice_rolled = False
                         turn_ended = True
                         screen.blit(board, (450, 0))
@@ -1044,7 +1101,7 @@ class ScreenTracker:
                         for i in range(game.players.get_length()):
                             player = game.players.get(i)
                             token_blit(player.number, player.pos, player.token)
-                            # blit_player_indicators(player.number, player)
+                            blit_player_indicators(player.number, player)
                         screen.blit(hat, (450 - 10 - 40, 30 + ((game.players.get(0).number - 1) * 155)))
                         pygame.display.update()
 
