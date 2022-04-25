@@ -135,8 +135,6 @@ class Game:
                 if prop.no_of_houses == min_houses:
                     if prop.no_of_houses == 4 and not first_time:
                         continue
-                    else:
-                        hotel_allowed.append(False)
                     available_props.append(prop)
         return available_props
 
