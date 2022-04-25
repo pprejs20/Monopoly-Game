@@ -3,14 +3,27 @@ from tile import get_cell_ref
 
 
 class Card:
+    """
+    Parent class containing all the necessary functionality for all cards in the game
+    """
+
     def __init__(self, description):
         self.description = description
 
     def get_description(self):
+        """
+        A method that returns the cards description
+        :return: the cards description
+        """
+
         return self.description
 
 
 class TransactionCard(Card):
+    """
+    A class for cards which involve a transaction of money 
+    """
+
     def __init__(self, payer, reciever, amount, description):
         self.payer = payer
         self.reciever = reciever
@@ -18,6 +31,13 @@ class TransactionCard(Card):
         super().__init__(description)
 
     def execute(self, player, players, game):
+        """
+        The procedure which happens when the card is pulled and actions need to be executed 
+        :param player: player that pulled the card
+        :param players: all the other players on the board
+        :param game: the instance of the game class
+        """
+
         if self.reciever == "bank":
             player.deduct_money(self.amount)
         if self.payer == "bank":
@@ -35,6 +55,12 @@ class TransactionCard(Card):
 
     @classmethod
     def load_transaction_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+        """
+        A method for loading all transaction the cards from the xlsx data 
+        :param path: the path to the xlsx data
+        :return: a list of cards
+        """
+
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
         pot_cards = []
@@ -71,6 +97,10 @@ class TransactionCard(Card):
 
 
 class MovementCard(Card):
+    """
+    A class for cards that involve the movement of a player around the board
+    """
+
     def __init__(self, relative_pos, tile, pass_go, description):
         self.relative_pos = relative_pos
         self.tile = tile
@@ -78,6 +108,11 @@ class MovementCard(Card):
         super().__init__(description)
 
     def execute(self, player):
+        """
+        Procedure which gets executed when a player pulls this card
+        :param player: the player that pulled the card
+        """
+
         if self.relative_pos:
             player.set_pos(self.tile-1)
         else:
@@ -88,6 +123,12 @@ class MovementCard(Card):
 
     @classmethod
     def load_movement_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+        """
+        A method for loading all the movement cards from the xlsx data 
+        :param path: the path to the xlsx data
+        :return: a list of cards
+        """
+
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
         pot_cards = []
@@ -122,6 +163,10 @@ class MovementCard(Card):
 
 
 class HouseHotelCard(Card):
+    """
+    A class for cards that require actions depending on houses and hotels on properties
+    """
+
     def __init__(self, payer, reciever, house_amount, hotel_amount, description):
         self.payer = payer
         self.reciever = reciever
@@ -130,6 +175,11 @@ class HouseHotelCard(Card):
         super().__init__(description)
 
     def execute(self, player):
+        """
+        Procedure which gets executed when a player pulls this card
+        :param player: the player that pulled the card
+        """
+
         houseCount = 0
         hotelCount = 0
         for prop in player.propList:
@@ -141,6 +191,12 @@ class HouseHotelCard(Card):
 
     @classmethod
     def load_hh_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+        """
+         A method for loading all the house hotel cards from the xlsx data 
+        :param path: the path to the xlsx data
+        :return: a list of cards
+        """
+
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
         cards = []
@@ -167,14 +223,29 @@ class HouseHotelCard(Card):
 
 
 class JailfreeCard(Card):
+    """
+    A class for jail-free cards
+    """
+
     def __init__(self, description):
         super().__init__(description)
 
     def execute(self, player):
+        """
+        Executes the procedure that needs to take place when a player pulls this card
+        :param player: the player that pulled the card
+        """
+
         player.jailCard += 1
 
     @classmethod
     def load_jail_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
+        """
+         A method for loading all the house jail-free cards from the xlsx data 
+        :param path: the path to the xlsx data
+        :return: a list of cards
+        """
+
         workbook = openpyxl.load_workbook(path)
         sheet = workbook.active
         pot_cards = []
@@ -206,6 +277,11 @@ class JailfreeCard(Card):
 
 
 def load_all_cards():
+    """
+    A function that loads all the cards from the data
+    :return: a list of card objects 
+    """
+
     potluck = []
     opportunity = []
 
