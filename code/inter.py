@@ -516,6 +516,8 @@ class Intermediary:
 
     # integration functions
     def reblit_left(self):
+        base = pygame.Rect(0, 0, 450, 975)
+        pygame.draw.rect(screen, BLACK, base)
         for i in range(self.game.players.get_length()):
             player = self.game.players.get(i)
             blit_player_indicators(player.number, player)
@@ -572,7 +574,7 @@ class Intermediary:
         screen.blit(no, no_rect)
         pygame.display.update()
         if isinstance(player, AIPlayer):
-            pygame.time.wait(1000)
+            pygame.time.wait(2000)
             response = random.choice(["y", "n"])
         else:
             response = None
@@ -595,6 +597,23 @@ class Intermediary:
                             use = False
                             response = "n"
         return response
+
+    def doubles_jail(self, player):
+        base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
+        pygame.draw.rect(screen, WHITE, base)
+        line1 = font2.render("{}, you're getting too lucky!,".format(player.name), True, BLACK)
+        line1_rect = line1.get_rect()
+        line1_rect.centerx = 937.5
+        line1_rect.y = tile_height + 120
+        screen.blit(line1, line1_rect)
+        line2 = font2.render("After rolling three doubles in a row you're sent to jail", True, BLACK)
+        line2_rect = line2.get_rect()
+        line2_rect.centerx = 937.5
+        line2_rect.y = line1_rect.bottom + 60
+        screen.blit(line2, line2_rect)
+        pygame.display.update()
+        pygame.time.wait(3000)
+        self.reblit_board()
 
     def jailed_player(self, player):
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
@@ -625,7 +644,7 @@ class Intermediary:
         screen.blit(no, no_rect)
         pygame.display.update()
         if isinstance(player, AIPlayer):
-            pygame.time.wait(1000)
+            pygame.time.wait(2000)
             response = random.choice(["y", "n"])
         else:
             response = None
@@ -656,7 +675,7 @@ class Intermediary:
         line2 = font2.render("You pay £50 to leave jail!", True, BLACK)
         line2_rect = line2.get_rect()
         line2_rect.centerx = 937.5
-        line2.y = 350
+        line2_rect.y = 350
         screen.blit(line2, line2_rect)
         pygame.display.update()
         pygame.time.wait(1000)
@@ -707,6 +726,39 @@ class Intermediary:
             player = self.game.players.get(i)
             token_blit(player.number, player.pos, player.token)
         # screen.blit(hat, (450 - 10 - 40, 30 + (player.number - 1) * 155))
+        pygame.display.update()
+
+    def buy_buildings(self, game, player, first_time):
+        base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
+        pygame.draw.rect(screen, WHITE, base)
+        # line 1
+        line1 = font2.render("{}, you can buy a house/hotel on the following properties:".format(player.name), True, BLACK)
+        line1_rect = line1.get_rect()
+        line1_rect.centerx = 937.5
+        line1_rect.y = (tile_height + 150)
+        screen.blit(line1, line1_rect)
+        pygame.display.update()
+        # create button 1: Pass
+        pass_button = pygame.Rect(base.x + 20, line1_rect.bottom + 40, 100, 50)
+        pygame.draw.rect(screen, (230, 200, 130), pass_button)
+        pass_txt = font2.render("Pass", True, BLACK)
+        pass_rect = pass_txt.get_rect()
+        pass_rect.center = pass_button.center
+        screen.blit(pass_txt, pass_rect)
+        # display possible properties
+        available_props = game.get_house_available_props(player, first_time)
+        x = pass_rect.x
+        y = pass_rect.bottom
+        ctr = 2
+        for prop in available_props:
+            txt = font2.render("{}. {}, {}, Current Houses: {}, ${} per house".format(ctr, prop.space, prop.group, prop.no_of_houses, game.house_costs[prop.group]), True, BLACK)
+            ctr += 1
+            txt_rect = txt.get_rect()
+            txt_rect.x = x
+            txt_rect.y = y + 15
+            y = txt_rect.bottom
+            screen.blit(txt, txt_rect)
+        # TODO: add code to type in which option is chosen
         pygame.display.update()
 
     def check_player_location(self, player):
@@ -799,7 +851,7 @@ class Intermediary:
         screen.blit(no, no_rect)
         pygame.display.update()
         if isinstance(curr_player, AIPlayer):
-            pygame.time.wait(1000)
+            pygame.time.wait(2000)
             response = random.choice(["y", "n"])
         else:
             buying_prop = True
@@ -897,7 +949,7 @@ class Intermediary:
         screen.blit(fhund_txt, fhund_txt_rect)
         pygame.display.update()
         if isinstance(player, AIPlayer):
-            pygame.time.wait(1000)
+            pygame.time.wait(2000)
             if player.money >= curr_price + 500:
                 response = random.choice(["1", "2", "3", "4"])
             elif player.money >= curr_price + 100:
@@ -935,6 +987,16 @@ class Intermediary:
                             response = "4"
                             bidding = False
         return response
+
+    def noone_bought(self):
+        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
+        line3 = font2.render("Noone bought the property!", True, BLACK)
+        line3_rect = line3.get_rect()
+        line3_rect.centerx = 937.5
+        line3_rect.y = 350
+        screen.blit(line3, line3_rect)
+        pygame.display.update()
 
     def owned_tile(self, player, tile):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
@@ -975,6 +1037,7 @@ class Intermediary:
             gap += line3_rect.height
             screen.blit(line3, line3_rect)
             pygame.display.update()
+        pygame.time.wait(4000)
 
     def opp_knocks(self, card):
         c = opp_knocks.get_rect()
@@ -992,6 +1055,7 @@ class Intermediary:
             gap += line3_rect.height
             screen.blit(line3, line3_rect)
             pygame.display.update()
+        pygame.time.wait(4000)
 
 
     def free_parking(self, player):
@@ -1043,4 +1107,4 @@ class Intermediary:
         line4_rect.y = line3_rect.bottom + 20
         screen.blit(line4, line4_rect)
         pygame.display.update()
-        pygame.time.wait(5000)
+        pygame.time.wait(10000)

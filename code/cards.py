@@ -23,7 +23,7 @@ class TransactionCard(Card):
         if self.payer == "bank":
             player.add_money(self.amount)
         if self.payer == "all":
-            for i in range(len(players)-1):
+            for i in range(players.get_length()-1):
                 assert players.get(i).name != player.name
                 p = players.get(i)
                 p.deduct_money(self.amount)
@@ -77,7 +77,7 @@ class MovementCard(Card):
         self.pass_go = pass_go
         super().__init__(description)
 
-    def execute(self, player):
+    def execute(self, player, players, game):
         if self.relative_pos:
             player.set_pos(self.tile-1)
         else:
@@ -129,7 +129,7 @@ class HouseHotelCard(Card):
         self.hotel_amount = hotel_amount
         super().__init__(description)
 
-    def execute(self, player):
+    def execute(self, player, players, game):
         houseCount = 0
         hotelCount = 0
         for prop in player.propList:
@@ -170,7 +170,7 @@ class JailfreeCard(Card):
     def __init__(self, description):
         super().__init__(description)
 
-    def execute(self, player):
+    def execute(self, player, players, game):
         player.jailCard += 1
 
     @classmethod

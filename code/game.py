@@ -42,30 +42,32 @@ class Game:
 
         if self.doubles_counter == 3:
             player.jail()
+            self.gui.doubles_jail(player)
+        else:
 
-        if player is None:
-            player = self.players.next_object()
+            if player is None:
+                player = self.players.next_object()
 
-        if player.is_jailed():
-            self.jailed_player(player)
-            return
-        d1, d2, doubles = player.roll_dice()
-        self.current_d1 = d1
-        self.current_d2 = d2
-        dice_sum = d1 + d2
-        player.move_player_forward(dice_sum)
-        self.gui.roll_dice(player, d1, d2)
-        self.check_player_position(player)
-        print("[{}] rolled: {}".format(player.name, dice_sum))
+            if player.is_jailed():
+                self.jailed_player(player)
+                return
+            d1, d2, doubles = player.roll_dice()
+            self.current_d1 = d1
+            self.current_d2 = d2
+            dice_sum = d1 + d2
+            player.move_player_forward(dice_sum)
+            self.gui.roll_dice(player, d1, d2)
+            self.check_player_position(player)
+            print("[{}] rolled: {}".format(player.name, dice_sum))
 
-        if doubles:
-            print("[{}] Player rolled a double".format(player.name))
-            self.doubles_counter += 1
-            self.next_step(player)
+            if doubles:
+                print("[{}] Player rolled a double".format(player.name))
+                self.doubles_counter += 1
+                self.next_step(player)
 
-        self.doubles_counter = 0
-        if player.has_monopoly() and not doubles:
-            self.check_monopoly(player)
+            self.doubles_counter = 0
+            if player.has_monopoly() and not doubles:
+                self.check_monopoly(player)
 
     def check_monopoly(self, player):
         """
@@ -234,6 +236,7 @@ class Game:
                 money_placed = True
 
         if temp_queue.get_length() == 0:
+            self.gui.noone_bought()
             print("No one bought the property")
             return
         curr_player = temp_queue.get(0)
@@ -370,13 +373,13 @@ class Game:
         elif tile.space == "Pot Luck":
             pot = self.pot_cards.next_object()
             self.gui.pot_luck(pot)
-            # pot.execute(player, self.players, self)
-            # self.gui.reblit_all()
+            pot.execute(player, self.players, self)
+            self.gui.reblit_all()
         elif tile.space == "Opportunity Knocks":
             opp = self.opp_cards.next_object()
             self.gui.opp_knocks(opp)
-            # opp.execute(player, self.players, self)
-            # self.gui.reblit_all()
+            opp.execute(player, self.players, self)
+            self.gui.reblit_all()
         elif tile.space == "Free Parking":
             player.add_money(self.free_parking_money)
             self.gui.free_parking(player)
