@@ -39,17 +39,17 @@ class TransactionCard(Card):
         """
 
         if self.reciever == "bank":
-            player.deduct_money(self.amount)
+            player.deduct_money(self.amount, True)
         if self.payer == "bank":
             player.add_money(self.amount)
         if self.payer == "all":
             for i in range(players.get_length()-1):
                 assert players.get(i).name != player.name
                 p = players.get(i)
-                p.deduct_money(self.amount)
+                p.deduct_money(self.amount, True)
                 player.add_money(self.amount)
         if self.reciever == "freeparking":
-            player.deduct_money(self.amount)
+            player.deduct_money(self.amount, True)
             game.free_parking_money += self.amount
 
 
@@ -114,10 +114,10 @@ class MovementCard(Card):
         """
         
         if self.relative_pos:
-            player.set_pos(self.tile-1)
+            player.set_pos(self.tile)
         else:
             player.move_player(self.tile)
-        if player.pos > self.tile-1:
+        if player.pos > self.tile:
             if self.pass_go:
                 player.add_money(200)
 
@@ -185,8 +185,8 @@ class HouseHotelCard(Card):
         for prop in player.propList:
             houseCount += prop.no_of_houses
             hotelCount += prop.no_of_hotel
-        player.deduct_money(houseCount*self.house_amount)
-        player.deduct_money(hotelCount*self.hotel_amount)
+        player.deduct_money(houseCount*self.house_amount, True)
+        player.deduct_money(hotelCount*self.hotel_amount, True)
 
 
     @classmethod

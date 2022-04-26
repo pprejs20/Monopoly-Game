@@ -1064,13 +1064,14 @@ class ScreenTracker:
         last_turns = False
         checked = False
         ctr = None
+        player1 = game.players.get(0)
         while self.playing_game:
             if not self.normal_mode:
                 if ctr == game.players.get_length():
                     game.end_game()
                     self.playing_game = False
                 elapsed_time = time.time() - start_time
-                if elapsed_time > 1800 and not checked:
+                if elapsed_time > 1800 and not checked and game.players.get(0) == player1:
                     ctr = 1
                     last_turns = True
                     checked = True

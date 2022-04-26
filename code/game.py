@@ -82,11 +82,11 @@ class Game:
         first_time = True
         while input != 1:
             available_props = self.get_house_available_props(player, first_time)
-            first_time = False
-            string = "1. Leave\n"
-            string += self.consturct_prop_strings(available_props)
-            string += "\nSelect an option: "
-            inpt = int(input(string))
+            # first_time = False
+            # string = "1. Leave\n"
+            # string += self.consturct_prop_strings(available_props)
+            # string += "\nSelect an option: "
+            inpt = int(self.gui.buy_buildings(self, player, first_time))
 
             if inpt == 1:
                 return
@@ -184,7 +184,7 @@ class Game:
 
         if response == 'y':
             self.gui.pay_to_leave(player)
-            player.deduct_money(50)
+            player.deduct_money(50, True)
             self.free_parking_money += 50
             player.unjail()
             self.gui.reblit_all()
@@ -226,17 +226,21 @@ class Game:
         self.gui.auction_prop(tile)
         while not (temp_queue.get_length() == 0):
             curr_player = temp_queue.next_object()
-            # Only one player left and has already raised, they win
-            if temp_queue.get_length() == 1 and money_placed:
-                break
-            # if isinstance(player, AIPlayer):
-            #     curr_price, passed = self.auction_menu_ai(curr_player, tile, curr_price)
-            # else:
-            curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
-            if passed:
+            # check to make sure player is eligible: not in jail and at least 1 lap
+            if curr_player.jailed or curr_player.laps < 1:
                 temp_queue.remove_by_name(curr_player.name)
             else:
-                money_placed = True
+                # Only one player left and has already raised, they win
+                if temp_queue.get_length() == 1 and money_placed:
+                    break
+                # if isinstance(player, AIPlayer):
+                #     curr_price, passed = self.auction_menu_ai(curr_player, tile, curr_price)
+                # else:
+                curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
+                if passed:
+                    temp_queue.remove_by_name(curr_player.name)
+                else:
+                    money_placed = True
 
         if temp_queue.get_length() == 0:
             self.gui.noone_bought()
@@ -320,10 +324,49 @@ class Game:
                         self.auction_property(tile, player)
                 else:
                     print("[{}] Not enough money to buy!".format(player.name))
-        elif tile.owner is not None:
+        elif tile.owner is not None and player.name != tile.owner:
             self.gui.owned_tile(player, tile)
-            if tile.group == "Utilities" and player.name != tile.owner:
-                self.check_utilities(player, tile.owner)
+            rent = tile.base_rent
+            if tile.no_of_houses > 4:
+                rent = tile.hotel_rent
+            if tile.no_of_houses == 1:
+                rent = tile.one_house_rent
+            if tile.no_of_houses == 2:
+                rent = tile.two_house_rent
+            if tile.no_of_houses == 3:
+                rent = tile.three_house_rent
+            if tile.no_of_houses == 4:
+                rent = tile.four_house_rent
+            if tile.group in player.get_monopolies():
+                if rent == tile.base_rent:
+                    rent = rent*2
+            # else:
+            #     rent = rent
+            if tile.group == "Utilities":
+                rent = self.check_utilities(player, tile.owner)
+            elif tile.group == "Station":
+                rent = self.check_stations(tile.owner)
+
+            # # check if player can afford rent
+            # if rent > player.net_worth:
+            #     # return any player properties to the bank
+            #     for prop in player.propList:
+            #         self.gui.return_prop(prop)
+            #     self.gui.reblit_right()
+            #     # remove player from player list
+            #     self.players.remove_by_name(player.name)
+            #     # reblit lhs
+            #     self.gui.reblit_left()
+            # # check if player needs to mortgage any properties
+            # elif rent > player.money:
+            #     pass
+
+            owner = self.players.get_by_name(tile.owner)
+
+            player.deduct_money(rent, True)
+            owner.add_money(rent, True)
+            self.gui.pay_rent(rent, player, owner)
+            self.gui.reblit_left()
 
     def check_utilities(self, player, owner_name):
         """
@@ -335,14 +378,13 @@ class Game:
         owner = self.players.get_by_name(owner_name)
         count = self.count_utilities(owner)
         if count == 1:
-            money_owed = (self.current_d1 + self.current_d2) * 4
+            rent = (self.current_d1 + self.current_d2) * 4
         elif count == 2:
-            money_owed = (self.current_d1 + self.current_d2) * 4
+            rent = (self.current_d1 + self.current_d2) * 4
         else:
             raise Exception("Invalid number of utilities")
 
-        player.deduct_money(money_owed)
-        owner.add_money(money_owed)
+        return rent
 
     def count_utilities(self, player):
         """
@@ -354,6 +396,31 @@ class Game:
         count = 0
         for prop in player.propList:
             if prop.group == "Utilities":
+                count += 1
+        return count
+
+    def check_stations(self, owner_name):
+
+        owner = self.players.get_by_name(owner_name)
+        count = self.count_stations(owner)
+
+        if count == 1:
+            rent = 25
+        elif count == 2:
+            rent = 50
+        elif count == 3:
+            rent = 100
+        elif count == 4:
+            rent = 200
+        else:
+            raise Exception("Invalid number of stations")
+
+        return rent
+
+    def count_stations(self, player):
+        count = 0
+        for prop in player.propList:
+            if prop.group == "Station":
                 count += 1
         return count
 
@@ -375,13 +442,13 @@ class Game:
             self.check_property(player)
         elif tile.space == "Pot Luck":
             pot = self.pot_cards.next_object()
-            self.gui.pot_luck(pot)
             pot.execute(player, self.players, self)
+            self.gui.pot_luck(pot)
             self.gui.reblit_all()
         elif tile.space == "Opportunity Knocks":
             opp = self.opp_cards.next_object()
-            self.gui.opp_knocks(opp)
             opp.execute(player, self.players, self)
+            self.gui.opp_knocks(opp)
             self.gui.reblit_all()
         elif tile.space == "Free Parking":
             player.add_money(self.free_parking_money)
@@ -389,11 +456,11 @@ class Game:
             print("[{}] Collected ${} from free parking money".format(player.name, self.free_parking_money))
             self.free_parking_money = 0
         elif tile.space == "Income Tax":
-            player.deduct_money(200)
+            player.deduct_money(200, True)
             self.gui.income_tax(player)
             print("[{}] Paid $200 for income tax".format(player.name))
         elif tile.space == "Super Tax":
-            player.deduct_money(100)
+            player.deduct_money(100, True)
             self.gui.super_tax(player)
             print("[{}] Paid $100 for super tax".format(player.name))
 

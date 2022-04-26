@@ -42,7 +42,7 @@ class Player:
         """
 
         for i in range(amount):
-            if self.pos == 39:
+            if self.pos == 40:
                 self.pos = 1
                 self.add_money(200)
                 print("[{}] Collected $200 for passing go".format(self.name))
@@ -57,8 +57,8 @@ class Player:
         """
 
         for i in range(amount):
-            if self.pos == 0:
-                self.pos = 39
+            if self.pos == 1:
+                self.pos = 40
             else:
                 self.pos -= 1
 
