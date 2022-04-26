@@ -115,11 +115,12 @@ class MovementCard(Card):
         
         if self.relative_pos:
             player.set_pos(self.tile)
+            if player.pos > self.tile:
+                if self.pass_go:
+                    player.add_money(200)
         else:
             player.move_player(self.tile)
-        if player.pos > self.tile:
-            if self.pass_go:
-                player.add_money(200)
+
 
     @classmethod
     def load_movement_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
@@ -179,12 +180,13 @@ class HouseHotelCard(Card):
         Procedure which gets executed when a player pulls this card
         :param player: the player that pulled the card
         """
-
         houseCount = 0
         hotelCount = 0
         for prop in player.propList:
-            houseCount += prop.no_of_houses
-            hotelCount += prop.no_of_hotel
+            if prop.no_of_houses > 4:
+                hotelCount += 1
+            else:
+                houseCount += prop.no_of_houses
         player.deduct_money(houseCount*self.house_amount, True)
         player.deduct_money(hotelCount*self.hotel_amount, True)
 
