@@ -319,7 +319,7 @@ class Game:
                     print("[{}] Not enough money to buy!".format(player.name))
         elif tile.owner is not None and player.name != tile.owner:
             self.gui.owned_tile(player, tile)
-            cost = tile.cost
+            rent = tile.cost
             if tile.no_of_houses > 4:
                 cost = tile.hotel_rent
             if tile.no_of_houses == 1:
@@ -331,28 +331,33 @@ class Game:
             if tile.no_of_houses == 4:
                 cost = tile.four_house_rent
             if self.check_monopoly(player):
-                if cost == tile.cost:
-                    rent = cost*2
-                    player.deduct_money(cost*2, True)
+                if rent == tile.cost:
+                    rent = rent*2
             else:
-                rent = cost
-                player.deduct_money(cost, True)
+                rent = rent
             if tile.group == "Utilities":
                 rent = self.check_utilities(player, tile.owner)
             elif tile.group == "Station":
                 rent = self.check_stations(tile.owner)
 
-                # check if player can afford rent
-                if rent > player.net_worth:
-                    # return any player properties to the bank
-                    for prop in player.propList:
-                        self.gui.return_prop(prop)
-                    self.gui.reblit_right()
-                    # remove player from player list
-                    self.players.remove_by_name(player.name)
-                # check if player needs to mortgage any properties
-                elif rent > player.money:
-                    pass
+            # check if player can afford rent
+            if rent > player.net_worth:
+                # return any player properties to the bank
+                for prop in player.propList:
+                    self.gui.return_prop(prop)
+                self.gui.reblit_right()
+                # remove player from player list
+                self.players.remove_by_name(player.name)
+            # check if player needs to mortgage any properties
+            elif rent > player.money:
+                pass
+
+            owner = self.players.get_by_name(tile.owner)
+
+            player.deduct_money(rent, True)
+            owner.add_money(rent, True)
+            self.gui.pay_rent(rent, player, owner)
+            self.gui.reblit_left()
 
     def check_utilities(self, player, owner_name):
         """
