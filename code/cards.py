@@ -179,12 +179,13 @@ class HouseHotelCard(Card):
         Procedure which gets executed when a player pulls this card
         :param player: the player that pulled the card
         """
-
         houseCount = 0
         hotelCount = 0
         for prop in player.propList:
-            houseCount += prop.no_of_houses
-            hotelCount += prop.no_of_hotel
+            if prop.no_of_houses > 4:
+                hotelCount += 1
+            else:
+                houseCount += prop.no_of_houses
         player.deduct_money(houseCount*self.house_amount, True)
         player.deduct_money(hotelCount*self.hotel_amount, True)
 
