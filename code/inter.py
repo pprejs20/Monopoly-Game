@@ -754,12 +754,11 @@ class Intermediary:
         line1_rect.y = (tile_height + 150)
         screen.blit(line1, line1_rect)
         pygame.display.update()
-        # create button 1: Pass
-        pass_button = pygame.Rect(base.x + 20, line1_rect.bottom + 40, 100, 50)
-        pygame.draw.rect(screen, (230, 200, 130), pass_button)
+        # create option 1: Pass
         pass_txt = font2.render("Pass", True, BLACK)
         pass_rect = pass_txt.get_rect()
-        pass_rect.center = pass_button.center
+        pass_rect.centerx = 937.5
+        pass_rect.y = line1_rect.bottom
         screen.blit(pass_txt, pass_rect)
         # display possible properties
         available_props = game.get_house_available_props(player, first_time)
@@ -779,7 +778,7 @@ class Intermediary:
             screen.blit(txt, txt_rect)
         input_active = False
         choice = ""
-        input_rect = pygame.Rect(base.x + 10, base.bottom + 30, 20, 20)
+        input_rect = pygame.Rect(base.x + 10, base.bottom - 30, 20, 20)
         pygame.draw.rect(screen, (220, 215, 200), input_rect)
         decision = False
         while not decision:
@@ -790,7 +789,7 @@ class Intermediary:
                     break
 
                 pos = pygame.mouse.get_pos()
-                hit = input_rect.collidepoint(pos)
+                hit = input_rect.collidepoint(pos[0], pos[1])
 
                 if event == pygame.MOUSEBUTTONDOWN and hit:
                     input_active = True
