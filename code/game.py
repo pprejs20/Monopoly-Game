@@ -319,6 +319,22 @@ class Game:
                     print("[{}] Not enough money to buy!".format(player.name))
         elif tile.owner is not None:
             self.gui.owned_tile(player, tile)
+            cost = tile.cost
+            if tile.no_of_houses > 4:
+                cost = tile.hotel_rent
+            if tile.no_of_houses == 1:
+                cost = tile.one_house_rent
+            if tile.no_of_houses == 2:
+                cost = tile.two_house_rent
+            if tile.no_of_houses == 3:
+                cost = tile.three_house_rent
+            if tile.no_of_houses == 4:
+                cost = tile.four_house_rent
+            if self.check_monopoly(player):
+                if cost == tile.cost:
+                    player.deduct_money(cost*2, True)
+            else:
+                player.deduct_money(cost, True)
             if tile.group == "Utilities" and player.name != tile.owner:
                 self.check_utilities(player, tile.owner)
 
