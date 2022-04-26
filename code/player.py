@@ -227,7 +227,7 @@ class AIPlayer(Player):
 
     player_count = 1
 
-    def __init__(self, pos=1, money=1500, propList=None, laps=0, token=None):
+    def __init__(self, pos=1, money=1500, propList=None, laps=0, token=None, number=None, jailCard=0):
         if propList is None:
             propList = []
         else:
@@ -235,7 +235,7 @@ class AIPlayer(Player):
         self.propList = [] if propList is None else propList
         name = "AI Player " + str(AIPlayer.player_count)
         AIPlayer.player_count += 1
-        super().__init__(name, pos, money, propList, laps, token)
+        super().__init__(name, pos, money, propList, laps, token, number, jailCard)
 
 
 tiles_of_color = {
