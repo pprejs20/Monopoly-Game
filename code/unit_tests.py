@@ -114,6 +114,45 @@ class TestGame(unittest.TestCase):
         self.assertTrue(False)
 
 
+class TestUserRequirements(unittest.TestCase):
+
+    def setUp(self):
+        players1 = [AIPlayer(), AIPlayer(), AIPlayer()]
+        players2 = [Player("Player 1"), Player("Player 2"), Player("Player 3")]
+        game1 = Game(players1)
+        game2 = Game(players2)
+
+    def test_ai_players(self):
+        players = [AIPlayer(), AIPlayer(), AIPlayer()]
+        game = Game(players)
+        for i in range(250):
+            game.next_step()
+
+        self.assertTrue(True)
+
+    def test_player_numbers(self):
+        players = [AIPlayer()]
+        try:
+            game = Game(players)
+        except AssertionError:
+            self.assertTrue(True)
+        self.assertTrue(False)
+
+    def test_players_start_money(self):
+        players = [AIPlayer(), AIPlayer(), AIPlayer()]
+        game = Game(players)
+        self.assertEqual(1500, game.players.get(0).money)
+        self.assertEqual(1500, game.players.get(1).money)
+        self.assertEqual(1500, game.players.get(2).money)
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+
+
+
+
 
 
 
