@@ -79,11 +79,11 @@ class Game:
         first_time = True
         while input != 1:
             available_props = self.get_house_available_props(player, first_time)
-            first_time = False
-            string = "1. Leave\n"
-            string += self.consturct_prop_strings(available_props)
-            string += "\nSelect an option: "
-            inpt = int(input(string))
+            # first_time = False
+            # string = "1. Leave\n"
+            # string += self.consturct_prop_strings(available_props)
+            # string += "\nSelect an option: "
+            inpt = int(self.gui.buy_buildings(self, player, first_time))
 
             if inpt == 1:
                 return
@@ -323,7 +323,7 @@ class Game:
                     print("[{}] Not enough money to buy!".format(player.name))
         elif tile.owner is not None and player.name != tile.owner:
             self.gui.owned_tile(player, tile)
-            rent = tile.cost
+            rent = tile.base_rent
             if tile.no_of_houses > 4:
                 rent = tile.hotel_rent
             if tile.no_of_houses == 1:
@@ -335,28 +335,28 @@ class Game:
             if tile.no_of_houses == 4:
                 rent = tile.four_house_rent
             if tile.group in player.get_monopolies():
-                if rent == tile.cost:
+                if rent == tile.base_rent:
                     rent = rent*2
-            else:
-                rent = rent
+            # else:
+            #     rent = rent
             if tile.group == "Utilities":
                 rent = self.check_utilities(player, tile.owner)
             elif tile.group == "Station":
                 rent = self.check_stations(tile.owner)
 
-            # check if player can afford rent
-            if rent > player.net_worth:
-                # return any player properties to the bank
-                for prop in player.propList:
-                    self.gui.return_prop(prop)
-                self.gui.reblit_right()
-                # remove player from player list
-                self.players.remove_by_name(player.name)
-                # reblit lhs
-                self.gui.reblit_left()
-            # check if player needs to mortgage any properties
-            elif rent > player.money:
-                pass
+            # # check if player can afford rent
+            # if rent > player.net_worth:
+            #     # return any player properties to the bank
+            #     for prop in player.propList:
+            #         self.gui.return_prop(prop)
+            #     self.gui.reblit_right()
+            #     # remove player from player list
+            #     self.players.remove_by_name(player.name)
+            #     # reblit lhs
+            #     self.gui.reblit_left()
+            # # check if player needs to mortgage any properties
+            # elif rent > player.money:
+            #     pass
 
             owner = self.players.get_by_name(tile.owner)
 

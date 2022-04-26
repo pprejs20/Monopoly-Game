@@ -747,7 +747,8 @@ class Intermediary:
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # line 1
-        line1 = font2.render("{}, you can buy a house/hotel on the following properties:".format(player.name), True, BLACK)
+        line1 = font2.render("{}, you can buy a house/hotel on the following properties:".format(player.name), True,
+                             BLACK)
         line1_rect = line1.get_rect()
         line1_rect.centerx = 937.5
         line1_rect.y = (tile_height + 150)
@@ -766,14 +767,16 @@ class Intermediary:
         y = pass_rect.bottom
         ctr = 2
         for prop in available_props:
-            txt = font2.render("{}. {}, {}, Current Houses: {}, ${} per house".format(ctr, prop.space, prop.group, prop.no_of_houses, game.house_costs[prop.group]), True, BLACK)
+            txt = font2.render("{}. {}, {}, Current Houses: {}, ${} per house".format(ctr, prop.space, prop.group,
+                                                                                      prop.no_of_houses,
+                                                                                      house_costs[prop.group]), True,
+                               BLACK)
             ctr += 1
             txt_rect = txt.get_rect()
             txt_rect.x = x
             txt_rect.y = y + 15
             y = txt_rect.bottom
             screen.blit(txt, txt_rect)
-        # TODO: add code to type in which option is chosen
         input_active = False
         choice = ""
         input_rect = pygame.Rect(base.x + 10, base.bottom + 30, 20, 20)
@@ -1060,10 +1063,11 @@ class Intermediary:
         pygame.display.update()
 
     def pay_rent(self, rent, payee, receiver):
-        line5 = font2.render("{} ".format(payee.name) + "pays {}".format(receiver.name) + "{} in rent!".format(str(rent)), True, BLACK)
+        line5 = font2.render("{} ".format(payee.name) + "pays {} ".format(receiver.name) +
+                             "£{} in rent!".format(str(rent)), True, BLACK)
         line5_rect = line5.get_rect()
         line5_rect.centerx= 937.5
-        line5_rect.y = 700
+        line5_rect.y = 500
         screen.blit(line5, line5_rect)
         pygame.display.update()
 
@@ -1122,6 +1126,7 @@ class Intermediary:
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        self.reblit_left()
         pygame.display.update()
 
     def super_tax(self, player):
@@ -1132,6 +1137,7 @@ class Intermediary:
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        self.reblit_left()
         pygame.display.update()
 
     def end_game(self, game, player):
@@ -1154,3 +1160,14 @@ class Intermediary:
         screen.blit(line4, line4_rect)
         pygame.display.update()
         pygame.time.wait(10000)
+
+house_costs = {
+    "Brown": 50,
+    "Blue": 50,
+    "Purple": 100,
+    "Orange": 100,
+    "Red": 150,
+    "Yellow": 150,
+    "Green": 200,
+    "Deep Blue": 200
+}
