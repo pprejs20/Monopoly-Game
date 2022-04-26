@@ -181,7 +181,7 @@ class Game:
 
         if response == 'y':
             self.gui.pay_to_leave(player)
-            player.deduct_money(50)
+            player.deduct_money(50, True)
             self.free_parking_money += 50
             player.unjail()
             self.gui.reblit_all()
@@ -338,7 +338,7 @@ class Game:
         else:
             raise Exception("Invalid number of utilities")
 
-        player.deduct_money(money_owed)
+        player.deduct_money(money_owed, True)
         owner.add_money(money_owed)
 
     def count_utilities(self, player):
@@ -386,11 +386,11 @@ class Game:
             print("[{}] Collected ${} from free parking money".format(player.name, self.free_parking_money))
             self.free_parking_money = 0
         elif tile.space == "Income Tax":
-            player.deduct_money(200)
+            player.deduct_money(200, True)
             self.gui.income_tax(player)
             print("[{}] Paid $200 for income tax".format(player.name))
         elif tile.space == "Super Tax":
-            player.deduct_money(100)
+            player.deduct_money(100, True)
             self.gui.super_tax(player)
             print("[{}] Paid $100 for super tax".format(player.name))
 
