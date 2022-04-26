@@ -115,11 +115,12 @@ class MovementCard(Card):
         
         if self.relative_pos:
             player.set_pos(self.tile)
+            if player.pos > self.tile:
+                if self.pass_go:
+                    player.add_money(200)
         else:
             player.move_player(self.tile)
-        if player.pos > self.tile:
-            if self.pass_go:
-                player.add_money(200)
+
 
     @classmethod
     def load_movement_card_from_xlsx(cls, path="ExcelData/PropertyTycoonCardDataRefactored.xlsx"):
