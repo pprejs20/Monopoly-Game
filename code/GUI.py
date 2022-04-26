@@ -1066,6 +1066,8 @@ class ScreenTracker:
         ctr = None
         player1 = game.players.get(0)
         while self.playing_game:
+            if game.players.get_length() == 1:
+                game.end_game()
             if not self.normal_mode:
                 if ctr == game.players.get_length():
                     game.end_game()

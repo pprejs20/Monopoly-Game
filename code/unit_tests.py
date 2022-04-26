@@ -102,7 +102,7 @@ class TestGame(unittest.TestCase):
 
         self.assertEqual(self.queue.get(0), self.p3)
         self.queue.next_object()
-        
+
         self.assertEqual(self.queue.objects, [self.p1, self.p2, self.p3])
 
     def test_player_queue_shuffle(self):
@@ -161,11 +161,9 @@ class TestUserRequirements(unittest.TestCase):
         pot_cards.shuffle()
         self.assertTrue(card1 != pot_cards.get(0) or card2 != pot_cards.get(1) or card3 != pot_cards.get(4))
 
-    def
 
 if __name__ == '__main__':
     unittest.main()
-
 
 
 

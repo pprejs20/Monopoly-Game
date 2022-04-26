@@ -509,21 +509,29 @@ def token_blit(number, tile_pos, token):
     pygame.display.update()
 
 
+# class containing integration functions to be called from the back end
 class Intermediary:
 
+    # initialise with an instance of the game class
     def __init__(self, game):
         self.game = game
 
-    # integration functions
     def reblit_left(self):
+        """
+        Function to reblit the player information on the left side of screen
+        :return:
+        """
         base = pygame.Rect(0, 0, 450, 975)
         pygame.draw.rect(screen, BLACK, base)
         for i in range(self.game.players.get_length()):
             player = self.game.players.get(i)
             blit_player_indicators(player.number, player)
 
-
     def reblit_board(self):
+        """
+        Function to re-blit the board image, the text, and the houses/hotels (if any)
+        :return:
+        """
         screen.blit(board, (450, 0))
         get_text()
         for i in range(self.game.players.get_length()):
@@ -538,14 +546,28 @@ class Intermediary:
         pygame.display.update()
 
     def reblit_right(self):
+        """
+        Function to re-blit the bank indicators on the right side of the screen
+        :return:
+        """
         blit_bank_prop()
 
     def reblit_all(self):
+        """
+        Function to re-blit each part of the screen
+        :return:
+        """
         self.reblit_left()
         self.reblit_board()
         self.reblit_right()
 
-    def gjf_card(self, player):
+    def gjf_card(self, player, test=None):
+        """
+        Function to give player the option to use their Get out of Jail Free card, and get their decision
+        :param player: Player who is in jail
+        :param test: Variable to allow for passing a manual response (for testing)
+        :return: Whether the player will use their Get out of Jail Free card
+        """
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         line1 = font2.render("{}, you're in jail!,".format(player.name), True, BLACK)
@@ -596,9 +618,16 @@ class Intermediary:
                             1] <= no_button.bottom:
                             use = False
                             response = "n"
+        if test is not None:
+            return test
         return response
 
     def doubles_jail(self, player):
+        """
+        Function to blit a message when the player rolls three doubles in a row and is sent to jail
+        :param player: Player who has rolled the doubles
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         line1 = font2.render("{}, you're getting too lucky!,".format(player.name), True, BLACK)
@@ -615,7 +644,14 @@ class Intermediary:
         pygame.time.wait(3000)
         self.reblit_board()
 
-    def jailed_player(self, player):
+    def jailed_player(self, player, test=None):
+        """
+        Function for when a player is in jail at the beginning of their turn. Gives option to pay £50 to leave or to try
+         and roll for a double
+        :param player: Player who is in jail
+        :param test: Variable to allow for passing a manual response (for testing)
+        :return: Whether the player will pay to leave jail or not
+        """
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         line1 = font2.render("{}, you're in jail!,".format(player.name), True, BLACK)
@@ -667,9 +703,16 @@ class Intermediary:
                             1] <= no_button.bottom:
                             pay = False
                             response = "n"
+        if test is not None:
+            return test
         return response
 
     def pay_to_leave(self, player):
+        """
+        Function for when the player pays to leave jail
+        :param player: PLayer who is leaving jail
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("You pay £50 to leave jail!", True, BLACK)
@@ -680,7 +723,11 @@ class Intermediary:
         pygame.display.update()
         pygame.time.wait(1000)
 
-    def roll_to_leave(self, player):
+    def roll_to_leave(self):
+        """
+        Function for when a player is trying to roll a double to leave jail
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("Rolling for a double to leave jail!", True, BLACK)
@@ -691,6 +738,11 @@ class Intermediary:
         pygame.display.update()
 
     def leave(self, player):
+        """
+        Function for when a player successfully rolls a double to leave jail
+        :param player: Player who is leaving jail
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("{}, you've rolled a double and are now free!".format(player.name), True, BLACK)
@@ -701,6 +753,11 @@ class Intermediary:
         pygame.display.update()
 
     def failed_double(self, player):
+        """
+        Function for when a player fails to roll a double to get out of jail
+        :param player: Player who was rolling dice
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("{}, you didn't roll a double :(".format(player.name), True, BLACK)
@@ -715,7 +772,11 @@ class Intermediary:
         screen.blit(line3, line3_rect)
         pygame.display.update()
 
-    def go(self, player):
+    def go(self):
+        """
+        Function for when a player lands on GO!
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), 270, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("Collect £200 as you pass GO!", True, BLACK)
@@ -726,8 +787,13 @@ class Intermediary:
         self.reblit_left()
         pygame.display.update()
 
-    def roll_dice(self, player, roll1, roll2):
-        # self.reblit_left()
+    def roll_dice(self, roll1, roll2):
+        """
+        Function to roll the dice; randomly shows numbers (to simulate rolling) then shows actual values
+        :param roll1: number rolled on dice 1
+        :param roll2: number rolled on dice 2
+        :return:
+        """
         for i in range(4):
             screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (858.75, (975 - tile_height - 70)))
             screen.blit(dice_images[random.choice([1, 2, 3, 4, 5, 6])], (966.25, (975 - tile_height - 70)))
@@ -740,10 +806,18 @@ class Intermediary:
         for i in range(self.game.players.get_length()):
             player = self.game.players.get(i)
             token_blit(player.number, player.pos, player.token)
-        # screen.blit(hat, (450 - 10 - 40, 30 + (player.number - 1) * 155))
         pygame.display.update()
 
-    def buy_buildings(self, game, player, first_time):
+    def buy_buildings(self, game, player, first_time, test=None):
+        """
+        Function to give a player the option to buy houses/hotels on properties they have a monopoly of
+        :param game: game object which is in use
+        :param player: player who is buying house/hotel
+        :param first_time: whether it is the first time the player is given this choice (can only buy hotel on first
+         time)
+        :param test: Variable to allow for passing a manual response (for testing)
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # line 1
@@ -780,6 +854,7 @@ class Intermediary:
         choice = ""
         input_rect = pygame.Rect(base.x + 10, base.bottom - 30, 20, 20)
         pygame.draw.rect(screen, (220, 215, 200), input_rect)
+        pygame.display.update()
         decision = False
         while not decision:
             pygame.display.update()
@@ -802,10 +877,17 @@ class Intermediary:
                         decision = True
                     elif len(choice) < 3:
                         choice += event.unicode
-        pygame.display.update()
+        if test is not None:
+            return test
         return choice
 
     def check_player_location(self, player):
+        """
+        Function to blit the name of the tile a player has landed on. Creates the base on which the appropriate messages
+         for that tile will be blitted
+        :param player: player who landed on the tile
+        :return:
+        """
         current_tile = tiles[player.pos - 1]
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
@@ -822,6 +904,11 @@ class Intermediary:
         pygame.display.update()
 
     def go_jail(self, player):
+        """
+        Function for when a player lands on the Go to Jail tile
+        :param player: player who is sent to jail
+        :return:
+        """
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("Uh oh! {}".format(random.choice(msgs)), True, BLACK)
@@ -836,17 +923,29 @@ class Intermediary:
         screen.blit(line4, line4_rect)
         pygame.display.update()
 
-    def offer_prop(self, curr_player):
+    def offer_prop(self, curr_player, test=None):
+        """
+        Function to give a player the opportunity to buy the property they have landed on. Generates automatic response
+         for AI players
+        :param curr_player: player who is buying a property
+        :param test: Variable to allow for manually passing a response (for testing)
+        :return:
+        """
+        # get the tile to be offered
         tile = tiles[curr_player.pos - 1]
+        # create smaller base to put text on (covers previous text apart from where they landed)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        # if the tile is a station create following lines of text:
         if tile.pos in [6, 16, 26, 36]:
             line3_txt = "1 Station: £25            2 Stations: £50"
             line4_txt = "3 Stations: £100            4 Stations: £200"
             line5_txt = ""
+        # if tile is a utility create following lines of text:
         elif tile.pos in [13, 29]:
             line3_txt = "1 Utility: rent is 4 times value shown on dice"
             line4_txt = "2 Utilities: rent is 10 times value shown on dice"
             line5_txt = ""
+        # otherwise, tile will be a normal property
         else:
             line3_txt = "Base rent: £{}".format(tile.base_rent) + "            1 House: £{}".format(
                 tile.one_house_rent)
@@ -854,26 +953,31 @@ class Intermediary:
                 tile.three_house_rent)
             line5_txt = "4 House: £{}".format(tile.four_house_rent) + "            Hotel: £{}".format(
                 tile.hotel_rent)
+        # display line 3
         line3 = font2.render(line3_txt, True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        # display line 4
         line4 = font2.render(line4_txt, True, BLACK)
         line4_rect = line4.get_rect()
         line4_rect.centerx = 937.5
         line4_rect.y = line3_rect.bottom + 15
         screen.blit(line4, line4_rect)
+        # display line 5
         line5 = font2.render(line5_txt, True, BLACK)
         line5_rect = line5.get_rect()
         line5_rect.centerx = 937.5
         line5_rect.y = line4_rect.bottom + 15
         screen.blit(line5, line5_rect)
+        # display line 6
         line6 = font2.render("Cost: £{}".format(tile.cost), True, BLACK)
         line6_rect = line6.get_rect()
         line6_rect.centerx = 937.5
         line6_rect.y = line5_rect.bottom + 20
         screen.blit(line6, line6_rect)
+        # display line 7
         line7 = font2.render("{}, do you wish to buy?".format(curr_player.name), True, BLACK)
         line7_rect = line7.get_rect()
         line7_rect.centerx = 937.5
@@ -894,9 +998,11 @@ class Intermediary:
         no_rect.center = no_button.center
         screen.blit(no, no_rect)
         pygame.display.update()
+        # if player is an AI, generate random response
         if isinstance(curr_player, AIPlayer):
             pygame.time.wait(2000)
             response = random.choice(["y", "n"])
+        # if human player check to see where they clicked to get their response
         else:
             buying_prop = True
             response = None
@@ -907,23 +1013,32 @@ class Intermediary:
                         break
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
-                        # if they click yes
                         if yes_button.left <= mouse_pos[0] <= yes_button.right and yes_button.top <= mouse_pos[
                             1] <= yes_button.bottom:
                             buying_prop = False
                             response = "y"
-                        # else, if click no, tile needs to go up for auction
                         elif no_button.left <= mouse_pos[0] <= no_button.right and no_button.top <= mouse_pos[
                             1] <= no_button.bottom:
                             buying_prop = False
                             response = "n"
+        if test is not None:
+            return test
         return response
 
-    def buy_prop(self, curr_player, tile=None,):
+    def buy_prop(self, curr_player, tile=None, ):
+        """
+        Function for when a player buys a property (either through them landing on it or auction)
+        :param curr_player: player making the purchase
+        :param tile: tile being purchased (necessary in case they are buying a property they are not currently on)
+        :return:
+        """
+        # create smaller base to put text on (covers previous text apart from which property was bought)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
+        # if they are not buying a specific tile, then retrieve the tile they are currently on
         if tile is None:
             tile = tiles[curr_player.pos - 1]
+        # create line 3 text
         line3 = font2.render("{} has bought ".format(curr_player.name) + "{}!".format(tile.space), True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
@@ -938,6 +1053,13 @@ class Intermediary:
         pygame.display.update()
 
     def auction_prop(self, tile):
+        """
+        Function for when a property is being auctioned. Creates the base where auction menu will be called for each
+         player
+        :param tile: tile being auctioned
+        :return:
+        """
+        # create base for the property being auctioned
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # line 1: "Auction for: *Property name*"
@@ -948,7 +1070,16 @@ class Intermediary:
         screen.blit(line1, line1_rect)
         pygame.display.update()
 
-    def auction_menu(self, player, curr_price):
+    def auction_menu(self, player, curr_price, test=None):
+        """
+        Function for when a player is bidding on a property. Gives option to pass or raise the current bid by set
+         amounts and gets players decision
+        :param player: player making a bid
+        :param curr_price: current price of the property being auctioned
+        :param test: Variable to allow for manually passing a response (for testing)
+        :return:
+        """
+        # create smaller base to put text on (covers previous text apart from which property is being auctioned)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         # create third line of text: "Current bid: £x"
@@ -992,6 +1123,7 @@ class Intermediary:
         fhund_txt_rect.center = fhund_button.center
         screen.blit(fhund_txt, fhund_txt_rect)
         pygame.display.update()
+        # generate automatic response if it's an AI
         if isinstance(player, AIPlayer):
             pygame.time.wait(2000)
             if player.money >= curr_price + 500:
@@ -1006,36 +1138,46 @@ class Intermediary:
             response = None
             bidding = True
             while bidding:
+                # get which button was clicked by the player
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         bidding = False
-                        # self.playing_game = False
                         break
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
                         print(mouse_pos)
                         if pass_button.left <= mouse_pos[0] <= pass_button.right and pass_button.top <= mouse_pos[
-                            1] <= pass_button.bottom:
+                                1] <= pass_button.bottom:
                             response = "1"
                             bidding = False
                         elif fifty_button.left <= mouse_pos[0] <= fifty_button.right and fifty_button.top <= mouse_pos[
-                            1] <= fifty_button.bottom:
+                                1] <= fifty_button.bottom:
                             response = "2"
                             bidding = False
                         elif hund_button.left <= mouse_pos[0] <= hund_button.right and hund_button.top <= mouse_pos[
-                            1] <= hund_button.bottom:
+                                1] <= hund_button.bottom:
                             response = "3"
                             bidding = False
                         elif fhund_button.left <= mouse_pos[0] <= fhund_button.right and fhund_button.top <= mouse_pos[
-                            1] <= fhund_button.bottom:
+                                1] <= fhund_button.bottom:
                             response = "4"
                             bidding = False
+        # return the manually inputted value if there is one
+        if test is not None:
+            return test
+        # otherwise, return the chosen value
         return response
 
     def noone_bought(self):
+        """
+        Function in case no-one buys the property that was being auctioned
+        :return:
+        """
+        # create smaller base to put text on (covers previous text apart from which property was auctioned)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
-        line3 = font2.render("Noone bought the property!", True, BLACK)
+        # create line 3
+        line3 = font2.render("No-one bought the property!", True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
         line3_rect.y = 350
@@ -1043,17 +1185,31 @@ class Intermediary:
         pygame.display.update()
 
     def return_prop(self, prop):
+        """
+        Function to make a property indicator reappear on the right side in case of mortgage
+        :param prop: property being returned
+        :return:
+        """
         # set transparency of image at bank_prop_list[current_tile] to be 1 (disappear from rhs)
         bank_prop_list[prop.space].set_alpha(100)
 
     def owned_tile(self, player, tile):
+        """
+        Function for when a player lands on another player's property
+        :param player: player who landed on the tile
+        :param tile: tile that was landed on
+        :return:
+        """
+        # create smaller base to put text on (covers previous text apart from where they landed)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
+        # create line 3
         line3 = font2.render("{} ".format(tile.space) + "is owned by {}".format(tile.owner), True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        # create line 4
         line4 = font2.render("{}, time to pay rent!".format(player.name), True, BLACK)
         line4_rect = line4.get_rect()
         line4_rect.centerx = 937.5
@@ -1062,15 +1218,29 @@ class Intermediary:
         pygame.display.update()
 
     def pay_rent(self, rent, payee, receiver):
+        """
+        Function to blit the message when a player pays another player rent
+        :param rent: amount being paid
+        :param payee: player making the payment
+        :param receiver: player receiveing the payment
+        :return:
+        """
+        # create text to display
         line5 = font2.render("{} ".format(payee.name) + "pays {} ".format(receiver.name) +
                              "£{} in rent!".format(str(rent)), True, BLACK)
         line5_rect = line5.get_rect()
-        line5_rect.centerx= 937.5
+        line5_rect.centerx = 937.5
         line5_rect.y = 500
         screen.blit(line5, line5_rect)
         pygame.display.update()
 
     def pot_luck(self, card):
+        """
+        Function for when a player lands on a Pot Luck tile. Displays the card description
+        :param card: card that was drawn
+        :return:
+        """
+        # get card description on the board
         c = pot_luck.get_rect()
         c.centerx = 937.5
         c.y = 375
@@ -1086,9 +1256,16 @@ class Intermediary:
             gap += line3_rect.height
             screen.blit(line3, line3_rect)
             pygame.display.update()
+        # wait 2.5 seconds to display the card
         pygame.time.wait(2500)
 
     def opp_knocks(self, card):
+        """
+        Function for when a player lands on an Opportunity Knocks tile. Displays the card description
+        :param card: card that was drawn
+        :return:
+        """
+        # get card description on the board
         c = opp_knocks.get_rect()
         c.centerx = 937.5
         c.y = 375
@@ -1104,61 +1281,96 @@ class Intermediary:
             gap += line3_rect.height
             screen.blit(line3, line3_rect)
             pygame.display.update()
+        # wait 2.5 seconds to display the card
         pygame.time.wait(2500)
 
-
     def free_parking(self, player):
+        """
+        Function for when a player lands on the free-parking tile
+        :param player: player who landed on free-parking
+        :return:
+        """
+        # create smaller base to put text on (covers previous text apart from where they landed)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
+        # create line 3
         line3 = font2.render("Wooo! {} has hit the jackpot and gets richer!".format(player.name), True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        # re-blit left side to show new player money
+        self.reblit_left()
         pygame.display.update()
 
     def income_tax(self, player):
+        """
+        Function for when a player lands on the Income Tax tile
+        :param player: player who landed on the tile
+        :return:
+        """
+        # create smaller base to put text on (covers previous text apart from where they landed)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
+        # create line 3
         line3 = font2.render("{} must pay £200 to the bank".format(player.name), True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        # re-blit the left side to show new player money
         self.reblit_left()
         pygame.display.update()
 
     def super_tax(self, player):
+        """
+        Function for when a player lands on the Super Tax tile
+        :param player: player who landed on the tile
+        :return:
+        """
+        # create smaller base to put text on (covers previous text apart from where they landed)
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
+        # create line 3
         line3 = font2.render("{} must pay £100 to the bank".format(player.name), True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        # re-blit the left side to show new player money
         self.reblit_left()
         pygame.display.update()
 
-    def end_game(self, game, player):
+    def end_game(self, player):
+        """
+        Function for when the game is over (either because there is only one player left or time runs out)
+        :param player: player who has won the game
+        :return:
+        """
+        # create base to put text on
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
+        # create line 1 
         line1 = font2.render("The game is over!", True, BLACK)
         line1_rect = line1.get_rect()
         line1_rect.centerx = 937.5
         line1_rect.y = tile_height + 120
         screen.blit(line1, line1_rect)
-        line3 = font2.render("{} wins with a net worth of:".format(player.name), True, BLACK)
+        # create line 2 
+        line2 = font2.render("{} wins with a net worth of:".format(player.name), True, BLACK)
+        line2_rect = line2.get_rect()
+        line2_rect.centerx = 937.5
+        line2_rect.y = 350
+        screen.blit(line2, line2_rect)
+        # create line 3
+        line3 = font2.render("{}".format(player.money), True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
-        line3_rect.y = 350
+        line3_rect.y = line2_rect.bottom + 20
         screen.blit(line3, line3_rect)
-        line4 = font2.render("{}".format(player.money), True, BLACK)
-        line4_rect = line4.get_rect()
-        line4_rect.centerx = 937.5
-        line4_rect.y = line3_rect.bottom + 20
-        screen.blit(line4, line4_rect)
         pygame.display.update()
         pygame.time.wait(10000)
+
 
 house_costs = {
     "Brown": 50,
