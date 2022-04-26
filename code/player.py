@@ -118,13 +118,13 @@ class Player:
             if len(self.propList) == 0:
                 print("Player has lost")
                 return
-                #add code for removing a player from the game
+                # add code for removing a player from the game
             for i, prop in enumerate(self.propList):
                 print(i, prop, prop.cost)
             ans = input("Enter prop index to sell")
             self.propList[ans].buyable = True
             amount = self.propList[ans].cost
-            #might need to add code for getting money for house and hotels back
+            # might need to add code for getting money for house and hotels back
             self.propList.pop(ans)
             self.add_money(amount, False)
         return

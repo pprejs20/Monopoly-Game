@@ -84,10 +84,6 @@ class Game:
         first_time = True
         while input != 1:
             available_props = self.get_house_available_props(player, first_time)
-            # first_time = False
-            # string = "1. Leave\n"
-            # string += self.consturct_prop_strings(available_props)
-            # string += "\nSelect an option: "
             inpt = int(self.gui.buy_buildings(self, player, first_time))
 
             if inpt == 1:
@@ -176,9 +172,6 @@ class Game:
                 pass
 
         if player.money >= 50:
-            # if isinstance(player, AIPlayer):
-            #     response = random.choice(["y", "n"])
-            # else:
             response = self.gui.jailed_player(player)
         else:
             response = "n"
@@ -235,9 +228,6 @@ class Game:
                 # Only one player left and has already raised, they win
                 if temp_queue.get_length() == 1 and money_placed:
                     break
-                # if isinstance(player, AIPlayer):
-                #     curr_price, passed = self.auction_menu_ai(curr_player, tile, curr_price)
-                # else:
                 curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
                 if passed:
                     temp_queue.remove_by_name(curr_player.name)
