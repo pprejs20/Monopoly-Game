@@ -13,7 +13,7 @@ class Game:
 
     def __init__(self, players):
 
-        assert len(players) <= 6 and len(players) >= 2
+        assert 6 >= len(players) >= 2
 
         self.players = PlayerQueue(players)
         self.players.shuffle()
@@ -61,7 +61,7 @@ class Game:
             self.current_d2 = d2
             dice_sum = d1 + d2
             player.move_player_forward(dice_sum)
-            self.gui.roll_dice(player, d1, d2)
+            self.gui.roll_dice(d1, d2)
             self.check_player_position(player)
             print("[{}] rolled: {}".format(player.name, dice_sum))
 
@@ -192,8 +192,8 @@ class Game:
             self.gui.reblit_all()
         else:
             d1, d2, doubles = player.roll_dice()
-            self.gui.roll_to_leave(player)
-            self.gui.roll_dice(player, d1, d2)
+            self.gui.roll_to_leave()
+            self.gui.roll_dice( d1, d2)
             if doubles:
                 player.unjail()
                 self.gui.leave(player)
@@ -283,26 +283,6 @@ class Game:
         elif inpt == "4":
             return curr_price + 500, False
 
-    # def auction_menu_ai(self, player, tile, curr_price):
-        # inpt = self.gui.gui_auction_menu(player, curr_price)
-        # if player.money >= curr_price + 500:
-        #     inpt = random.choice(["1", "2", "3", "4"])
-        # elif player.money >= curr_price + 100:
-        #     inpt = random.choice(["1", "2", "3"])
-        # elif player.money >= curr_price + 50:
-        #     inpt = random.choice(["1", "2"])
-        # else:
-        #     inpt = "1"
-        #
-        # if inpt == "1":
-        #     return curr_price, True
-        # elif inpt == "2":
-        #     return curr_price + 50, False
-        # elif inpt == "3":
-        #     return curr_price + 100, False
-        # elif inpt == "4":
-        #     return curr_price + 500, False
-
     def check_property(self, player):
         """
         Procedure which takes place when a player lands on a property
@@ -314,10 +294,6 @@ class Game:
             if player.laps > 0:
                 if player.money >= tile.cost:
                     inpt = self.gui.offer_prop(player)
-                    # if isinstance(player, AIPlayer):
-                    #     inpt = random.choice(["y", "n"])
-                    # else:
-                    #     inpt = response
                     if inpt == "y":
                         player.buy_property(tile)
                         self.gui.buy_prop(player)
