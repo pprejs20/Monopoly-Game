@@ -114,10 +114,10 @@ class MovementCard(Card):
         """
         
         if self.relative_pos:
-            player.set_pos(self.tile-1)
+            player.set_pos(self.tile)
         else:
             player.move_player(self.tile)
-        if player.pos > self.tile-1:
+        if player.pos > self.tile:
             if self.pass_go:
                 player.add_money(200)
 

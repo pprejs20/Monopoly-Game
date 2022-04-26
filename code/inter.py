@@ -759,7 +759,34 @@ class Intermediary:
             y = txt_rect.bottom
             screen.blit(txt, txt_rect)
         # TODO: add code to type in which option is chosen
+        input_active = False
+        choice = ""
+        input_rect = pygame.Rect(base.x + 10, base.bottom + 30, 20, 20)
+        pygame.draw.rect(screen, (220, 215, 200), input_rect)
+        decision = False
+        while not decision:
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event == pygame.QUIT:
+                    decision = True
+                    break
+
+                pos = pygame.mouse.get_pos()
+                hit = input_rect.collidepoint(pos)
+
+                if event == pygame.MOUSEBUTTONDOWN and hit:
+                    input_active = True
+
+                if event == pygame.KEYDOWN and input_active:
+                    if event.key == pygame.K_BACKSPACE:
+                        choice = choice[:-1]
+                    elif event.key == pygame.K_RETURN and len(choice) > 0:
+                        input_active = False
+                        decision = True
+                    elif len(choice) < 3:
+                        choice += event.unicode
         pygame.display.update()
+        return choice
 
     def check_player_location(self, player):
         current_tile = tiles[player.pos - 1]
@@ -998,6 +1025,10 @@ class Intermediary:
         screen.blit(line3, line3_rect)
         pygame.display.update()
 
+    def return_prop(self, prop):
+        # set transparency of image at bank_prop_list[current_tile] to be 1 (disappear from rhs)
+        bank_prop_list[prop.space].set_alpha(100)
+
     def owned_tile(self, player, tile):
         base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
@@ -1017,7 +1048,7 @@ class Intermediary:
         line5 = font2.render("{} ".format(payee.name) + "pays {}".format(receiver.name) + "{} in rent!".format(str(rent)), True, BLACK)
         line5_rect = line5.get_rect()
         line5_rect.centerx= 937.5
-        line5_rect.y = 400
+        line5_rect.y = 700
         screen.blit(line5, line5_rect)
         pygame.display.update()
 
@@ -1037,7 +1068,7 @@ class Intermediary:
             gap += line3_rect.height
             screen.blit(line3, line3_rect)
             pygame.display.update()
-        pygame.time.wait(4000)
+        pygame.time.wait(2500)
 
     def opp_knocks(self, card):
         c = opp_knocks.get_rect()
@@ -1055,7 +1086,7 @@ class Intermediary:
             gap += line3_rect.height
             screen.blit(line3, line3_rect)
             pygame.display.update()
-        pygame.time.wait(4000)
+        pygame.time.wait(2500)
 
 
     def free_parking(self, player):

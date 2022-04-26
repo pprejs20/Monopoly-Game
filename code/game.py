@@ -317,7 +317,7 @@ class Game:
                         self.auction_property(tile, player)
                 else:
                     print("[{}] Not enough money to buy!".format(player.name))
-        elif tile.owner is not None:
+        elif tile.owner is not None and player.name != tile.owner:
             self.gui.owned_tile(player, tile)
             cost = tile.cost
             if tile.no_of_houses > 4:
@@ -332,11 +332,27 @@ class Game:
                 cost = tile.four_house_rent
             if self.check_monopoly(player):
                 if cost == tile.cost:
+                    rent = cost*2
                     player.deduct_money(cost*2, True)
             else:
+                rent = cost
                 player.deduct_money(cost, True)
-            if tile.group == "Utilities" and player.name != tile.owner:
-                self.check_utilities(player, tile.owner)
+            if tile.group == "Utilities":
+                rent = self.check_utilities(player, tile.owner)
+            elif tile.group == "Station":
+                rent = self.check_stations(tile.owner)
+
+                # check if player can afford rent
+                if rent > player.net_worth:
+                    # return any player properties to the bank
+                    for prop in player.propList:
+                        self.gui.return_prop(prop)
+                    self.gui.reblit_right()
+                    # remove player from player list
+                    self.players.remove_by_name(player.name)
+                # check if player needs to mortgage any properties
+                elif rent > player.money:
+                    pass
 
     def check_utilities(self, player, owner_name):
         """
@@ -348,14 +364,13 @@ class Game:
         owner = self.players.get_by_name(owner_name)
         count = self.count_utilities(owner)
         if count == 1:
-            money_owed = (self.current_d1 + self.current_d2) * 4
+            rent = (self.current_d1 + self.current_d2) * 4
         elif count == 2:
-            money_owed = (self.current_d1 + self.current_d2) * 4
+            rent = (self.current_d1 + self.current_d2) * 4
         else:
             raise Exception("Invalid number of utilities")
 
-        player.deduct_money(money_owed, True)
-        owner.add_money(money_owed)
+        return rent
 
     def count_utilities(self, player):
         """
@@ -367,6 +382,31 @@ class Game:
         count = 0
         for prop in player.propList:
             if prop.group == "Utilities":
+                count += 1
+        return count
+
+    def check_stations(self, owner_name):
+
+        owner = self.players.get_by_name(owner_name)
+        count = self.count_stations(owner)
+
+        if count == 1:
+            rent = 25
+        elif count == 2:
+            rent = 50
+        elif count == 3:
+            rent = 100
+        elif count == 4:
+            rent = 200
+        else:
+            raise Exception("Invalid number of stations")
+
+        return rent
+
+    def count_stations(self, player):
+        count = 0
+        for prop in player.propList:
+            if prop.group == "Station":
                 count += 1
         return count
 
@@ -388,13 +428,13 @@ class Game:
             self.check_property(player)
         elif tile.space == "Pot Luck":
             pot = self.pot_cards.next_object()
-            self.gui.pot_luck(pot)
             pot.execute(player, self.players, self)
+            self.gui.pot_luck(pot)
             self.gui.reblit_all()
         elif tile.space == "Opportunity Knocks":
             opp = self.opp_cards.next_object()
-            self.gui.opp_knocks(opp)
             opp.execute(player, self.players, self)
+            self.gui.opp_knocks(opp)
             self.gui.reblit_all()
         elif tile.space == "Free Parking":
             player.add_money(self.free_parking_money)
