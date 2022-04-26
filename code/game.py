@@ -439,7 +439,7 @@ class Game:
             player.jail()
             self.gui.go_jail(player)
         elif tile.pos == 1:
-            self.gui.go(player)
+            self.gui.go()
         elif tile.buyable:
             self.check_property(player)
         elif tile.space == "Pot Luck":
@@ -470,7 +470,7 @@ class Game:
         # get net worth of all players and determine who wins
         # temporarily getting player at top of queue
         winner = self.players.get(0)
-        self.gui.end_game(self, winner)
+        self.gui.end_game(winner)
 
 
 
