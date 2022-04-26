@@ -4,6 +4,7 @@ from tile import Tile
 from cards import *
 from player import *
 from game import *
+from inter import *
 
 
 class TestTile(unittest.TestCase):
@@ -117,16 +118,15 @@ class TestGame(unittest.TestCase):
 class TestUserRequirements(unittest.TestCase):
 
     def setUp(self):
-        players1 = [AIPlayer(), AIPlayer(), AIPlayer()]
-        players2 = [Player("Player 1"), Player("Player 2"), Player("Player 3")]
-        game1 = Game(players1)
-        game2 = Game(players2)
+        players1 = [AIPlayer(token=cat_token, number=1), AIPlayer(token=iron_token, number=2), AIPlayer(token=smartphone_token, number=3)]
+        players2 = [Player("Player 1", token=cat_token, number=1), Player("Player 2", token=iron_token, number=2),
+                    Player("Player 3", token=smartphone_token, number=3), AIPlayer(token=hatstand_token, number=1)]
+        self.game1 = Game(players1)
+        self.game2 = Game(players2)
 
     def test_ai_players(self):
-        players = [AIPlayer(), AIPlayer(), AIPlayer()]
-        game = Game(players)
         for i in range(250):
-            game.next_step()
+            self.game1.next_step()
 
         self.assertTrue(True)
 
@@ -136,15 +136,32 @@ class TestUserRequirements(unittest.TestCase):
             game = Game(players)
         except AssertionError:
             self.assertTrue(True)
+            return
         self.assertTrue(False)
 
     def test_players_start_money(self):
-        players = [AIPlayer(), AIPlayer(), AIPlayer()]
-        game = Game(players)
-        self.assertEqual(1500, game.players.get(0).money)
-        self.assertEqual(1500, game.players.get(1).money)
-        self.assertEqual(1500, game.players.get(2).money)
+        self.assertEqual(1500, self.game1.players.get(0).money)
+        self.assertEqual(1500, self.game1.players.get(1).money)
+        self.assertEqual(1500, self.game1.players.get(2).money)
 
+    def test_player_moves_around_board(self):
+        player = self.game1.players.get(0)
+        initial_pos = player.pos
+        self.game1.next_step()
+        self.assertTrue(initial_pos != player.pos)
+        dice_sum = self.game1.current_d1 + self.game1.current_d2
+        self.assertTrue(player.pos == initial_pos + dice_sum)
+
+    def test_card_shuffle(self):
+        pot_cards, opp_cards = load_all_cards()
+        pot_cards = Queue(pot_cards)
+        card1 = pot_cards.get(0)
+        card2 = pot_cards.get(1)
+        card3 = pot_cards.get(4)
+        pot_cards.shuffle()
+        self.assertTrue(card1 != pot_cards.get(0) or card2 != pot_cards.get(1) or card3 != pot_cards.get(4))
+
+    def
 
 if __name__ == '__main__':
     unittest.main()
