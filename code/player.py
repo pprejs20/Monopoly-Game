@@ -113,6 +113,24 @@ class Player:
             self.unjail()
             print("[{}] You served your time, you are now free!".format(self.name))
 
+    def sell_property(self):
+        while self.money < 0:
+            if len(self.propList) == 0:
+                print("Player has lost")
+                return
+                #add code for removing a player from the game
+            for i, prop in enumerate(self.propList):
+                print(i, prop, prop.cost)
+            ans = input("Enter prop index to sell")
+            self.propList[ans].buyable = True
+            amount = self.propList[ans].cost
+            #might need to add code for getting money for house and hotels back
+            self.propList.pop(ans)
+            self.add_money(amount, False)
+        return
+
+
+
     def deduct_money(self, amount, net_worth_deduction=False):
         """
         Takes money away from the player
@@ -122,6 +140,8 @@ class Player:
         self.money -= amount
         if net_worth_deduction:
             self.net_worth -= amount
+        if self.money < 0:
+            self.sell_property()
 
     def add_money(self, amount, net_worth_increase=True):
         """
