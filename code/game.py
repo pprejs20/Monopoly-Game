@@ -33,9 +33,11 @@ class Game:
         """
 
         pot_cards, opp_cards = load_all_cards()
-        random.shuffle(pot_cards)
-        random.shuffle(opp_cards)
-        return Queue(pot_cards), Queue(opp_cards)
+        pot_cards = Queue(pot_cards)
+        opp_cards = Queue(opp_cards)
+        pot_cards.shuffle()
+        opp_cards.shuffle()
+        return pot_cards, opp_cards
 
     def next_step(self, player=None):
         """
