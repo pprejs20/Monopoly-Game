@@ -670,7 +670,7 @@ class Intermediary:
         return response
 
     def pay_to_leave(self, player):
-        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("You pay £50 to leave jail!", True, BLACK)
         line2_rect = line2.get_rect()
@@ -681,7 +681,7 @@ class Intermediary:
         pygame.time.wait(1000)
 
     def roll_to_leave(self, player):
-        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("Rolling for a double to leave jail!", True, BLACK)
         line2_rect = line2.get_rect()
@@ -691,7 +691,7 @@ class Intermediary:
         pygame.display.update()
 
     def leave(self, player):
-        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line2 = font2.render("{}, you've rolled a double and are now free!".format(player.name), True, BLACK)
         line2_rect = line2.get_rect()
@@ -700,8 +700,23 @@ class Intermediary:
         screen.blit(line2, line2_rect)
         pygame.display.update()
 
+    def failed_double(self, player):
+        base = pygame.Rect((450 + tile_height + 150), 290, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        pygame.draw.rect(screen, WHITE, base)
+        line2 = font2.render("{}, you didn't roll a double :(".format(player.name), True, BLACK)
+        line2_rect = line2.get_rect()
+        line2_rect.centerx = 937.5
+        line2_rect.y = 350
+        screen.blit(line2, line2_rect)
+        line3 = font2.render("Better luck next time!", True, BLACK)
+        line3_rect = line3.get_rect()
+        line3_rect.centerx = 937.5
+        line3_rect.y = line2_rect.bottom + 20
+        screen.blit(line3, line3_rect)
+        pygame.display.update()
+
     def go(self, player):
-        base = pygame.Rect((450 + tile_height + 150), 300, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        base = pygame.Rect((450 + tile_height + 150), 270, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         line3 = font2.render("Collect £200 as you pass GO!", True, BLACK)
         line3_rect = line3.get_rect()

@@ -223,17 +223,21 @@ class Game:
         self.gui.auction_prop(tile)
         while not (temp_queue.get_length() == 0):
             curr_player = temp_queue.next_object()
-            # Only one player left and has already raised, they win
-            if temp_queue.get_length() == 1 and money_placed:
-                break
-            # if isinstance(player, AIPlayer):
-            #     curr_price, passed = self.auction_menu_ai(curr_player, tile, curr_price)
-            # else:
-            curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
-            if passed:
+            # check to make sure player is eligible: not in jail and at least 1 lap
+            if curr_player.jailed or curr_player.laps < 1:
                 temp_queue.remove_by_name(curr_player.name)
             else:
-                money_placed = True
+                # Only one player left and has already raised, they win
+                if temp_queue.get_length() == 1 and money_placed:
+                    break
+                # if isinstance(player, AIPlayer):
+                #     curr_price, passed = self.auction_menu_ai(curr_player, tile, curr_price)
+                # else:
+                curr_price, passed = self.display_auction_menu(curr_player, tile, curr_price)
+                if passed:
+                    temp_queue.remove_by_name(curr_player.name)
+                else:
+                    money_placed = True
 
         if temp_queue.get_length() == 0:
             self.gui.noone_bought()
@@ -321,16 +325,16 @@ class Game:
             self.gui.owned_tile(player, tile)
             rent = tile.cost
             if tile.no_of_houses > 4:
-                cost = tile.hotel_rent
+                rent = tile.hotel_rent
             if tile.no_of_houses == 1:
-                cost = tile.one_house_rent
+                rent = tile.one_house_rent
             if tile.no_of_houses == 2:
-                cost = tile.two_house_rent
+                rent = tile.two_house_rent
             if tile.no_of_houses == 3:
-                cost = tile.three_house_rent
+                rent = tile.three_house_rent
             if tile.no_of_houses == 4:
-                cost = tile.four_house_rent
-            if self.check_monopoly(player):
+                rent = tile.four_house_rent
+            if tile.group in player.get_monopolies():
                 if rent == tile.cost:
                     rent = rent*2
             else:
@@ -348,6 +352,8 @@ class Game:
                 self.gui.reblit_right()
                 # remove player from player list
                 self.players.remove_by_name(player.name)
+                # reblit lhs
+                self.gui.reblit_left()
             # check if player needs to mortgage any properties
             elif rent > player.money:
                 pass
