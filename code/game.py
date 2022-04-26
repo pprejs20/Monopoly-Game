@@ -12,6 +12,9 @@ class Game:
     """
 
     def __init__(self, players):
+
+        assert len(players) <= 6 and len(players) >= 2
+
         self.players = PlayerQueue(players)
         self.players.shuffle()
         self.tiles = Tile.load_tiles_from_xlsx()
