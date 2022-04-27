@@ -26,6 +26,7 @@ class Player:
         self.number = number
         self.monopolies = []
         self.net_worth = self.money
+        self.bankrupt = False
 
     def add_prop(self, tile):
         """
@@ -113,35 +114,47 @@ class Player:
             self.unjail()
             print("[{}] You served your time, you are now free!".format(self.name))
 
-    def sell_property(self):
-        while self.money < 0:
-            if len(self.propList) == 0:
-                print("Player has lost")
-                return
-                # add code for removing a player from the game
+    def sell_property(self, game, amount):
+        while self.money < amount:
             for i, prop in enumerate(self.propList):
                 print(i, prop, prop.cost)
             ans = input("Enter prop index to sell")
             self.propList[ans].buyable = True
-            amount = self.propList[ans].cost
-            # might need to add code for getting money for house and hotels back
+            self.propList[ans].owner = None
+            game.gui.return_prop(self.propList[ans])
+            no = self.propList[ans].no_of_house
+            if no > 0:
+                amount = house_costs[self.propList[ans].group] * no
+                amount += self.propList[ans].cost
+            else:
+                amount = self.propList[ans].cost
             self.propList.pop(ans)
-            self.add_money(amount, False)
-        return
+            self.add_money(amount)
 
 
 
-    def deduct_money(self, amount, net_worth_deduction=False):
+    def deduct_money(self, amount, game, net_worth_deduction=False):
         """
         Takes money away from the player
         :param amount: the amount of money that will be deducted
         """
 
+        if self.net_worth < amount:
+            game.players.remove_by_name(self.name)
+            for prop in self.propList:
+                prop.buyable = True
+                prop.owner = None
+                game.gui.return_prop(prop)
+            return
+
+        if self.money < amount:
+            self.sell_property(game, amount)
+
         self.money -= amount
         if net_worth_deduction:
             self.net_worth -= amount
-        if self.money < 0:
-            self.sell_property()
+
+
 
     def add_money(self, amount, net_worth_increase=True):
         """
@@ -267,4 +280,15 @@ tiles_of_color = {
     "Yellow": 3,
     "Green": 3,
     "Deep blue": 2
+}
+
+house_costs = {
+    "Brown": 50,
+    "Blue": 50,
+    "Purple": 100,
+    "Orange": 100,
+    "Red": 150,
+    "Yellow": 150,
+    "Green": 200,
+    "Deep Blue": 200
 }
