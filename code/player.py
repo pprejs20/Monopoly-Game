@@ -116,6 +116,11 @@ class Player:
             print("[{}] You served your time, you are now free!".format(self.name))
 
     def sell_property(self, game, amount):
+        """
+        Sells of property in the event that a player can't afford payments
+        :param game: game object
+        :param amount: the amount of money the player owes
+        """
         while self.money < amount:
             for i, prop in enumerate(self.propList):
                 print(i, prop, prop.cost)
@@ -138,6 +143,8 @@ class Player:
         """
         Takes money away from the player
         :param amount: the amount of money that will be deducted
+        :param game: game object
+        :param net_worth_deduction: dictates whether the decuction will also deduct net worth
         """
 
         if self.net_worth < amount:
@@ -161,6 +168,7 @@ class Player:
         """
         Gives the player money
         :param amount: the amount of money to be added
+        :param net_worth_increase: dictates whether the increase will also increase net worth
         """
 
         self.money += amount
