@@ -1073,7 +1073,7 @@ class ScreenTracker:
                     game.end_game()
                     self.playing_game = False
                 elapsed_time = time.time() - start_time
-                timer = font.render(str(elapsed_time))
+                timer = font.render(str(elapsed_time/60) + ":" + str(elapsed_time%60), True, BLACK)
                 if elapsed_time > 1800 and not checked and game.players.get(0) == player1:
                     ctr = 1
                     last_turns = True

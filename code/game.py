@@ -100,7 +100,7 @@ class Game:
         :param player: the player which will purchase the property
         """
         
-        player.deduct_money(house_costs[prop.group])
+        player.deduct_money(house_costs[prop.group], self)
         prop.add_house()
 
 
@@ -181,7 +181,7 @@ class Game:
 
         if response == 'y':
             self.gui.pay_to_leave(player)
-            player.deduct_money(50, True)
+            player.deduct_money(50, self, True)
             self.free_parking_money += 50
             player.unjail()
             self.gui.reblit_all()
@@ -333,7 +333,7 @@ class Game:
 
             owner = self.players.get_by_name(tile.owner)
 
-            player.deduct_money(rent, True)
+            player.deduct_money(rent, self, True)
             owner.add_money(rent, True)
             self.gui.pay_rent(rent, player, owner)
             self.gui.reblit_left()
@@ -426,11 +426,11 @@ class Game:
             print("[{}] Collected ${} from free parking money".format(player.name, self.free_parking_money))
             self.free_parking_money = 0
         elif tile.space == "Income Tax":
-            player.deduct_money(200, True)
+            player.deduct_money(200, self, True)
             self.gui.income_tax(player)
             print("[{}] Paid $200 for income tax".format(player.name))
         elif tile.space == "Super Tax":
-            player.deduct_money(100, True)
+            player.deduct_money(100, self, True)
             self.gui.super_tax(player)
             print("[{}] Paid $100 for super tax".format(player.name))
 

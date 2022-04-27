@@ -188,7 +188,7 @@ class Player:
         if cost is None:
             cost = tile.cost
 
-        self.deduct_money(cost)
+        self.deduct_money(cost, game=None)
         tile.owner = self.name
         self.add_prop(tile)
 

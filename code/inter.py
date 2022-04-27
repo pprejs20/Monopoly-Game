@@ -863,7 +863,7 @@ class Intermediary:
         :return:
         """
         # create a smaller base to display text on (covers previous text apart from where player landed)
-        base = pygame.Rect((450 + tile_height + 150), 270, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
+        base = pygame.Rect((450 + tile_height + 150), 280, 675 - (2 * tile_height), 675 - (2 * tile_height) - 83.75)
         pygame.draw.rect(screen, WHITE, base)
         # cretae line 3
         line3 = font2.render("Collect £200 as you pass GO!", True, BLACK)
