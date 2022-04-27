@@ -1186,9 +1186,10 @@ class ScreenTracker:
                     last_turns = True
                     checked = True
             pygame.display.update()
-            if isinstance(game.players.get(0), AIPlayer):
-                pygame.time.wait(2000)
-                self.game.next_step()
+            if turn_ended:
+                if isinstance(game.players.get(0), AIPlayer):
+                    pygame.time.wait(2000)
+                    self.game.next_step()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.playing_game = False
