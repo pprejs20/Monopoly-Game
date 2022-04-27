@@ -36,7 +36,7 @@ class Player:
 
         self.propList.append(tile)
 
-    def move_player_forward(self, amount):
+    def move_player_forward(self, amount, pass_go = True):
         """
         Moves the player forward by an x amount
         :param amount: the number of spaces the player should be moved
@@ -45,9 +45,10 @@ class Player:
         for i in range(amount):
             if self.pos == 40:
                 self.pos = 1
-                self.add_money(200)
-                print("[{}] Collected $200 for passing go".format(self.name))
-                self.laps += 1
+                if pass_go:
+                    self.add_money(200)
+                    print("[{}] Collected $200 for passing go".format(self.name))
+                    self.laps += 1
             else:
                 self.pos += 1
 
