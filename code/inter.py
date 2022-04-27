@@ -188,6 +188,20 @@ def blit_player_indicators(player_no, player):
     if player.jailCard > 0:
         card = pygame.transform.scale(gjf, (29, 43))
         screen.blit(card, (227, 28.5))
+    # blit the net_worth toggle button
+    toggle_button = pygame.Rect(325, 955.5, 100, 16.5)
+    pygame.draw.rect(screen, WHITE, toggle_button)
+    toggle_txt = font.render("Net Worth", True, BLACK)
+    toggle_rect = toggle_txt.get_rect()
+    toggle_rect.center = toggle_button.center
+    screen.blit(toggle_txt, toggle_rect)
+    # blit end game button
+    end_button = pygame.Rect(25, 955.5, 100, 16.5)
+    pygame.draw.rect(screen, WHITE, end_button)
+    end_txt = font.render("End Game", True, BLACK)
+    end_rect = end_txt.get_rect()
+    end_rect.center = end_button.center
+    screen.blit(end_txt, end_rect)
     pygame.display.update()
 
 
@@ -286,7 +300,7 @@ def wrap_text(text, width):
 
 
 # function to get the text for each tile
-def get_text():
+def get_text(tile_set):
     """
     Function to display the text corresponding to each tile on the board
     :return:
@@ -294,7 +308,7 @@ def get_text():
     # get tile coordinates
     tiles_coord = get_coordinates()
     # write the text for each tile
-    for t in tiles:
+    for t in tile_set:
         # get current tile's position
         curr_pos = t.pos
         # skip non-customisable tiles (corners, pot lucks, opportunity knocks, and taxes)
@@ -452,6 +466,7 @@ def get_text():
                     houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
                     houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
                     screen.blit(houses_img, houses_rect)
+                    print(txt)
 
 
 # function to blit a players token  on the board
@@ -571,6 +586,7 @@ class Intermediary:
     # initialise with an instance of the game class
     def __init__(self, game):
         self.game = game
+        self.choice = ""
 
     def reblit_left(self):
         """
@@ -592,7 +608,7 @@ class Intermediary:
         """
         # re-blit the board and text
         screen.blit(board, (450, 0))
-        get_text()
+        get_text(self.game.tiles)
         # re-blit the player tokens
         for i in range(self.game.players.get_length()):
             player = self.game.players.get(i)
@@ -890,7 +906,7 @@ class Intermediary:
             pygame.time.wait(300)
         # re-blit the board and text (to cover the old tokens)
         screen.blit(board, (450, 0))
-        get_text()
+        get_text(self.game.tiles)
         # display the actual numbers that were rolled
         screen.blit(dice_images[roll1], (858.75, (975 - tile_height - 70)))
         screen.blit(dice_images[roll2], (966.25, (975 - tile_height - 70)))
@@ -911,7 +927,7 @@ class Intermediary:
         :return:
         """
         # create base to display the text on (for buying buildings)
-        base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
+        base = pygame.Rect((450 + tile_height + 130), (tile_height + 100), 675 - 2 * tile_height + 40, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # line 1
         line1 = font2.render("{}, you can buy a house/hotel on:".format(player.name), True, BLACK)
@@ -924,7 +940,7 @@ class Intermediary:
         pass_txt = font2.render("1. Pass", True, BLACK)
         pass_rect = pass_txt.get_rect()
         pass_rect.centerx = 937.5
-        pass_rect.y = line1_rect.bottom
+        pass_rect.y = line1_rect.bottom + 20
         screen.blit(pass_txt, pass_rect)
         # get possible properties
         available_props = game.get_house_available_props(player, first_time)
@@ -957,44 +973,129 @@ class Intermediary:
             options = []
             for i in range(1, len(available_props) + 1):
                 options.append(str(i))
-            choice = random.choice(options)
+            self.choice = random.choice(options)
         # if human player, get the option they chose
         else:
             input_active = False
-            choice = ""
+            self.choice = ""
             decision = False
             while not decision:
-                pygame.display.update()
                 for event in pygame.event.get():
-                    if event == pygame.QUIT:
+                    if event.type == pygame.QUIT:
                         decision = True
                         break
 
                     # if the player clicks on the input rectangle enable input
-                    if event == pygame.MOUSEBUTTONDOWN:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
                         if input_rect.left <= mouse_pos[0] <= input_rect.right and input_rect.top <= mouse_pos[1] <= input_rect.bottom:
                             input_active = True
 
                     # if player presses backspace delete one
-                    if event == pygame.KEYDOWN and input_active:
+                    if event.type == pygame.KEYDOWN and input_active:
                         if event.key == pygame.K_BACKSPACE:
-                            choice = choice[:-1]
+                            self.choice = self.choice[:-1]
                         # if they press return and the input is valid exit
-                        elif event.key == pygame.K_RETURN and int(choice) <= len(available_props) + 1:
+                        elif event.key == pygame.K_RETURN and int(self.choice) <= len(available_props) + 1:
                             input_active = False
                             decision = True
+                            break
                         # receive input
-                        elif len(choice) < 3 and event.unicode.isdigit():
-                            choice += event.unicode
+                        elif len(self.choice) < 3:
+                            self.choice += event.unicode
+
+                    pygame.draw.rect(screen, (220, 215, 200), input_rect)
+                    show_choice = font.render(self.choice, True, BLACK)
+                    choice_rect = show_choice.get_rect()
+                    choice_rect.center = input_rect.center
+                    screen.blit(show_choice, choice_rect)
+                    pygame.display.update()
+
         # return manually inputted value if there is one
         if test is not None:
             return test
         # otherwise, return the player's response
-        return choice
+        return self.choice
 
-    def sell_properties(self, player):
-        pass
+    def sell_properties(self, player, test=None):
+        # create base to display the text on (for buying buildings)
+        base = pygame.Rect((450 + tile_height + 130), (tile_height + 100), 675 - 2 * tile_height+40, 675 - 2 * tile_height)
+        pygame.draw.rect(screen, WHITE, base)
+        # line 1
+        line1 = font2.render("{}, you can sell the following properties:".format(player.name), True, BLACK)
+        line1_rect = line1.get_rect()
+        line1_rect.centerx = 937.5
+        line1_rect.y = (tile_height + 150)
+        screen.blit(line1, line1_rect)
+        pygame.display.update()
+        # get possible properties
+        y = line1_rect.bottom + 20
+        ctr = 1
+        # display possible properties
+        for prop in player.propList:
+            no = house_costs[prop.group]
+            no_houses = prop.no_of_houses
+            txt = font2.render("{}. {}, Houses: {}, Cost: {}".format(ctr, prop.space, no_houses,
+                                                                     prop.cost+(no*no_houses)), True, BLACK)
+            ctr += 1
+            txt_rect = txt.get_rect()
+            txt_rect.centerx = 937.5
+            txt_rect.y = y + 15
+            y = txt_rect.bottom
+            screen.blit(txt, txt_rect)
+        # create input space
+        input_rect = pygame.Rect(937.5 - 40, base.bottom - 40, 80, 30)
+        pygame.draw.rect(screen, (220, 215, 200), input_rect)
+        pygame.display.update()
+        # if AI player, generate random response
+        if isinstance(player, AIPlayer):
+            pygame.time.wait(1500)
+            options = []
+            for i in range(1, len(player.propList) + 1):
+                options.append(str(i))
+            self.choice = random.choice(options)
+        # if human player, get the option they chose
+        else:
+            input_active = False
+            self.choice = ""
+            decision = False
+            while not decision:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        decision = True
+                        break
+
+                    # if the player clicks on the input rectangle enable input
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = event.pos
+                        if input_rect.left <= mouse_pos[0] <= input_rect.right and input_rect.top <= mouse_pos[
+                            1] <= input_rect.bottom:
+                            input_active = True
+
+                    # if player presses backspace delete one
+                    if event.type == pygame.KEYDOWN and input_active:
+                        if event.key == pygame.K_BACKSPACE:
+                            self.choice = self.choice[:-1]
+                        # if they press return and the input is valid exit
+                        elif event.key == pygame.K_RETURN and int(self.choice) <= len(player.propList) + 1:
+                            input_active = False
+                            decision = True
+                        # receive input
+                        elif len(self.choice) < 3 and event.unicode.isdigit():
+                            self.choice += event.unicode
+
+                    pygame.draw.rect(screen, (220, 215, 200), input_rect)
+                    show_choice = font.render(self.choice, True, BLACK)
+                    choice_rect = show_choice.get_rect()
+                    choice_rect.center = input_rect.center
+                    screen.blit(show_choice, choice_rect)
+                    pygame.display.update()
+
+        # return manually inputted value if there is one
+        if test is not None:
+            return test
+        # otherwise, return the player's response
+        return self.choice
 
     def check_player_location(self, player):
         """
@@ -1492,7 +1593,7 @@ class Intermediary:
         line3_rect.y = line2_rect.bottom + 20
         screen.blit(line3, line3_rect)
         pygame.display.update()
-        pygame.time.wait(10000)
+        pygame.time.wait(5000)
 
 
 house_costs = {

@@ -204,6 +204,20 @@ def blit_player_indicators(player_no, player):
     if player.jailCard > 0:
         card = pygame.transform.scale(gjf, (29, 43))
         screen.blit(card, (227, 28.5))
+    # blit the net_worth toggle button
+    toggle_button = pygame.Rect(325, 955.5, 100, 16.5)
+    pygame.draw.rect(screen, WHITE, toggle_button)
+    toggle_txt = font.render("Net Worth", True, BLACK)
+    toggle_rect = toggle_txt.get_rect()
+    toggle_rect.center = toggle_button.center
+    screen.blit(toggle_txt, toggle_rect)
+    # blit end game button
+    end_button = pygame.Rect(25, 955.5, 100, 16.5)
+    pygame.draw.rect(screen, WHITE, end_button)
+    end_txt = font.render("End Game", True, BLACK)
+    end_rect = end_txt.get_rect()
+    end_rect.center = end_button.center
+    screen.blit(end_txt, end_rect)
     pygame.display.update()
 
 
@@ -302,7 +316,7 @@ def wrap_text(text, width):
 
 
 # function to get the text for each tile
-def get_text():
+def get_text(tiles_set):
     """
     Function to display the text corresponding to each tile on the board
     :return:
@@ -310,7 +324,7 @@ def get_text():
     # get tile coordinates
     tiles_coord = get_coordinates()
     # write the text for each tile
-    for t in tiles:
+    for t in tiles_set:
         # get current tile's position
         curr_pos = t.pos
         # skip non-customisable tiles (corners, pot lucks, opportunity knocks, and taxes)
@@ -322,6 +336,15 @@ def get_text():
             name = wrap_text(text, 64.5)
             # get text for price
             price = str(t.cost)
+            # get text for house/hotel
+            txt = ""
+            if t.no_of_houses > 0:
+                count = str(t.no_of_houses)
+                if t.no_of_houses == 5:
+                    txt = "Hotel"
+                else:
+                    txt = "Houses: {}".format(count)
+            print(txt)
 
             # for the bottom row
             if curr_pos < 11:
@@ -346,17 +369,11 @@ def get_text():
                 price_img_rect.y = (tiles_coord[curr_pos - 1][1] + tile_height) - (2 + price_img_rect.height)
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
-                if t.no_of_houses > 0:
-                    count = str(t.no_of_houses)
-                    if t.no_of_houses == 5:
-                        txt = "Hotel"
-                    else:
-                        txt = "Houses: {}".format(count)
-                    houses_img = font.render(txt, True, BLACK)
-                    houses_rect = houses_img.get_rect()
-                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
-                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
-                    screen.blit(houses_img, houses_rect)
+                houses_img = font.render(txt, True, BLACK)
+                houses_rect = houses_img.get_rect()
+                houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
+                screen.blit(houses_img, houses_rect)
 
             # for the left row
             elif curr_pos < 21:
@@ -383,17 +400,11 @@ def get_text():
                 price_img_rect.x = (tiles_coord[curr_pos - 1][0] - tile_height) + 2
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
-                if t.no_of_houses > 0:
-                    count = str(t.no_of_houses)
-                    if t.no_of_houses == 5:
-                        txt = "Hotel"
-                    else:
-                        txt = "Houses: {}".format(count)
-                    houses_img = font.render(txt, True, BLACK)
-                    houses_rect = houses_img.get_rect()
-                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
-                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
-                    screen.blit(houses_img, houses_rect)
+                houses_img = font.render(txt, True, BLACK)
+                houses_rect = houses_img.get_rect()
+                houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
+                houses_rect.x = tiles_coord[curr_pos - 1][0] - 2
+                screen.blit(houses_img, houses_rect)
 
             # for the top row
             elif curr_pos < 31:
@@ -420,17 +431,11 @@ def get_text():
                 price_img_rect.y = 2
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
-                if t.no_of_houses > 0:
-                    count = str(t.no_of_houses)
-                    if t.no_of_houses == 5:
-                        txt = "Hotel"
-                    else:
-                        txt = "Houses: {}".format(count)
-                    houses_img = font.render(txt, True, BLACK)
-                    houses_rect = houses_img.get_rect()
-                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
-                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
-                    screen.blit(houses_img, houses_rect)
+                houses_img = font.render(txt, True, BLACK)
+                houses_rect = houses_img.get_rect()
+                houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                houses_rect.y = tiles_coord[curr_pos - 1][1] - 2
+                screen.blit(houses_img, houses_rect)
 
             # for the right row
             else:
@@ -457,17 +462,13 @@ def get_text():
                 price_img_rect.x = (tiles_coord[curr_pos - 1][0] + tile_height) - (2 + price_img_rect.width)
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
-                if t.no_of_houses > 0:
-                    count = str(t.no_of_houses)
-                    if t.no_of_houses == 5:
-                        txt = "Hotel"
-                    else:
-                        txt = "Houses: {}".format(count)
-                    houses_img = font.render(txt, True, BLACK)
-                    houses_rect = houses_img.get_rect()
-                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
-                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
-                    screen.blit(houses_img, houses_rect)
+                houses_img = font.render(txt, True, BLACK)
+                houses_img = pygame.transform.rotate(houses_img, 90)
+                houses_rect = houses_img.get_rect()
+                houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
+                houses_rect.x = tiles_coord[curr_pos - 1][0] + 2
+                screen.blit(houses_img, houses_rect)
+    pygame.display.update()
 
 
 # function to blit a players token  on the board
@@ -603,6 +604,7 @@ class ScreenTracker:
         self.timer = None
         self.getting_timer = None
         self.time_limit = None
+        self.net_worth = False
 
     def start_screen1(self):
         while self.start_menu1:
@@ -1079,14 +1081,46 @@ class ScreenTracker:
                 pygame.display.update()
 
     def toggle_net_worth(self, game):
-        pygame.draw.rect(screen, BLACK, pygame.Rect(0, 0, 450, 975))
+        self.net_worth = True
+        pygame.draw.rect(screen, WHITE, pygame.Rect(586.25, 136.25, 702.25, 475))
+        pygame.display.update()
+        font1 = pygame.font.SysFont('franklingothicmediumcond', 30)
+        header = font1.render("Player net worth:", True, BLACK)
+        header_rect = header.get_rect()
+        header_rect.centerx = 937.5
+        header_rect.y = 156.25
+        x = 606.25
+        y = header_rect.bottom + 30
+        for i in range(game.players.get_length()):
+            player = game.players.get(i)
+            # blit the player name
+            name = font1.render(player.name, True, BLACK)
+            name_rect = name.get_rect()
+            name_rect.x = x
+            name_rect.y = y
+            screen.blit(name, name_rect)
+            # blit player net worth
+            money = font1.render("Net worth: £" + str(player.net_worth), True, BLACK)
+            money_rect = money.get_rect()
+            money_rect.x = 937.5
+            money_rect.y = y
+            screen.blit(money, money_rect)
+            y = name_rect.bottom + 15
+        # blit the confirm toggle button
+        toggle_button = pygame.Rect(887.5, 581.25, 100, 20)
+        pygame.draw.rect(screen, BLACK, toggle_button)
+        toggle_txt = font.render("Confrim", True, WHITE)
+        toggle_rect = toggle_txt.get_rect()
+        toggle_rect.center = toggle_button.center
+        screen.blit(toggle_txt, toggle_rect)
+        pygame.display.update()
 
     def game_screen(self):
         # while self.playing_game:
         pygame.display.set_mode(game_size)
         screen.blit(board, (450, 0))
         screen.blit(board_right, (1425, 0))
-        get_text()
+        get_text(self.tiles)
         # get the inputted names and chosen tokens for each player
         player_list = self.names_and_tokens
         # create a list for the players
@@ -1139,6 +1173,8 @@ class ScreenTracker:
         # get the cards
         self.pot_luck = game.pot_cards
         self.opp_knocks = game.opp_cards
+        # set tiles
+        self.tiles = game.tiles
         # blit the board, text, and free parking
         font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
         fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
@@ -1165,13 +1201,13 @@ class ScreenTracker:
         last_turns = False
         checked = False
         ctr = None
-        player1 = game.players.get(0)
+        player1 = self.game.players.get(0)
         while self.playing_game:
-            if game.players.get_length() == 1:
-                game.end_game()
+            if self.game.players.get_length() == 1:
+                self.game.end_game()
             if not self.normal_mode:
-                if ctr == game.players.get_length():
-                    game.end_game()
+                if ctr == self.game.players.get_length():
+                    self.game.end_game()
                     self.playing_game = False
                 elapsed_time = time.time() - start_time
                 # remaining_time = 1800 - elapsed_time
@@ -1186,16 +1222,33 @@ class ScreenTracker:
                     last_turns = True
                     checked = True
             pygame.display.update()
-            if turn_ended:
-                if isinstance(game.players.get(0), AIPlayer):
-                    pygame.time.wait(2000)
-                    self.game.next_step()
+            # if turn_ended:
+            #     if isinstance(game.players.get(0), AIPlayer):
+            #         pygame.time.wait(2000)
+            #         self.game.next_step()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.playing_game = False
                     break
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
+                    if 25 <= mouse_pos[0] <= 125 and 955.5 <= mouse_pos[1] <= 972:
+                        self.game.end_game()
+                    if 325 <= mouse_pos[0] <= 425 and 955.5 <= mouse_pos[1] <= 972 and not self.net_worth:
+                        self.toggle_net_worth(game)
+                    if 887.5 <= mouse_pos[0] <= 987.5 and 581.25 <= mouse_pos[1] <= 601.25 and self.net_worth:
+                        self.net_worth = False
+                        screen.blit(board, (450, 0))
+                        get_text(self.game.tiles)
+                        for i in range(game.players.get_length()):
+                            player = game.players.get(i)
+                            token_blit(player.number, player.pos, player.token)
+                        font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
+                        fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
+                        fp_rect = fp_txt.get_rect()
+                        fp_rect.centerx = 937.5
+                        fp_rect.centery = 487.5
+                        screen.blit(fp_txt, fp_rect)
                     if 1460 <= mouse_pos[0] <= 1545 and 910 <= mouse_pos[1] <= 965 and turn_ended:
                         dice_rolled = True
                         turn_ended = False
@@ -1206,7 +1259,7 @@ class ScreenTracker:
                         dice_rolled = False
                         turn_ended = True
                         screen.blit(board, (450, 0))
-                        get_text()
+                        get_text(self.game.tiles)
                         font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
                         fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
                         fp_rect = fp_txt.get_rect()
