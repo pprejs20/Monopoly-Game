@@ -1,3 +1,4 @@
+import pygame.time
 
 from cards import load_all_cards
 from player import Player, AIPlayer, tiles_of_color
@@ -68,6 +69,7 @@ class Game:
             if doubles:
                 print("[{}] Player rolled a double".format(player.name))
                 self.doubles_counter += 1
+                pygame.time.wait(2000)
                 self.next_step(player)
 
             self.doubles_counter = 0
