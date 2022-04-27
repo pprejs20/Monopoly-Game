@@ -1,3 +1,4 @@
+import datetime
 import time
 
 import pygame
@@ -125,16 +126,24 @@ for i in [2, 4, 7, 9, 10, 12, 14, 15, 17, 19, 20, 22, 24, 25, 27, 28, 30, 32, 33
 
 # create dictionary for the player property indicators (x and y coordinates of each indicator are relative to player 1)
 player_prop_ind = {}
+# variable for which indicator is being looked at to know when to drop a line
 i = 1
+# x value of first indicator
 x = 2
+# y value of first indicator
 y = 76
+# for each indicator
 for key in bank_prop_list:
+    # if at the end of the line drop a new line
     if i == 15:
         x = 2
         y += 50
+    # rescale the indicator to fit on right side
     ind = bank_prop_list[key]
     ind = pygame.transform.scale(ind, (29, 43))
+    # store the indicator its coordinates in the dictionary
     player_prop_ind[key] = (ind, (x, y))
+    # increment x value to move along the line
     x += 32
     i += 1
 
@@ -144,8 +153,11 @@ for i in range(1, 7):
     dice_images[i] = dices.pop(0)
 
 
-# function to blit bank property indicators
 def blit_bank_prop():
+    """
+    Function to blit the property indicators on the right side of the board (i.e. not yet purchased)
+    :return:
+    """
     screen.blit(board_right, (1425, 0))
     ctr = 1
     # coordinates of first tile
@@ -165,20 +177,30 @@ def blit_bank_prop():
         screen.blit(prop, (x, y))
 
 
-# function to blit player property indicators
 def blit_player_indicators(player_no, player):
+    """
+    Function to blit the player name, money, and indicators of a player
+    :param player_no: the player number (i.e.: player 1, 2, 3, etc.)
+    :param player: the player whose information is being displayed
+    :return:
+    """
+    # variable to determine how high/low to display the information (dependent on player_no)
     y_inc = (player_no - 1) * 155
+    # blit the template at the correct height
     screen.blit(playerTemplate, (0, (22.5 + y_inc)))
+    # blit the player name and money
     font1 = pygame.font.SysFont('franklingothicmediumcond', 30)
     name = font1.render(player.name, True, WHITE)
     money = font1.render("£" + str(player.money), True, WHITE)
     screen.blit(name, (10, (30 + y_inc)))
     screen.blit(money, (287, (30 + y_inc)))
+    # blit the indicators for the properties the player owns
     for prop in player.propList:
         indicator = player_prop_ind[prop.space][0]
         x = player_prop_ind[prop.space][1][0]
         y = player_prop_ind[prop.space][1][1] + y_inc
         screen.blit(indicator, (x, y))
+    # blit the Get out of Jail card if the player owns one
     if player.jailCard > 0:
         card = pygame.transform.scale(gjf, (29, 43))
         screen.blit(card, (227, 28.5))
@@ -187,6 +209,11 @@ def blit_player_indicators(player_no, player):
 
 # function to get the coordinates of each tile on board
 def get_coordinates():
+    """
+    Function to populate a list with the coordinates of the top left corner of each tile (takes into consideration
+     orientation of the tiles).
+    :return: the list of coordinates
+    """
     # create list to store the coordinates of each tile
     coord_list = []
     # iterator to go through the 40 tiles
@@ -238,8 +265,13 @@ def get_coordinates():
     return coord_list
 
 
-# function to wrap text within a given width (for tiles and cards)
 def wrap_text(text, width):
+    """
+    Function to wrap text within a given width
+    :param text: string to be wrapped
+    :param width: width which is the limit
+    :return:
+    """
     # create list to store rendered text images
     imgs = []
     # render image of string
@@ -271,6 +303,10 @@ def wrap_text(text, width):
 
 # function to get the text for each tile
 def get_text():
+    """
+    Function to display the text corresponding to each tile on the board
+    :return:
+    """
     # get tile coordinates
     tiles_coord = get_coordinates()
     # write the text for each tile
@@ -311,8 +347,12 @@ def get_text():
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
                 if t.no_of_houses > 0:
-                    houses = str(t.no_of_houses)
-                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
+                    count = str(t.no_of_houses)
+                    if t.no_of_houses == 5:
+                        txt = "Hotel"
+                    else:
+                        txt = "Houses: {}".format(count)
+                    houses_img = font.render(txt, True, BLACK)
                     houses_rect = houses_img.get_rect()
                     houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
                     houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
@@ -344,12 +384,15 @@ def get_text():
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
                 if t.no_of_houses > 0:
-                    houses = str(t.no_of_houses)
-                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
-                    pygame.transform.rotate(houses_img, -90)
+                    count = str(t.no_of_houses)
+                    if t.no_of_houses == 5:
+                        txt = "Hotel"
+                    else:
+                        txt = "Houses: {}".format(count)
+                    houses_img = font.render(txt, True, BLACK)
                     houses_rect = houses_img.get_rect()
-                    houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
-                    houses_rect.x = tiles_coord[curr_pos - 1][0] - 2
+                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
                     screen.blit(houses_img, houses_rect)
 
             # for the top row
@@ -378,12 +421,15 @@ def get_text():
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
                 if t.no_of_houses > 0:
-                    houses = str(t.no_of_houses)
-                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
-                    houses_img = pygame.transform.rotate(houses_img, 180)
+                    count = str(t.no_of_houses)
+                    if t.no_of_houses == 5:
+                        txt = "Hotel"
+                    else:
+                        txt = "Houses: {}".format(count)
+                    houses_img = font.render(txt, True, BLACK)
                     houses_rect = houses_img.get_rect()
                     houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
-                    houses_rect.y = tiles_coord[curr_pos - 1][1] - 2
+                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
                     screen.blit(houses_img, houses_rect)
 
             # for the right row
@@ -412,17 +458,27 @@ def get_text():
                 screen.blit(price_img, price_img_rect)
                 # print number of houses
                 if t.no_of_houses > 0:
-                    houses = str(t.no_of_houses)
-                    houses_img = font.render("Houses: {}".format(houses), True, BLACK)
-                    pygame.transform.rotate(houses_img, 90)
+                    count = str(t.no_of_houses)
+                    if t.no_of_houses == 5:
+                        txt = "Hotel"
+                    else:
+                        txt = "Houses: {}".format(count)
+                    houses_img = font.render(txt, True, BLACK)
                     houses_rect = houses_img.get_rect()
-                    houses_rect.centery = (tiles_coord[curr_pos - 1][1] + (tile_width / 2))
-                    houses_rect.x = tiles_coord[curr_pos - 1][0] + 2
+                    houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
+                    houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
                     screen.blit(houses_img, houses_rect)
 
 
 # function to blit a players token  on the board
 def token_blit(number, tile_pos, token):
+    """
+    Function to blit each player's token on the board
+    :param number: whether it is player 1, 2, 3, etc.
+    :param tile_pos: the number of the tile to blit onto
+    :param token: the token to blit
+    :return:
+    """
     # get the coordinates of all the tiles
     coordinates = get_coordinates()
     # get the top left corner of the current tile token is being blitted on to
@@ -540,11 +596,13 @@ class ScreenTracker:
         self.token_chosen = None
         self.tokens = [smartphone, cat, iron, hatstand, ship, boot]
         self.names_and_tokens = []
-        # self.start_screen1()
         self.tiles = tiles
         self.game = None
         self.pot_luck = None
         self.opp_knocks = None
+        self.timer = None
+        self.getting_timer = None
+        self.time_limit = None
 
     def start_screen1(self):
         while self.start_menu1:
@@ -912,6 +970,9 @@ class ScreenTracker:
                             self.playing_game = True
                             self.choosing_token = False
                             print(self.names_and_tokens)
+                            if not self.normal_mode:
+                                self.getting_timer = True
+                                self.get_timer()
                             self.game_screen()
                         else:
                             self.getting_names = True
@@ -979,6 +1040,46 @@ class ScreenTracker:
                         pygame.draw.circle(screen, (255, 0, 0), (650, 544), 70, 3)
 
                     pygame.display.update()
+
+    def get_timer(self):
+        input_active = False
+        self.timer = ""
+        font1 = pygame.font.SysFont('algerian', 40)
+        font = pygame.font.SysFont('timesnewroman', 40)
+        timer_txt = font1.render("Insert timer in minutes:", True, WHITE)
+        pygame.display.set_mode(start_screen_size)
+        screen.blit(timer_txt, (50, 50))
+        screen.blit(next_button, (600, 700))
+        pygame.display.update()
+        while self.getting_timer:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.getting_timer = False
+                    break
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = event.pos
+                    input_active = True
+                    if 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800 and len(self.timer) > 0:
+                        self.getting_timer = False
+                        self.time_limit = int(self.timer)*60
+                        self.game_screen()
+
+                if event.type == pygame.KEYDOWN and input_active:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.timer = self.timer[:-1]
+                    elif event.key == pygame.K_RETURN and len(self.timer) > 0:
+                        input_active = False
+                    elif len(self.timer) < 13:
+                        self.timer += event.unicode
+
+                pygame.draw.rect(screen, (100, 100, 100), pygame.Rect(126, 130, 525, 50))
+                show_timer = font.render(self.timer, True, (255, 255, 255))
+                screen.blit(show_timer, (150, 132))
+                pygame.display.update()
+
+    def toggle_net_worth(self, game):
+        pygame.draw.rect(screen, BLACK, pygame.Rect(0, 0, 450, 975))
 
     def game_screen(self):
         # while self.playing_game:
@@ -1073,12 +1174,21 @@ class ScreenTracker:
                     game.end_game()
                     self.playing_game = False
                 elapsed_time = time.time() - start_time
-                timer = font.render(str(elapsed_time/60) + ":" + str(elapsed_time%60), True, BLACK)
-                if elapsed_time > 1800 and not checked and game.players.get(0) == player1:
+                # remaining_time = 1800 - elapsed_time
+                # pygame.draw.rect(screen, BLACK, pygame.Rect(0, 0, 450, 22))
+                # timer = font.render(str(datetime.timedelta(seconds=remaining_time)), True, WHITE)
+                # timer_rect = timer.get_rect()
+                # timer_rect.centerx = 225
+                # timer_rect.y = 5
+                # screen.blit(timer, timer_rect)
+                if elapsed_time > self.time_limit and not checked and game.players.get(0) == player1:
                     ctr = 1
                     last_turns = True
                     checked = True
             pygame.display.update()
+            if isinstance(game.players.get(0), AIPlayer):
+                pygame.time.wait(2000)
+                self.game.next_step()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.playing_game = False

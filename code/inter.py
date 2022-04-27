@@ -921,7 +921,7 @@ class Intermediary:
         screen.blit(line1, line1_rect)
         pygame.display.update()
         # create option 1: Pass
-        pass_txt = font2.render("Pass", True, BLACK)
+        pass_txt = font2.render("1. Pass", True, BLACK)
         pass_rect = pass_txt.get_rect()
         pass_rect.centerx = 937.5
         pass_rect.y = line1_rect.bottom

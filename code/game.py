@@ -195,6 +195,7 @@ class Game:
                 print("[{}] You have rolled a double, you are now free!".format(player.name))
                 return
             else:
+                self.gui.failed_double(player)
                 player.add_jail_term()
                 return
 
@@ -435,11 +436,12 @@ class Game:
             print("[{}] Paid $100 for super tax".format(player.name))
 
     def end_game(self):
-        # get net worth of all players and determine who wins
-        # temporarily getting player at top of queue
         winner = self.players.get(0)
+        for i in range(self.players.get_length()):
+            check = self.players.get(i)
+            if winner.net_worth < check.net_worth:
+                winner = check
         self.gui.end_game(winner)
-
 
 
 class Queue:
