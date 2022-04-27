@@ -1210,14 +1210,17 @@ class ScreenTracker:
                     self.game.end_game()
                     self.playing_game = False
                 elapsed_time = time.time() - start_time
-                # remaining_time = 1800 - elapsed_time
-                # pygame.draw.rect(screen, BLACK, pygame.Rect(0, 0, 450, 22))
-                # timer = font.render(str(datetime.timedelta(seconds=remaining_time)), True, WHITE)
-                # timer_rect = timer.get_rect()
-                # timer_rect.centerx = 225
-                # timer_rect.y = 5
-                # screen.blit(timer, timer_rect)
                 if elapsed_time > self.time_limit and not checked and game.players.get(0) == player1:
+                    # create base to display text on
+                    base = pygame.Rect((450 + tile_height + 150), (tile_height + 50), 675 - 2 * tile_height, 40)
+                    pygame.draw.rect(screen, WHITE, base)
+                    font2 = pygame.font.SysFont('franklingothicmediumcond', 20)
+                    # create line 2
+                    line1 = font2.render("The game is almost over! Take your last turns!", True, BLACK)
+                    line1_rect = line1.get_rect()
+                    line1_rect.centerx = 937.5
+                    line1_rect.y = tile_height + 60
+                    screen.blit(line1, line1_rect)
                     ctr = 1
                     last_turns = True
                     checked = True
