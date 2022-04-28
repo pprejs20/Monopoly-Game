@@ -324,7 +324,10 @@ class Game:
                 owner = self.players.get_by_name(tile.owner)
 
                 player.deduct_money(rent, self, True)
-                owner.add_money(rent, True)
+                if player.bankrupt:
+                    owner.add_money(player.net_worth, True)
+                else:
+                    owner.add_money(rent, True)
                 self.gui.pay_rent(rent, player, owner)
                 self.gui.reblit_left()
 

@@ -149,6 +149,7 @@ class Player:
 
         if self.net_worth < amount:
             game.players.remove_by_name(self.name)
+            self.bankrupt = True
             for prop in self.propList:
                 prop.buyable = True
                 prop.owner = None
