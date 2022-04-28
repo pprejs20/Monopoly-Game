@@ -125,8 +125,8 @@ class Player:
             for i, prop in enumerate(self.propList):
                 print(i, prop, prop.cost)
             ans = int(game.gui.sell_properties(self))
-            self.propList[ans].buyable = True
-            self.propList[ans].owner = None
+            self.propList[ans - 1].buyable = True
+            self.propList[ans - 1].owner = None
             game.gui.return_prop(self.propList[ans])
             no = self.propList[ans].no_of_house
             if no > 0:
