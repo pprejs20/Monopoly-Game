@@ -70,12 +70,12 @@ class TestCard(unittest.TestCase):
 class TestPlayer(unittest.TestCase):
 
     def test_player_move(self):
-        player = Player("test1", pos=39)
-        self.assertEqual(player.pos, 39)
+        player = Player("test1", pos=40)
+        self.assertEqual(player.pos, 40)
         player.move_player_forward(1)
-        self.assertEqual(player.pos, 0)
+        self.assertEqual(player.pos, 1)
         player.move_player_backward(1)
-        self.assertEqual(player.pos, 39)
+        self.assertEqual(player.pos, 40)
 
     def test_roll_dice(self):
         player = Player("test")

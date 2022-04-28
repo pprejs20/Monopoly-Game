@@ -602,10 +602,8 @@ class ScreenTracker:
         self.names_and_tokens = []
         self.tiles = tiles
         self.game = None
-        self.pot_luck = None
-        self.opp_knocks = None
         self.timer = None
-        self.getting_timer = None
+        self.getting_timer = False
         self.time_limit = None
         self.net_worth = False
 
@@ -1250,9 +1248,6 @@ class ScreenTracker:
         # create game object using the player list
         game = Game(players)
         self.game = game
-        # get the cards
-        self.pot_luck = game.pot_cards
-        self.opp_knocks = game.opp_cards
         # set tiles
         self.tiles = game.tiles
         # blit the board, text, and free parking
@@ -1275,6 +1270,49 @@ class ScreenTracker:
         start_time = time.time()
         self.game_loop(game, start_time)
 
+    def start_turn(self):
+        """
+        Function to start a player's turn
+        :return: a boolean rolled_dice which is true, and a boolean turn_ended which is false
+        """
+        dice_rolled = True
+        turn_ended = False
+        self.game.next_step()
+        return dice_rolled, turn_ended
+
+    def end_turn(self, ctr, last_turns):
+        """
+        Function to end a player's turn. Updates the current player and resets the display
+        :param ctr: the counter in case the game is running the final turns
+        :param last_turns: a boolean to check if the game is running final turns
+        :return: a boolean rolled_dice which is false, and a boolean turn_ended which is true
+        """
+        # get current player
+        curr_player = self.game.players.get(0)
+        # check if these are the final turns
+        if last_turns:
+            ctr += 1
+        # reset boolean variables
+        dice_rolled = False
+        turn_ended = True
+        # re-bliot the board
+        screen.blit(board, (450, 0))
+        get_text(self.game.tiles)
+        font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
+        fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
+        fp_rect = fp_txt.get_rect()
+        fp_rect.centerx = 937.5
+        fp_rect.centery = 487.5
+        screen.blit(fp_txt, fp_rect)
+        for i in range(self.game.players.get_length()):
+            player = self.game.players.get(i)
+            token_blit(player.number, player.pos, player.token)
+            blit_player_indicators(player.number, player)
+        # update current player indicator
+        screen.blit(hat, (450 - 10 - 40, 30 + ((curr_player.number - 1) * 155)))
+        pygame.display.update()
+        return curr_player, dice_rolled, turn_ended
+
     def game_loop(self, game, start_time):
         """
         Function for the game loop. Handles starting and ending a players turn, and if it is the abridged version,
@@ -1283,21 +1321,32 @@ class ScreenTracker:
         :param start_time: the time the game was started
         :return:
         """
+        # variables for different checks
         dice_rolled = False
         turn_ended = True
         last_turns = False
         checked = False
         ctr = None
+        # get player one (needed for checking last turns)
         player1 = self.game.players.get(0)
+        # get the current player (at beginning this is same as player 1)
+        curr_player = player1
         while self.playing_game:
             if self.game.players.get_length() == 1:
                 self.game.end_game()
+
+            # if in abridged version
             if not self.normal_mode:
+                # check that the ctr is equal to number of players meaning they have all had their last turn
                 if ctr == self.game.players.get_length():
                     self.game.end_game()
                     self.playing_game = False
+
+                # get the current elapsed time of the game
                 elapsed_time = time.time() - start_time
-                if elapsed_time > self.time_limit and not checked and game.players.get(0) == player1:
+                # check if the time limit has been reached, that this check has not been made before, and the current
+                #   player is player1
+                if elapsed_time > self.time_limit and not checked and id(curr_player) == id(player1):
                     # create base to display text on
                     base = pygame.Rect((450 + tile_height + 150), (tile_height + 50), 675 - 2 * tile_height, 40)
                     pygame.draw.rect(screen, WHITE, base)
@@ -1308,26 +1357,44 @@ class ScreenTracker:
                     line1_rect.centerx = 937.5
                     line1_rect.y = tile_height + 60
                     screen.blit(line1, line1_rect)
+                    # initialise counter to make sure every player gets a last turn
                     ctr = 1
                     last_turns = True
+                    # set variable to prevent reentry into the if statement
                     checked = True
             pygame.display.update()
-            # if turn_ended:
-            #     if isinstance(game.players.get(0), AIPlayer):
-            #         pygame.time.wait(2000)
-            #         self.game.next_step()
+
+            if turn_ended:
+                # if the next player to take a turn is AI, automatically start the turn
+                if isinstance(curr_player, AIPlayer):
+                    pygame.time.wait(2000)
+                    dice_rolled, turn_ended = self.start_turn()
+
+            else:
+                # if the current player is AI, automatically end the turn
+                if isinstance(curr_player, AIPlayer):
+                    pygame.time.wait(2000)
+                    curr_player, dice_rolled, turn_ended = self.end_turn(ctr, last_turns)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.playing_game = False
                     break
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
+
+                    # if player clicks end game button, end the game
                     if 25 <= mouse_pos[0] <= 125 and 955.5 <= mouse_pos[1] <= 972:
                         self.game.end_game()
                         self.playing_game = False
                         break
+
+                    # if the player clicks net worth button, display net worth
                     if 325 <= mouse_pos[0] <= 425 and 955.5 <= mouse_pos[1] <= 972 and not self.net_worth:
                         self.toggle_net_worth(game)
+
+                    # if the net worth is being displayed and they click the confirm button, re-blit the board
                     if 887.5 <= mouse_pos[0] <= 987.5 and 581.25 <= mouse_pos[1] <= 601.25 and self.net_worth:
                         self.net_worth = False
                         screen.blit(board, (450, 0))
@@ -1341,29 +1408,14 @@ class ScreenTracker:
                         fp_rect.centerx = 937.5
                         fp_rect.centery = 487.5
                         screen.blit(fp_txt, fp_rect)
+
+                    # if human player clicks roll dice, start their turn
                     if 1460 <= mouse_pos[0] <= 1545 and 910 <= mouse_pos[1] <= 965 and turn_ended:
-                        dice_rolled = True
-                        turn_ended = False
-                        self.game.next_step()
+                        dice_rolled, turn_ended = self.start_turn()
+
+                    # if human player clicks end turn, end their turn
                     if 1555 <= mouse_pos[0] <= 1640 and 910 <= mouse_pos[1] <= 965 and dice_rolled:
-                        if last_turns:
-                            ctr += 1
-                        dice_rolled = False
-                        turn_ended = True
-                        screen.blit(board, (450, 0))
-                        get_text(self.game.tiles)
-                        font3 = pygame.font.SysFont('franklingothicmediumcond', 40)
-                        fp_txt = font3.render("£{}".format(self.game.free_parking_money), True, BLACK)
-                        fp_rect = fp_txt.get_rect()
-                        fp_rect.centerx = 937.5
-                        fp_rect.centery = 487.5
-                        screen.blit(fp_txt, fp_rect)
-                        for i in range(game.players.get_length()):
-                            player = game.players.get(i)
-                            token_blit(player.number, player.pos, player.token)
-                            blit_player_indicators(player.number, player)
-                        screen.blit(hat, (450 - 10 - 40, 30 + ((game.players.get(0).number - 1) * 155)))
-                        pygame.display.update()
+                        curr_player, dice_rolled, turn_ended = self.end_turn(ctr, last_turns)
 
 
 screen_tracker = ScreenTracker()

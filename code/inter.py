@@ -1080,10 +1080,13 @@ class Intermediary:
         ctr = 1
         # display possible properties
         for prop in player.propList:
-            no = house_costs[prop.group]
-            no_houses = prop.no_of_houses
-            txt = font2.render("{}. {}, Houses: {}, Value: {}".format(ctr, prop.space, no_houses,
+            if prop.group in house_costs.keys():
+                no = house_costs[prop.group]
+                no_houses = prop.no_of_houses
+                txt = font2.render("{}. {}, Houses: {}, Value: {}".format(ctr, prop.space, no_houses,
                                                                       prop.cost + (no * no_houses)), True, BLACK)
+            else:
+                txt = font2.render("{}. {}, Value: {}".format(ctr, prop.space, prop.cost), True, BLACK)
             ctr += 1
             txt_rect = txt.get_rect()
             txt_rect.centerx = 937.5
@@ -1578,6 +1581,7 @@ class Intermediary:
         # re-blit left side to show new player money
         self.reblit_left()
         pygame.display.update()
+        pygame.time.wait(1000)
 
     def income_tax(self, player):
         """
