@@ -933,7 +933,7 @@ class Intermediary:
         line1_rect.y = tile_height + 120
         screen.blit(line1, line1_rect)
         # make roll again button
-        roll_button = pygame.Rect(base.centerx-50, base.bottom-60, 100, 40)
+        roll_button = pygame.Rect(base.centerx - 50, base.bottom - 60, 100, 40)
         pygame.draw.rect(screen, (220, 215, 200), roll_button)
         roll_txt = font2.render("Roll again!", True, BLACK)
         roll_rect = roll_txt.get_rect()
@@ -956,7 +956,8 @@ class Intermediary:
                         pos = event.pos
 
                         # if player clicks roll again button exit loop
-                        if roll_button.left <= pos[0] <= roll_button.right and roll_button.top <= pos[1] <= roll_button.bottom:
+                        if roll_button.left <= pos[0] <= roll_button.right and roll_button.top <= pos[
+                            1] <= roll_button.bottom:
                             clicked = True
 
     def buy_buildings(self, game, player, first_time, test=None):
@@ -970,7 +971,8 @@ class Intermediary:
         :return:
         """
         # create base to display the text on (for buying buildings)
-        base = pygame.Rect((450 + tile_height + 130), (tile_height + 100), 675 - 2 * tile_height + 40, 675 - 2 * tile_height)
+        base = pygame.Rect((450 + tile_height + 130), (tile_height + 100), 675 - 2 * tile_height + 40,
+                           675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # line 1
         line1 = font2.render("{}, you can buy a house/hotel on:".format(player.name), True, BLACK)
@@ -1031,7 +1033,8 @@ class Intermediary:
                     # if the player clicks on the input rectangle enable input
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
-                        if input_rect.left <= mouse_pos[0] <= input_rect.right and input_rect.top <= mouse_pos[1] <= input_rect.bottom:
+                        if input_rect.left <= mouse_pos[0] <= input_rect.right and input_rect.top <= mouse_pos[
+                            1] <= input_rect.bottom:
                             input_active = True
 
                     # if player presses backspace delete one
@@ -1062,7 +1065,8 @@ class Intermediary:
 
     def sell_properties(self, player, test=None):
         # create base to display the text on (for buying buildings)
-        base = pygame.Rect((450 + tile_height + 130), (tile_height + 100), 675 - 2 * tile_height+40, 675 - 2 * tile_height)
+        base = pygame.Rect((450 + tile_height + 130), (tile_height + 100), 675 - 2 * tile_height + 40,
+                           675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # line 1
         line1 = font2.render("{}, you can sell the following properties:".format(player.name), True, BLACK)
@@ -1078,8 +1082,8 @@ class Intermediary:
         for prop in player.propList:
             no = house_costs[prop.group]
             no_houses = prop.no_of_houses
-            txt = font2.render("{}. {}, Houses: {}, Cost: {}".format(ctr, prop.space, no_houses,
-                                                                     prop.cost+(no*no_houses)), True, BLACK)
+            txt = font2.render("{}. {}, Houses: {}, Value: {}".format(ctr, prop.space, no_houses,
+                                                                      prop.cost + (no * no_houses)), True, BLACK)
             ctr += 1
             txt_rect = txt.get_rect()
             txt_rect.centerx = 937.5

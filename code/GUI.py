@@ -579,6 +579,10 @@ def token_blit(number, tile_pos, token):
 
 
 class ScreenTracker:
+    """
+    Class to handle receiving user intup necessary for setting up the game properly (game type, number of human players
+     and their names and tokens, and the number of AI players)
+    """
 
     def __init__(self):
         self.start_menu1 = True
@@ -606,6 +610,10 @@ class ScreenTracker:
         self.net_worth = False
 
     def start_screen1(self):
+        """
+        Function for the screen where the game type is chosen (normal or abridged)
+        :return:
+        """
         while self.start_menu1:
             pygame.display.set_mode(start_screen_size)
             screen.fill((30, 145, 150))
@@ -620,12 +628,14 @@ class ScreenTracker:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
+                    # if player clicks here it is for the normal version
                     if 150 <= mouse_pos[0] <= 350 and 400 <= mouse_pos[1] <= 600:
                         self.normal_mode = True
                         self.start_menu1 = False
                         self.start_menu2 = True
                         self.start_screen2()
 
+                    # if clicked here it is for the abridged version
                     if 450 <= mouse_pos[0] <= 650 and 400 <= mouse_pos[1] <= 600:
                         self.normal_mode = False
                         self.start_menu1 = False
@@ -633,6 +643,10 @@ class ScreenTracker:
                         self.start_screen2()
 
     def start_screen2(self):
+        """
+        Function for the screen where number of human players is chosen
+        :return:
+        """
         while self.start_menu2:
             pygame.display.set_mode(start_screen_size)
             screen.blit(no_of_human_players, (90, 50))
@@ -649,6 +663,7 @@ class ScreenTracker:
                     self.start_menu2 = False
                     break
 
+                # if clicked here, go back to previous screen
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
                     if 0 <= mouse_pos[0] <= 200 and 700 <= mouse_pos[1] <= 800:
@@ -656,30 +671,35 @@ class ScreenTracker:
                         self.start_menu1 = True
                         self.start_screen1()
 
+                    # if clicked here, 1 human player
                     if 90 <= mouse_pos[0] <= 190 and 250 <= mouse_pos[1] <= 350:
                         self.no_of_players = 1
                         self.start_menu2 = False
                         self.start_menu3 = True
                         self.start_screen3()
 
+                    # if clicked here, 2 human players
                     if 220 <= mouse_pos[0] <= 320 and 250 <= mouse_pos[1] <= 350:
                         self.no_of_players = 2
                         self.start_menu2 = False
                         self.start_menu3 = True
                         self.start_screen3()
 
+                    # if clicked here, 3 human players
                     if 350 <= mouse_pos[0] <= 450 and 250 <= mouse_pos[1] <= 350:
                         self.no_of_players = 3
                         self.start_menu2 = False
                         self.start_menu3 = True
                         self.start_screen3()
 
+                    # if clicked here, 4 human players
                     if 480 <= mouse_pos[0] <= 580 and 250 <= mouse_pos[1] <= 350:
                         self.no_of_players = 4
                         self.start_menu2 = False
                         self.start_menu3 = True
                         self.start_screen3()
 
+                    # if clicked here, 5 human players
                     if 610 <= mouse_pos[0] <= 710 and 250 <= mouse_pos[1] <= 350:
                         self.no_of_players = 5
                         self.start_menu2 = False
@@ -687,11 +707,18 @@ class ScreenTracker:
                         self.start_screen3()
 
     def start_screen3(self):
+        """
+        Function for the screen where number of AI players is chosen. Options displayed depend on the number of human
+         players
+        :return:
+        """
         while self.start_menu3:
             pygame.display.set_mode(start_screen_size)
             screen.blit(no_of_human_players, (90, 20))
             screen.blit(no_of_ai_players, (90, 340))
             screen.blit(back, (0, 700))
+
+            # if one human player can be up to 5 AI
             if self.no_of_players == 1:
                 screen.blit(one_player, (350, 220))
                 screen.blit(one_player, (90, 540))
@@ -700,6 +727,7 @@ class ScreenTracker:
                 screen.blit(four_player, (480, 540))
                 screen.blit(five_player, (610, 540))
 
+            # if 2 human can be up to 4 AI
             if self.no_of_players == 2:
                 screen.blit(two_player, (350, 220))
                 screen.blit(one_player, (155, 540))
@@ -707,17 +735,20 @@ class ScreenTracker:
                 screen.blit(three_player, (415, 540))
                 screen.blit(four_player, (545, 540))
 
+            # if 3 human can be up to 3 AI
             if self.no_of_players == 3:
                 screen.blit(three_player, (350, 220))
                 screen.blit(one_player, (220, 540))
                 screen.blit(two_player, (350, 540))
                 screen.blit(three_player, (480, 540))
 
+            # if 4 human can be up to 2 AI
             if self.no_of_players == 4:
                 screen.blit(four_player, (350, 220))
                 screen.blit(one_player, (285, 540))
                 screen.blit(two_player, (415, 540))
 
+            # if 5 human can only be 1 AI
             if self.no_of_players == 5:
                 screen.blit(five_player, (350, 220))
                 screen.blit(one_player, (350, 540))
@@ -731,11 +762,13 @@ class ScreenTracker:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
 
+                    # if clicked here go back to previous screen
                     if 0 <= mouse_pos[0] <= 200 and 700 <= mouse_pos[1] <= 800:
                         self.start_menu2 = True
                         self.start_menu3 = False
                         self.start_screen2()
 
+                    # for odd number of human players the AI options should be centred
                     if self.no_of_players == 1 or self.no_of_players == 3 or self.no_of_players == 5:
 
                         if 90 <= mouse_pos[0] <= 190 and 540 <= mouse_pos[1] <= 640:
@@ -797,6 +830,7 @@ class ScreenTracker:
                                 self.start_menu3 = False
                                 self.start_screen4()
 
+                    # for even number of human players, no AI options will land on center
                     if self.no_of_players == 2 or self.no_of_players == 4:
 
                         if 155 <= mouse_pos[0] <= 255 and 540 <= mouse_pos[1] <= 640:
@@ -840,6 +874,10 @@ class ScreenTracker:
                                 self.start_screen4()
 
     def start_screen4(self):
+        """
+        Function to display the choices made in set-up so far (game type, number of player, and number of AI players)
+        :return:
+        """
         while self.start_menu4:
             pygame.display.set_mode(start_screen_size)
             screen.blit(game_mode, (250, 20))
@@ -848,11 +886,13 @@ class ScreenTracker:
             screen.blit(start_game, (600, 700))
             screen.blit(back, (0, 700))
 
+            # display mode chosen
             if self.normal_mode:
                 screen.blit(play_original, (300, 120))
             elif not self.normal_mode:
                 screen.blit(play_abridged, (300, 120))
 
+            # display number of human players
             if self.no_of_players == 1:
                 screen.blit(one_player, (175, 530))
             if self.no_of_players == 2:
@@ -864,6 +904,7 @@ class ScreenTracker:
             if self.no_of_players == 5:
                 screen.blit(five_player, (175, 530))
 
+            # display number of AI players
             if self.no_of_ai == 1:
                 screen.blit(one_player, (525, 530))
             if self.no_of_ai == 2:
@@ -882,17 +923,22 @@ class ScreenTracker:
                     break
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
+                    # go back to previous screen
                     if 0 <= mouse_pos[0] <= 200 and 700 <= mouse_pos[1] <= 800:
                         self.start_menu3 = True
                         self.start_menu4 = False
                         self.start_screen3()
-
+                    # go on to receive names
                     if 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800:
                         self.getting_names = True
                         self.start_menu4 = False
                         self.input_names()
 
     def input_names(self):
+        """
+        Function for the screen where players input their names. Can be no more than 13 characters
+        :return:
+        """
         input_active = False
         self.name_chosen = ""
         font = pygame.font.SysFont('timesnewroman', 40)
@@ -909,16 +955,20 @@ class ScreenTracker:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
                     input_active = True
+                    # once they have clicked allow input
                     if 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800 and len(self.name_chosen) > 0:
                         self.choosing_token = True
                         self.getting_names = False
                         self.choose_token()
-
+                # get the key pressed
                 if event.type == pygame.KEYDOWN and input_active:
+                    # remove the latest character in the list
                     if event.key == pygame.K_BACKSPACE:
                         self.name_chosen = self.name_chosen[:-1]
+                    # stop allowing inputted as long as the name is not currently empty
                     elif event.key == pygame.K_RETURN and len(self.name_chosen) > 0:
                         input_active = False
+                    # if there is still space add key pressed on to name
                     elif len(self.name_chosen) < 13:
                         self.name_chosen += event.unicode
 
@@ -929,7 +979,8 @@ class ScreenTracker:
 
     def choose_token(self):
         """
-
+        Function for the screen where players choose their token. Only displays those available and highlights the
+         currently selected token
         :return:
         """
         self.token_chosen = None
@@ -941,6 +992,7 @@ class ScreenTracker:
         font = pygame.font.SysFont('timesnewroman', 40)
         show_name = font.render(self.name_chosen, True, (255, 255, 255))
         screen.blit(show_name, (150, 132))
+        # display the available tokens
         if smartphone in self.tokens:
             screen.blit(smartphone, (100, 250))
         if cat in self.tokens:
@@ -962,11 +1014,15 @@ class ScreenTracker:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
+                    # go back to previous screen
                     if 0 <= mouse_pos[0] <= 200 and 700 <= mouse_pos[1] <= 800:
                         self.getting_names = True
                         self.choosing_token = False
                         self.input_names()
 
+                    # if a token has been selected, add to the list of names and tokens and remove token from available
+                    #   tokens. If all players have chosen a token, move to next screen. Next screen is either get_timer
+                    #   (abridged version), or directly to game_screen
                     if self.token_chosen is not None and 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800:
                         self.names_and_tokens.append((self.name_chosen, self.token_chosen))
                         self.tokens.remove(self.token_chosen)
@@ -983,6 +1039,7 @@ class ScreenTracker:
                             self.choosing_token = False
                             self.input_names()
 
+                    # if smartphone is available and is clicked, draw circle around it
                     if smartphone in self.tokens and 100 <= mouse_pos[0] <= 200 and 250 <= mouse_pos[1] <= 450:
                         self.token_chosen = smartphone
                         pygame.draw.circle(screen, (0, 200, 210), (425, 331), 90, 3)
@@ -993,6 +1050,7 @@ class ScreenTracker:
 
                         pygame.draw.circle(screen, (255, 0, 0), (150, 350), 115, 3)
 
+                    # if cat is available and is clicked, draw circle around it
                     if cat in self.tokens and 350 <= mouse_pos[0] <= 500 and 275 <= mouse_pos[1] <= 387:
                         self.token_chosen = cat
                         pygame.draw.circle(screen, (0, 200, 210), (650, 338), 103, 3)
@@ -1003,6 +1061,7 @@ class ScreenTracker:
 
                         pygame.draw.circle(screen, (255, 0, 0), (425, 331), 90, 3)
 
+                    # if ship is available and is clicked, draw circle around it
                     if ship in self.tokens and 600 <= mouse_pos[0] <= 700 and 250 <= mouse_pos[1] <= 426:
                         self.token_chosen = ship
                         pygame.draw.circle(screen, (0, 200, 210), (150, 563), 70, 3)
@@ -1013,6 +1072,7 @@ class ScreenTracker:
 
                         pygame.draw.circle(screen, (255, 0, 0), (650, 338), 103, 3)
 
+                    # if iron is available and is clicked, draw circle around it
                     if iron in self.tokens and 100 <= mouse_pos[0] <= 200 and 520 <= mouse_pos[1] <= 602:
                         self.token_chosen = iron
                         pygame.draw.circle(screen, (0, 200, 210), (425, 600), 115, 3)
@@ -1023,6 +1083,7 @@ class ScreenTracker:
 
                         pygame.draw.circle(screen, (255, 0, 0), (150, 563), 70, 3)
 
+                    # if hatstand is available and is clicked, draw circle around it
                     if hatstand in self.tokens and 395 <= mouse_pos[0] <= 455 and 500 <= mouse_pos[1] <= 700:
                         self.token_chosen = hatstand
                         pygame.draw.circle(screen, (0, 200, 210), (150, 563), 70, 3)
@@ -1033,6 +1094,7 @@ class ScreenTracker:
 
                         pygame.draw.circle(screen, (255, 0, 0), (425, 600), 115, 3)
 
+                    # if boot is available and is clicked, draw circle around it
                     if boot in self.tokens and 600 <= mouse_pos[0] <= 700 and 500 <= mouse_pos[1] <= 588:
                         self.token_chosen = boot
                         pygame.draw.circle(screen, (0, 200, 210), (150, 350), 115, 3)
@@ -1068,20 +1130,23 @@ class ScreenTracker:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
                     input_active = True
+
+                    # if a time has been inputted then exit
                     if 600 <= mouse_pos[0] <= 800 and 700 <= mouse_pos[1] <= 800 and len(self.timer) > 0:
                         self.getting_timer = False
                         self.time_limit = int(self.timer)*60
-                        self.game_screen()
 
+                # get user input
                 if event.type == pygame.KEYDOWN and input_active:
                     if event.key == pygame.K_BACKSPACE:
                         self.timer = self.timer[:-1]
                     elif event.key == pygame.K_RETURN and len(self.timer) > 0:
                         input_active = False
-                    elif len(self.timer) < 13:
+                    elif len(self.timer) < 3:
                         self.timer += event.unicode
 
-                pygame.draw.rect(screen, (100, 100, 100), pygame.Rect(126, 130, 525, 50))
+                # display current user input
+                pygame.draw.rect(screen, (100, 100, 100), pygame.Rect(125, 130, 100, 50))
                 show_timer = font.render(self.timer, True, (255, 255, 255))
                 screen.blit(show_timer, (150, 132))
                 pygame.display.update()
@@ -1259,6 +1324,8 @@ class ScreenTracker:
                     mouse_pos = event.pos
                     if 25 <= mouse_pos[0] <= 125 and 955.5 <= mouse_pos[1] <= 972:
                         self.game.end_game()
+                        self.playing_game = False
+                        break
                     if 325 <= mouse_pos[0] <= 425 and 955.5 <= mouse_pos[1] <= 972 and not self.net_worth:
                         self.toggle_net_worth(game)
                     if 887.5 <= mouse_pos[0] <= 987.5 and 581.25 <= mouse_pos[1] <= 601.25 and self.net_worth:
