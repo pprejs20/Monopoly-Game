@@ -1569,6 +1569,12 @@ class Intermediary:
         line3_rect.centerx = 937.5
         line3_rect.y = 350
         screen.blit(line3, line3_rect)
+        # create line 4
+        line4 = font2.render("Collect {} from free parking!".format(self.game.free_parking_money), True, BLACK)
+        line4_rect = line4.get_rect()
+        line4_rect.centerx = 937.5
+        line4_rect.y = line3_rect.bottom + 20
+        screen.blit(line4, line4_rect)
         # re-blit left side to show new player money
         self.reblit_left()
         pygame.display.update()
