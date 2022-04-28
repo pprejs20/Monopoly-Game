@@ -88,6 +88,7 @@ class Game:
         while input != 1:
             available_props = self.get_house_available_props(player, first_time)
             inpt = int(self.gui.buy_buildings(self, player, first_time))
+            first_time = False
 
             if inpt == 1:
                 return
