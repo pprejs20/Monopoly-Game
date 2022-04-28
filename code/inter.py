@@ -466,7 +466,6 @@ def get_text(tile_set):
                     houses_rect.centerx = (tiles_coord[curr_pos - 1][0] + (tile_width / 2))
                     houses_rect.y = tiles_coord[curr_pos - 1][1] + 2
                     screen.blit(houses_img, houses_rect)
-                    print(txt)
 
 
 # function to blit a players token  on the board
@@ -915,6 +914,50 @@ class Intermediary:
             player = self.game.players.get(i)
             token_blit(player.number, player.pos, player.token)
         pygame.display.update()
+
+    def roll_again(self, player):
+        """
+        Function for a player to roll the dice again after there turn if they rolled a double
+        :param player: player who rolled a double
+        :return:
+        """
+        # reblit the board to cover any previous base
+        self.reblit_board()
+        # create base to display text on
+        base = pygame.Rect((450 + tile_height + 150), (tile_height + 110), 675 - 2 * tile_height, 300)
+        pygame.draw.rect(screen, WHITE, base)
+        # create line 2
+        line1 = font2.render("{}, you've rolled a double!,".format(player.name), True, BLACK)
+        line1_rect = line1.get_rect()
+        line1_rect.centerx = 937.5
+        line1_rect.y = tile_height + 120
+        screen.blit(line1, line1_rect)
+        # make roll again button
+        roll_button = pygame.Rect(base.centerx-50, base.bottom-60, 100, 40)
+        pygame.draw.rect(screen, (220, 215, 200), roll_button)
+        roll_txt = font2.render("Roll again!", True, BLACK)
+        roll_rect = roll_txt.get_rect()
+        roll_rect.center = roll_button.center
+        screen.blit(roll_txt, roll_rect)
+        pygame.display.update()
+        # if AI player automatically click button
+        if isinstance(player, AIPlayer):
+            pygame.time.wait(2000)
+        # if human player get mouse click
+        else:
+            clicked = False
+            while not clicked:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        clicked = True
+                        break
+
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        pos = event.pos
+
+                        # if player clicks roll again button exit loop
+                        if roll_button.left <= pos[0] <= roll_button.right and roll_button.top <= pos[1] <= roll_button.bottom:
+                            clicked = True
 
     def buy_buildings(self, game, player, first_time, test=None):
         """
@@ -1369,7 +1412,6 @@ class Intermediary:
                         break
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
-                        print(mouse_pos)
                         if pass_button.left <= mouse_pos[0] <= pass_button.right and pass_button.top <= mouse_pos[
                             1] <= pass_button.bottom:
                             response = "1"
@@ -1587,7 +1629,7 @@ class Intermediary:
         line2_rect.y = 350
         screen.blit(line2, line2_rect)
         # create line 3
-        line3 = font2.render("{}".format(player.money), True, BLACK)
+        line3 = font2.render("{}".format(player.net_worth), True, BLACK)
         line3_rect = line3.get_rect()
         line3_rect.centerx = 937.5
         line3_rect.y = line2_rect.bottom + 20

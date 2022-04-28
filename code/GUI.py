@@ -344,7 +344,6 @@ def get_text(tiles_set):
                     txt = "Hotel"
                 else:
                     txt = "Houses: {}".format(count)
-            print(txt)
 
             # for the bottom row
             if curr_pos < 11:
@@ -929,6 +928,10 @@ class ScreenTracker:
                 pygame.display.update()
 
     def choose_token(self):
+        """
+
+        :return:
+        """
         self.token_chosen = None
         pygame.display.set_mode(start_screen_size)
         screen.fill((0, 200, 210))
@@ -971,7 +974,6 @@ class ScreenTracker:
                         if self.players_setup == self.no_of_players:
                             self.playing_game = True
                             self.choosing_token = False
-                            print(self.names_and_tokens)
                             if not self.normal_mode:
                                 self.getting_timer = True
                                 self.get_timer()
@@ -1044,6 +1046,10 @@ class ScreenTracker:
                     pygame.display.update()
 
     def get_timer(self):
+        """
+        Function to create the start screen which will receive the timer if the game is the abridged version
+        :return:
+        """
         input_active = False
         self.timer = ""
         font1 = pygame.font.SysFont('algerian', 40)
@@ -1081,6 +1087,11 @@ class ScreenTracker:
                 pygame.display.update()
 
     def toggle_net_worth(self, game):
+        """
+        Function for the button which displays all player's net worth on the board
+        :param game: the game object
+        :return:
+        """
         self.net_worth = True
         pygame.draw.rect(screen, WHITE, pygame.Rect(586.25, 136.25, 702.25, 475))
         pygame.display.update()
@@ -1116,6 +1127,10 @@ class ScreenTracker:
         pygame.display.update()
 
     def game_screen(self):
+        """
+        Function to create the game object (from information inputted in start screens) and display initial game screen
+        :return:
+        """
         # while self.playing_game:
         pygame.display.set_mode(game_size)
         screen.blit(board, (450, 0))
@@ -1196,6 +1211,13 @@ class ScreenTracker:
         self.game_loop(game, start_time)
 
     def game_loop(self, game, start_time):
+        """
+        Function for the game loop. Handles starting and ending a players turn, and if it is the abridged version,
+        ending the game once the timer is over.
+        :param game: the current game's game object
+        :param start_time: the time the game was started
+        :return:
+        """
         dice_rolled = False
         turn_ended = True
         last_turns = False

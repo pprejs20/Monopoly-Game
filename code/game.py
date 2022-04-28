@@ -69,7 +69,8 @@ class Game:
             if doubles:
                 print("[{}] Player rolled a double".format(player.name))
                 self.doubles_counter += 1
-                pygame.time.wait(2000)
+                pygame.time.wait(1000)
+                self.gui.roll_again(player)
                 self.next_step(player)
 
             self.doubles_counter = 0
