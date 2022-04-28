@@ -535,7 +535,7 @@ house_costs = {
     "Red": 150,
     "Yellow": 150,
     "Green": 200,
-    "Deep Blue": 200
+    "Deep blue": 200
 }
 
 

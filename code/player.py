@@ -124,7 +124,7 @@ class Player:
         while self.money < amount:
             for i, prop in enumerate(self.propList):
                 print(i, prop, prop.cost)
-            ans = game.gui.sell_properties(self)
+            ans = int(game.gui.sell_properties(self))
             self.propList[ans].buyable = True
             self.propList[ans].owner = None
             game.gui.return_prop(self.propList[ans])
