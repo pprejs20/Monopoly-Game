@@ -1047,7 +1047,7 @@ class Intermediary:
                             decision = True
                             break
                         # receive input
-                        elif len(self.choice) < 3:
+                        elif len(self.choice) < 2 and event.unicode.isdigit():
                             self.choice += event.unicode
 
                     pygame.draw.rect(screen, (220, 215, 200), input_rect)
