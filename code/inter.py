@@ -649,7 +649,7 @@ class Intermediary:
         base = pygame.Rect((450 + tile_height + 150), (tile_height + 100), 675 - 2 * tile_height, 675 - 2 * tile_height)
         pygame.draw.rect(screen, WHITE, base)
         # create line 1
-        line1 = font2.render("{}, you're in jail!,".format(player.name), True, BLACK)
+        line1 = font2.render("{}, you're in jail!".format(player.name), True, BLACK)
         line1_rect = line1.get_rect()
         line1_rect.centerx = 937.5
         line1_rect.y = tile_height + 120

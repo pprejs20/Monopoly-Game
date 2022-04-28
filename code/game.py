@@ -64,12 +64,15 @@ class Game:
             player.move_player_forward(dice_sum)
             self.gui.roll_dice(d1, d2)
             self.check_player_position(player)
+            if player.jailed:
+                doubles = False
+                return
             print("[{}] rolled: {}".format(player.name, dice_sum))
 
             if doubles:
                 print("[{}] Player rolled a double".format(player.name))
                 self.doubles_counter += 1
-                pygame.time.wait(1000)
+                pygame.time.wait(1500)
                 self.gui.roll_again(player)
                 self.next_step(player)
 
