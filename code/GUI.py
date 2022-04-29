@@ -1364,17 +1364,17 @@ class ScreenTracker:
                     checked = True
             pygame.display.update()
 
-            # if turn_ended:
-            #     # if the next player to take a turn is AI, automatically start the turn
-            #     if isinstance(curr_player, AIPlayer):
-            #         pygame.time.wait(2000)
-            #         dice_rolled, turn_ended = self.start_turn()
-            #
-            # else:
-            #     # if the current player is AI, automatically end the turn
-            #     if isinstance(curr_player, AIPlayer):
-            #         pygame.time.wait(2000)
-            #         curr_player, dice_rolled, turn_ended = self.end_turn(ctr, last_turns)
+            if turn_ended:
+                # if the next player to take a turn is AI, automatically start the turn
+                if isinstance(curr_player, AIPlayer):
+                    pygame.time.wait(2000)
+                    dice_rolled, turn_ended = self.start_turn()
+
+            else:
+                # if the current player is AI, automatically end the turn
+                if isinstance(curr_player, AIPlayer):
+                    pygame.time.wait(2000)
+                    curr_player, dice_rolled, turn_ended = self.end_turn(ctr, last_turns)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
