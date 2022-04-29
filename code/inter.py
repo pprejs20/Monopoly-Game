@@ -942,7 +942,7 @@ class Intermediary:
         pygame.display.update()
         # if AI player automatically click button
         if isinstance(player, AIPlayer):
-            pygame.time.wait(2000)
+            pygame.time.wait(1500)
         # if human player get mouse click
         else:
             clicked = False
